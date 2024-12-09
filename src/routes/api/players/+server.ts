@@ -23,7 +23,7 @@ async function load() {
 
 	const sheets = google.sheets({ version: 'v4', auth: client as any });
 
-	const [playerResponse, imageResponse, tagResponse] = await Promise.all([
+	const [playerResponse, images, tagResponse] = await Promise.all([
 		// const [playerResponse] = await Promise.all([
 		sheets.spreadsheets.values
 			.get({
@@ -36,7 +36,10 @@ async function load() {
 				spreadsheetId: SPREADSHEET_ID,
 				range: 'images',
 			})
-			.then(handleResponse),
+			.then(handleResponse)
+			.then((values) => {
+				return values.map(imageMapper);
+			}),
 		sheets.spreadsheets.values
 			.get({
 				spreadsheetId: SPREADSHEET_ID,
@@ -51,33 +54,43 @@ async function load() {
 	// const images = getImages(imageResponse);
 	// const tags = getTags(tagResponse);
 
-	const players: any[] = playerResponse.map(rowToPlayer).sort((a, b) => {
-		const result = a.bio.first.localeCompare(b.bio.first);
-		return result !== 0 ? result : a.bio.last.localeCompare(b.bio.last);
-	});
-	// .map((player) => {
-	// 	player.images = images.filter((image) => {
-	// 		return image.playerId === player.key;
-	// 	});
+	const players: any[] = playerResponse
+		.map(rowToPlayer)
+		.sort((a, b) => {
+			const result = a.bio.first.localeCompare(b.bio.first);
+			return result !== 0 ? result : a.bio.last.localeCompare(b.bio.last);
+		})
+		.map((player) => {
+			player.images = images
+				.filter((image) => image.playerKey === player.key)
+				.map((image) => {
+					return {
+						type: image.imageType,
+						kit: image.kitType,
+						url: image.image,
+					};
+				});
+			return player;
+		});
 
 	// 	return player;
 	// });
-	// 	.map((player) => {
-	// 		const playerTags = tags.find((tag) => {
-	// 			return tag.playerKey === player.key;
-	// 		});
-
-	// 		if (playerTags) {
-	// 			player.tags = {
-	// 				homegrown: playerTags.homegraph,
-	// 			};
-	// 		} else {
-	// 			player.tags = {
-	// 				homegrown: false,
-	// 			};
-	// 		}
-	// 		return player;
+	// .map((player) => {
+	// 	const playerTags = tags.find((tag) => {
+	// 		return tag.playerKey === player.key;
 	// 	});
+
+	// 	if (playerTags) {
+	// 		player.tags = {
+	// 			homegrown: playerTags.homegraph,
+	// 		};
+	// 	} else {
+	// 		player.tags = {
+	// 			homegrown: false,
+	// 		};
+	// 	}
+	// 	return player;
+	// });
 	return players;
 }
 
@@ -129,27 +142,19 @@ function getPlayerAge(row: string[]) {
 	var parts = row[DOB_COLUMN].split('/');
 
 	const dob = new Date(parseInt(parts[2], 10), parseInt(parts[1], 10) - 1, parseInt(parts[0], 10));
-
 	const diff = Date.now() - dob.getTime();
 	const age = new Date(diff);
 	return Math.abs(age.getUTCFullYear() - 1970);
 }
 
-// function getImages(response) {
-// 	const rows: string[] = response.data.values[0] ?? ([] as string[]);
-// 	// rows.shift();
-
-// 	return rows.map((row) => {
-// 		return {
-// 			playerId: row[0].trim(),
-// 			imageType: row[1].trim(),
-// 			kitType: row[2] ? row[2].trim() : '',
-// 			image: row[3] ? row[3].trim() : '',
-// 		};
-// 	});
-// }
-
-function imageMapper(row: string[]) {}
+function imageMapper(row: string[]) {
+	return {
+		playerKey: row[0].trim(),
+		imageType: row[1].trim(),
+		kitType: row[2] ? row[2].trim() : '',
+		image: row[3] ? row[3].trim() : '',
+	};
+}
 
 function tagMapper(row: string[]) {
 	return {

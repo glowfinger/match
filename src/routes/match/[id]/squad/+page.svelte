@@ -1,40 +1,62 @@
 <script lang="ts">
 	import { page } from '$app/stores';
 	import Breadcrumb from '$lib/components/Breadcrumb.svelte';
+	import CardButton from '$lib/components/CardButton.svelte';
+	import CardList from '$lib/components/CardList.svelte';
+	import PlayerCard from '$lib/components/PlayerCard.svelte';
+	import SelectionStats from '$lib/components/stats/SelectionStats.svelte';
 	import { getMatch } from '$lib/database/MatchService';
 	import { getPlayers } from '$lib/database/PlayerDBService';
-	import { setSelection } from '$lib/database/SelectionDBService';
-	import type { Match, Player } from '$lib/IndexedDB';
+	import { getSelections, setSelection } from '$lib/database/SelectionDBService';
+	import type { Match, Player, Selection } from '$lib/IndexedDB';
 	import { onMount } from 'svelte';
 
 	const matchId = Number.parseInt($page.params.id);
 	let query = $page.url.searchParams;
 	let match: Match | undefined = $state();
 	let players: Player[] = $state([]);
-
-	let yesses: string[] = [];
-	let nos: string[] = [];
-	let maybes: string[] = [];
+	let selections: Selection[] = $state([]);
 
 	onMount(async () => {
 		match = await getMatch(matchId);
 		players = await getPlayers();
+		selections = await getSelections(matchId);
 	});
 
-	function handleYes(key: string) {
-		console.log('Yes');
-
-		setSelection(key, matchId, 'yes');
+	async function handleYes(key: string) {
+		await setSelection(key, matchId, 'yes');
+		selections = await getSelections(matchId);
 	}
 
-	function handleNo(key: string) {
-		console.log('No');
-		setSelection(key, matchId, 'no');
+	async function handleNo(key: string) {
+		await setSelection(key, matchId, 'no');
+		selections = await getSelections(matchId);
 	}
 
-	function handleMaybe(key: string) {
-		console.log('Maybe');
-		setSelection(key, matchId, 'maybe');
+	async function handleMaybe(key: string) {
+		await setSelection(key, matchId, 'maybe');
+		selections = await getSelections(matchId);
+	}
+
+	function hasSelection(key: string, status: string) {
+		return selections.find((s) => s.playerKey === key && s.available === status) !== undefined;
+	}
+
+	function isYes(key: string) {
+		return hasSelection(key, 'yes');
+	}
+
+	function isNo(key: string) {
+		return hasSelection(key, 'no');
+	}
+
+	function isMaybe(key: string) {
+		return hasSelection(key, 'maybe');
+	}
+
+	function getSelection(key: string) {
+		const selection = selections.find((s) => s.playerKey === key);
+		return selection ? selection.available : '';
 	}
 
 	const breadcrumbs = [
@@ -42,6 +64,10 @@
 		{ name: 'Match', href: `/match/${matchId}` },
 		{ name: 'Manage squad', href: `/match/${matchId}/squad` },
 	];
+
+	let declined = $derived(players.filter((player) => isNo(player.key)));
+
+	let possible = $derived(players.filter((player) => !isNo(player.key)));
 </script>
 
 <div class="grid grid-cols-1 gap-4">
@@ -51,17 +77,35 @@
 	{#if !match}
 		<p>Match not found</p>
 	{:else}
-		<ul class="list">
-			{#each players as player}
-				<li>
-					<div class="variant-filled btn-group">
-						<button onclick={() => handleYes(player.key)}>Y</button>
-						<button onclick={() => handleNo(player.key)}>N</button>
-						<button onclick={() => handleMaybe(player.key)}>?</button>
-					</div>
+		<SelectionStats {players} {selections} />
+		<CardList>
+			{#each possible as player}
+				<PlayerCard {player}>
+					<CardButton onClick={() => handleYes(player.key)} disabled={isYes(player.key)}
+						>Yes</CardButton
+					>
+					<CardButton onClick={() => handleNo(player.key)} disabled={isNo(player.key)}
+						>No</CardButton
+					>
+					<CardButton onClick={() => handleMaybe(player.key)} disabled={isMaybe(player.key)}
+						>Maybe</CardButton
+					>
+				</PlayerCard>
+			{/each}
+		</CardList>
 
-					<span class="flex-auto">{player.bio.first} {player.bio.last}</span>
-				</li>
+		<h3 class="h3">Declined {declined.length}</h3>
+		<ul class="list">
+			{#each declined as player}
+				<PlayerCard {player}>
+					<div class="variant-filled-primary btn-group">
+						<button onclick={() => handleYes(player.key)} disabled={isYes(player.key)}>Y</button>
+						<button onclick={() => handleNo(player.key)} disabled={isNo(player.key)}>N</button>
+						<button onclick={() => handleMaybe(player.key)} disabled={isMaybe(player.key)}>?</button
+						>
+					</div>
+					<p>{getSelection(player.key)}</p>
+				</PlayerCard>
 			{/each}
 		</ul>
 	{/if}

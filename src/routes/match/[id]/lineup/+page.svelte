@@ -1,6 +1,8 @@
 <script lang="ts">
 	import { page } from '$app/stores';
 	import Breadcrumb from '$lib/components/Breadcrumb.svelte';
+	import LineupSelector from '$lib/components/LineupSelector.svelte';
+	import TeamStats from '$lib/components/stats/TeamStats.svelte';
 	import { getMatch } from '$lib/database/MatchService';
 	import { getPlayers } from '$lib/database/PlayerDBService';
 	import { getSelections } from '$lib/database/SelectionDBService';
@@ -38,6 +40,10 @@
 	<div class="grid grid-cols-1 gap-4">
 		<h1 class="h1">Manage Lineup</h1>
 		<Breadcrumb {breadcrumbs} />
+
+		<TeamStats {players} />
+
+		<LineupSelector />
 
 		{#if players.length === 0}
 			<p>No players selected</p>
