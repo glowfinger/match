@@ -64,13 +64,30 @@ export function countProps(players: Player[]): number {
 	return players.filter((player) => canPlay(player, [LOOSE_HEAD, TIGHT_HEAD])).length;
 }
 
+export function countNo8(players: Player[]): number {
+	return players.filter((player) => canPlay(player, [NUMBER_EIGHT])).length;
+}
+
+export function countBlindSide(players: Player[]): number {
+	return players.filter((player) => canPlay(player, [BLIND_SIDE])).length;
+}
+
+export function countOpenSide(players: Player[]): number {
+	return players.filter((player) => canPlay(player, [OPEN_SIDE])).length;
+}
+
 export function countHookers(players: Player[]): number {
 	return players.filter((player) => canPlay(player, [HOOKER])).length;
 }
 
+export function countSecondRow(players: Player[]): number {
+	return players.filter((player) => canPlay(player, [SECOND_ROW])).length;
+}
+
 export function canPlay(player: Player, positions: readonly string[]): boolean {
-	return positions.some(
-		(position) => isMainPosition(player, position) || isOtherPosition(player, position),
+	return (
+		positions.some((position) => isMainPosition(player, position)) ||
+		positions.some((position) => isOtherPosition(player, position))
 	);
 }
 
@@ -80,7 +97,6 @@ export function isMainPosition(player: Player, position: string): boolean {
 
 export function isOtherPosition(player: Player, position: string): boolean {
 	const positions = player.positions.other.filter((pos) => pos !== player.positions.main);
-	console.log(player.positions.other, positions, position);
 
 	return positions.includes(position);
 }

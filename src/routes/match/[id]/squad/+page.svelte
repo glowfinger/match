@@ -81,13 +81,11 @@
 		<CardList>
 			{#each possible as player}
 				<PlayerCard {player}>
-					<CardButton onClick={() => handleYes(player.key)} disabled={isYes(player.key)}
+					<CardButton onClick={() => handleYes(player.key)} active={isYes(player.key)}
 						>Yes</CardButton
 					>
-					<CardButton onClick={() => handleNo(player.key)} disabled={isNo(player.key)}
-						>No</CardButton
-					>
-					<CardButton onClick={() => handleMaybe(player.key)} disabled={isMaybe(player.key)}
+					<CardButton onClick={() => handleNo(player.key)} active={isNo(player.key)}>No</CardButton>
+					<CardButton onClick={() => handleMaybe(player.key)} active={isMaybe(player.key)}
 						>Maybe</CardButton
 					>
 				</PlayerCard>
@@ -95,18 +93,18 @@
 		</CardList>
 
 		<h3 class="h3">Declined {declined.length}</h3>
-		<ul class="list">
+		<CardList>
 			{#each declined as player}
 				<PlayerCard {player}>
-					<div class="variant-filled-primary btn-group">
-						<button onclick={() => handleYes(player.key)} disabled={isYes(player.key)}>Y</button>
-						<button onclick={() => handleNo(player.key)} disabled={isNo(player.key)}>N</button>
-						<button onclick={() => handleMaybe(player.key)} disabled={isMaybe(player.key)}>?</button
-						>
-					</div>
-					<p>{getSelection(player.key)}</p>
+					<CardButton onClick={() => handleYes(player.key)} active={isYes(player.key)}
+						>Yes</CardButton
+					>
+					<CardButton onClick={() => handleNo(player.key)} active={isNo(player.key)}>No</CardButton>
+					<CardButton onClick={() => handleMaybe(player.key)} active={isMaybe(player.key)}
+						>Maybe</CardButton
+					>
 				</PlayerCard>
 			{/each}
-		</ul>
+		</CardList>
 	{/if}
 </div>

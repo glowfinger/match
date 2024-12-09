@@ -24,6 +24,8 @@
 	}
 </script>
 
-<span class="inline-flex size-10 items-center justify-center rounded-full bg-slate-500">
-	<span class="font-medium text-white">{avatarLabel}</span>
+<span
+	class="inline-flex size-10 items-center justify-center rounded-full bg-slate-100 ring-1 ring-slate-400"
+>
+	<span class="font-medium text-slate-800">{avatarLabel}</span>
 </span>

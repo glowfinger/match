@@ -61,4 +61,12 @@ db.version(1).stores({
 	positions: '++id, [matchId+playerKey+position]',
 });
 
+// if (navigator.storage && navigator.storage.estimate) {
+// 	const estimation = await navigator.storage.estimate();
+// 	console.log(`Quota: ${estimation.quota}`);
+// 	console.log(`Usage: ${estimation.usage}`);
+// } else {
+// 	console.error('StorageManager not found');
+// }
+
 export { db };

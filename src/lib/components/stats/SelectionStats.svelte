@@ -30,6 +30,6 @@
 <dl class="grid grid-cols-4 gap-2">
 	<Stat title="All" value={countPlayers()} />
 	<Stat title="Yes" value={countYes()} />
-	<Stat title="Maybe" value={countMaybe()} />
 	<Stat title="No" value={countNo()} />
+	<Stat title="Maybe" value={countMaybe()} />
 </dl>

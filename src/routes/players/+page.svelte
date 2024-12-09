@@ -6,11 +6,13 @@
 	import { getPlayers } from '$lib/database/PlayerDBService';
 	import PlayerCard from '$lib/components/PlayerCard.svelte';
 	import Breadcrumb from '$lib/components/Breadcrumb.svelte';
+	import CardList from '$lib/components/CardList.svelte';
+	import TeamStats from '$lib/components/stats/TeamStats.svelte';
 
-	let players = writable<Player[]>([]);
+	let players: Player[] = $state([]);
 
 	onMount(async () => {
-		players.set(await getPlayers());
+		players = await getPlayers();
 	});
 
 	const breadcrumbs = [
@@ -26,9 +28,10 @@
 
 	<a href="/players/load" class="variant-filled-primary btn">Load players</a>
 
-	<div class="grid grid-cols-1 gap-2">
-		{#each $players as player}
+	<TeamStats {players} />
+	<CardList>
+		{#each players as player}
 			<PlayerCard {player} />
 		{/each}
-	</div>
+	</CardList>
 </div>
