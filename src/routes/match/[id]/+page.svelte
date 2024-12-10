@@ -1,16 +1,27 @@
 <script lang="ts">
 	import { page } from '$app/stores';
 	import Breadcrumb from '$lib/components/Breadcrumb.svelte';
+	import TeamStats from '$lib/components/stats/TeamStats.svelte';
 	import { getMatch } from '$lib/database/MatchService';
-	import type { Match } from '$lib/IndexedDB';
+	import { getPlayers } from '$lib/database/PlayerDBService';
+	import { getSelections } from '$lib/database/SelectionDBService';
+	import { isAvailable } from '$lib/filters/SelectionFilter';
+	import type { Match, Player, Selection } from '$lib/IndexedDB';
 	import { onMount } from 'svelte';
 
 	const matchId = Number.parseInt($page.params.id);
 
 	let match: Match | undefined = $state();
+	let players: Player[] = $state([]);
+	let selections: Selection[] = $state([]);
 
 	onMount(async () => {
 		match = await getMatch(matchId);
+
+		selections = (await getSelections(matchId)).filter(isAvailable);
+		players = (await getPlayers()).filter((player) =>
+			selections.some((selection) => selection.playerKey === player.key),
+		);
 	});
 
 	const breadcrumbs = [
@@ -28,4 +39,6 @@
 		<a href={`/match/${match.id}/squad`} class="variant-filled-primary btn">Manage squad</a>
 		<a href={`/match/${match.id}/lineup`} class="variant-filled-primary btn">Manage lineup</a>
 	{/if}
+
+	<TeamStats {players} />
 </div>

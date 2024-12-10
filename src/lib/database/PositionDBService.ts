@@ -15,3 +15,7 @@ export async function setPosition(playerKey: string, matchId: number, position: 
 		await db.positions.add(pos);
 	}
 }
+
+export async function getPositions(matchId: number): Promise<Position[]> {
+	return db.positions.where({ matchId }).toArray();
+}

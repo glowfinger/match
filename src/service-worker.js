@@ -58,6 +58,10 @@ self.addEventListener('fetch', (event) => {
 				throw new Error('invalid response from fetch');
 			}
 
+			if (url.protocol === 'chrome-extension:') {
+				return response;
+			}
+
 			if (response.status === 200) {
 				cache.put(event.request, response.clone());
 			}

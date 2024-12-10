@@ -2,12 +2,12 @@
 	import { page } from '$app/stores';
 	import Breadcrumb from '$lib/components/Breadcrumb.svelte';
 	import LineupSelector from '$lib/components/LineupSelector.svelte';
-	import TeamStats from '$lib/components/stats/TeamStats.svelte';
 	import { getMatch } from '$lib/database/MatchService';
 	import { getPlayers } from '$lib/database/PlayerDBService';
+	import { getPositions } from '$lib/database/PositionDBService';
 	import { getSelections } from '$lib/database/SelectionDBService';
 	import { isAvailable } from '$lib/filters/SelectionFilter';
-	import type { Match, Player, Selection } from '$lib/IndexedDB';
+	import type { Match, Player, Position, Selection } from '$lib/IndexedDB';
 	import { onMount } from 'svelte';
 
 	const matchId = Number.parseInt($page.params.id);
@@ -15,6 +15,7 @@
 	let match: Match | undefined = $state();
 	let players: Player[] = $state([]);
 	let selections: Selection[] = $state([]);
+	let positions: Position[] = $state([]);
 
 	onMount(async () => {
 		const allPlayer = await getPlayers();
@@ -25,6 +26,8 @@
 		players = allPlayer.filter((player) =>
 			selections.some((selection) => selection.playerKey === player.key),
 		);
+
+		positions = await getPositions(matchId);
 	});
 
 	const breadcrumbs = [
@@ -41,9 +44,7 @@
 		<h1 class="h1">Manage Lineup</h1>
 		<Breadcrumb {breadcrumbs} />
 
-		<TeamStats {players} />
-
-		<LineupSelector />
+		<LineupSelector {positions} />
 
 		{#if players.length === 0}
 			<p>No players selected</p>
