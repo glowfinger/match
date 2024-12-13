@@ -2,10 +2,10 @@
 	type Props = {
 		children?: any;
 		onClick: () => void | Promise<void>;
-		active: boolean;
+		active?: boolean;
 	};
 
-	let { onClick, children, active }: Props = $props();
+	let { onClick, children, active = false }: Props = $props();
 </script>
 
 {#if active}

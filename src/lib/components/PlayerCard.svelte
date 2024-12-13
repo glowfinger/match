@@ -22,10 +22,12 @@
 					{player.bio.first}
 					{player.bio.last}
 				</h3>
-				<span
-					class="inline-flex shrink-0 items-center rounded-full bg-slate-50 px-1.5 py-0.5 text-xs font-medium text-slate-700 ring-1 ring-inset ring-slate-600/20"
-					>{player.bio.age}</span
-				>
+				{#if player.bio.age}
+					<span
+						class="inline-flex shrink-0 items-center rounded-full bg-slate-50 px-1.5 py-0.5 text-xs font-medium text-slate-700 ring-1 ring-inset ring-slate-600/20"
+						>{player.bio.age}</span
+					>
+				{/if}
 			</div>
 			<p class="mt-1 truncate text-sm text-slate-500">
 				{POSITION_NAMES.get(player.positions.main)}

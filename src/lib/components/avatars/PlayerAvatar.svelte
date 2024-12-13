@@ -7,7 +7,7 @@
 	let { player }: Props = $props();
 
 	// let avatarUrl = getAvatarUrl(player.images);
-	let avatarLabel = getAvatarLabel(player);
+	let avatarLabel = $derived(getAvatarLabel(player));
 
 	function getAvatarUrl(images: PlayerImage[]) {
 		const image = images.find((image) => image.type === 'profile-front' && image.kit === 'home');

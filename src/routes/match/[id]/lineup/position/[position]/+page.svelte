@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { goto } from '$app/navigation';
 	import { page } from '$app/stores';
 	import Breadcrumb from '$lib/components/Breadcrumb.svelte';
 	import CardButton from '$lib/components/CardButton.svelte';
@@ -7,10 +8,15 @@
 	import { isMainPosition, isOtherPosition, SHIRT_NUMBERS } from '$lib/counts/PlayerCounts';
 	import { getMatch } from '$lib/database/MatchService';
 	import { getPlayers } from '$lib/database/PlayerDBService';
-	import { setPosition } from '$lib/database/PositionDBService';
+	import {
+		deleteMatchPlayer,
+		deleteMatchPositions,
+		getMatchPositions,
+		setPosition,
+	} from '$lib/database/MatchPositionDBService';
 	import { getSelections, setSelection } from '$lib/database/SelectionDBService';
 	import { isAvailable } from '$lib/filters/SelectionFilter';
-	import type { Match, Player, Selection } from '$lib/IndexedDB';
+	import type { Match, MatchPosition, Player, Selection } from '$lib/IndexedDB';
 	import { onMount } from 'svelte';
 
 	const matchId = Number.parseInt($page.params.id);
@@ -22,6 +28,7 @@
 	let mains: Player[] = $state([]);
 	let secondary: Player[] = $state([]);
 	let not: Player[] = $state([]);
+	let matchPositions: MatchPosition[] = $state([]);
 
 	onMount(async () => {
 		const allPlayer = await getPlayers();
@@ -37,6 +44,8 @@
 		mains = players.filter((player) => isMainPosition(player, key));
 		secondary = players.filter((player) => isOtherPosition(player, key));
 		not = players.filter((player) => !isMainPosition(player, key) && !isOtherPosition(player, key));
+
+		matchPositions = await getMatchPositions(matchId);
 	});
 
 	const breadcrumbs = [
@@ -48,8 +57,38 @@
 
 	const key = SHIRT_NUMBERS.get(position);
 
-	async function handleSelect(playerKey: string) {
-		await setPosition(playerKey, matchId, position);
+	async function handleStart(playerKey: string) {
+		await deleteMatchPositions(matchId, position, 'start');
+		await deleteMatchPlayer(matchId, playerKey, 'start');
+		await setPosition(playerKey, matchId, position, 'start');
+		matchPositions = await getMatchPositions(matchId);
+	}
+
+	async function handleReplacement(playerKey: string) {
+		hasReplacement(playerKey)
+			? await deleteMatchPositions(matchId, position, 'replacement')
+			: await setPosition(playerKey, matchId, position, 'replacement');
+		matchPositions = await getMatchPositions(matchId);
+	}
+
+	function hasStart(playerKey: string): boolean {
+		return matchPositions.some(
+			(matchPosition) =>
+				matchPosition.matchId === matchId &&
+				matchPosition.playerKey === playerKey &&
+				matchPosition.position === position &&
+				matchPosition.type === 'start',
+		);
+	}
+
+	function hasReplacement(playerKey: string): boolean {
+		return matchPositions.some(
+			(matchPosition) =>
+				matchPosition.matchId === matchId &&
+				matchPosition.playerKey === playerKey &&
+				matchPosition.position === position &&
+				matchPosition.type === 'replacement',
+		);
 	}
 </script>
 
@@ -65,10 +104,13 @@
 	<CardList>
 		{#each mains as player}
 			<PlayerCard {player}>
-				<CardButton onClick={() => handleSelect(player.key)} />
-				<CardButton onClick={() => handleSelect(player.key)} />
-				<CardButton onClick={() => handleSelect(player.key)} />
-				<CardButton onClick={() => handleSelect(player.key)} />
+				<CardButton onClick={() => handleStart(player.key)} active={hasStart(player.key)}
+					>Start</CardButton
+				>
+				<CardButton
+					onClick={() => handleReplacement(player.key)}
+					active={hasReplacement(player.key)}>Replacement</CardButton
+				>
 			</PlayerCard>
 		{/each}
 	</CardList>
@@ -77,19 +119,27 @@
 	<CardList>
 		{#each secondary as player}
 			<PlayerCard {player}>
-				<div class="variant-filled-primary btn-group">
-					<button onclick={() => handleSelect(player.key)}>Y</button>
-				</div>
+				<CardButton onClick={() => handleStart(player.key)} active={hasStart(player.key)}
+					>Start</CardButton
+				>
+				<CardButton
+					onClick={() => handleReplacement(player.key)}
+					active={hasReplacement(player.key)}>Replacement</CardButton
+				>
 			</PlayerCard>
 		{/each}
 	</CardList>
-	<h2 class="h2">Not</h2>
+	<h2 class="h2">Unfavoured</h2>
 	<CardList>
 		{#each not as player}
 			<PlayerCard {player}>
-				<div class="variant-filled-primary btn-group">
-					<button onclick={() => handleSelect(player.key)}>Y</button>
-				</div>
+				<CardButton onClick={() => handleStart(player.key)} active={hasStart(player.key)}
+					>Start</CardButton
+				>
+				<CardButton
+					onClick={() => handleReplacement(player.key)}
+					active={hasReplacement(player.key)}>Replacement</CardButton
+				>
 			</PlayerCard>
 		{/each}
 	</CardList>

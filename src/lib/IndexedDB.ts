@@ -40,33 +40,27 @@ export interface Selection {
 	available: string;
 }
 
-export interface Position {
+export interface MatchPosition {
 	id: number;
 	matchId: number;
 	playerKey: string;
 	position: string;
+	type: 'start' | 'replacement' | 'possible';
 }
 
 const db = new Dexie('MatchDatabase') as Dexie & {
 	matches: EntityTable<Match, 'id'>;
 	players: EntityTable<Player, 'key'>;
 	selections: EntityTable<Selection, 'id'>;
-	positions: EntityTable<Position, 'id'>;
+	matchPositions: EntityTable<MatchPosition, 'id'>;
 };
 
 db.version(1).stores({
 	matches: '++id, [matchOn+team+squad+type]',
 	players: 'key',
 	selections: '++id, [matchId+playerKey]',
-	positions: '++id, [matchId+playerKey+position]',
+	matchPositions:
+		'++id, [matchId+playerKey+position+type], [matchId+position+type], [matchId+playerKey+type]',
 });
-
-// if (navigator.storage && navigator.storage.estimate) {
-// 	const estimation = await navigator.storage.estimate();
-// 	console.log(`Quota: ${estimation.quota}`);
-// 	console.log(`Usage: ${estimation.usage}`);
-// } else {
-// 	console.error('StorageManager not found');
-// }
 
 export { db };

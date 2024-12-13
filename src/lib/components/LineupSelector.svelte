@@ -1,7 +1,31 @@
 <script lang="ts">
 	import { SHIRT_NUMBERS } from '$lib/counts/PlayerCounts';
+	import type { MatchPosition, Player } from '$lib/IndexedDB';
+	import MatchPositionCard from './cards/MatchPositionCard.svelte';
+
+	type Props = {
+		players: Player[];
+		matchPositions: MatchPosition[];
+	};
+
+	let { players = [], matchPositions = [] }: Props = $props();
+
+	function getPlayerByPosition(position: string): Player | null {
+		const found =
+			matchPositions.find(
+				(matchPosition) => matchPosition.position === position && matchPosition.type === 'start',
+			)?.playerKey ?? null;
+
+		return players.find((player) => player.key === found) ?? null;
+	}
 </script>
 
-{#each [...SHIRT_NUMBERS] as [number, name]}
-	<p>{number}: <a href="/match/1/lineup/position/{number}">{name}</a></p>
-{/each}
+<div class="grid grid-cols-1 gap-2">
+	{#each [...SHIRT_NUMBERS] as [positionNumber, positionName]}
+		<MatchPositionCard
+			{positionNumber}
+			{positionName}
+			player={getPlayerByPosition(positionNumber)}
+		/>
+	{/each}
+</div>
