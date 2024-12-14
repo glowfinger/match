@@ -60,5 +60,3 @@
 		</ul>
 	</div>
 {/if}
-
-<pre class="text-xs">{JSON.stringify({ matchPositions }, null, 2)}</pre>

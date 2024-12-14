@@ -1,5 +1,6 @@
 <script lang="ts">
 	import type { Player } from '$lib/IndexedDB';
+	import PlayerAvatar from '../avatars/PlayerAvatar.svelte';
 
 	type Props = {
 		positionName: string;
@@ -8,6 +9,10 @@
 	};
 
 	let { positionName, positionNumber, player }: Props = $props();
+
+	function hasPlayerImage(player: Player | undefined | null): boolean {
+		return !!player && player.images?.length > 0;
+	}
 </script>
 
 <div
@@ -19,14 +24,16 @@
 		</span>
 	</div>
 
-	{#if player}
+	{#if player && player.images?.length > 0}
 		<div class="shrink-0">
 			<img
 				class="size-10 rounded-full"
-				src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
+				src={`https://glowfinger.blob.core.windows.net/smg/thumbnails-260x260/${player.images[0].url}.png`}
 				alt=""
 			/>
 		</div>
+	{:else if player}
+		<PlayerAvatar {player} />
 	{:else}
 		<div class="shrink-0">
 			<span

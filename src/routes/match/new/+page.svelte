@@ -91,6 +91,3 @@
 		<SubmitButton title="Add match" disabled={saving} />
 	</form>
 </div>
-
-<pre>{JSON.stringify(data, null, 2)}</pre>
-<pre>{JSON.stringify(errors, null, 2)}</pre>
