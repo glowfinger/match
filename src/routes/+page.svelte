@@ -11,10 +11,7 @@
 		matches = await getMatches();
 	});
 
-	const breadcrumbs = [
-		{ name: 'Home', href: '/' },
-		{ name: 'Teams', href: '/teams' },
-	];
+	const breadcrumbs = [{ name: 'Home', href: '/' }];
 </script>
 
 <div class="grid grid-cols-1 gap-2">
@@ -27,8 +24,9 @@
 	<a href="/players" class="variant-filled-primary btn">View players</a>
 	<a href="/teams" class="variant-filled-primary btn">View Teams</a>
 </div>
-<!-- <div class="grid grid-cols-1 gap-2">
+<div class="grid grid-cols-1 gap-2">
+	<h2 class="h2">Matches</h2>
 	{#each matches as match}
 		<MatchCard {match} />
 	{/each}
-</div> -->
+</div>
