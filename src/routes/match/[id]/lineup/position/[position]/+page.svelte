@@ -58,10 +58,15 @@
 	const key = SHIRT_NUMBERS.get(position);
 
 	async function handleStart(playerKey: string) {
-		await deleteMatchPositions(matchId, position, 'start');
-		await deleteMatchPlayer(matchId, playerKey, 'start');
-		await setPosition(playerKey, matchId, position, 'start');
-		matchPositions = await getMatchPositions(matchId);
+		if (hasStart(playerKey)) {
+			await deleteMatchPositions(matchId, position, 'start');
+			matchPositions = await getMatchPositions(matchId);
+		} else {
+			await deleteMatchPositions(matchId, position, 'start');
+			await deleteMatchPlayer(matchId, playerKey, 'start');
+			await setPosition(playerKey, matchId, position, 'start');
+			matchPositions = await getMatchPositions(matchId);
+		}
 	}
 
 	async function handleReplacement(playerKey: string) {

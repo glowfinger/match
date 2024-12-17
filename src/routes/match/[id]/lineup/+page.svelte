@@ -9,11 +9,15 @@
 	import { isAvailable } from '$lib/filters/SelectionFilter';
 	import type { Match, MatchPosition, Player, Selection } from '$lib/IndexedDB';
 	import { onMount } from 'svelte';
+	import PlayerCard from '$lib/components/PlayerCard.svelte';
+	import PlayerAvatar from '$lib/components/avatars/PlayerAvatar.svelte';
+	import FinisherCard from '$lib/components/cards/FinisherCard.svelte';
 
 	const matchId = Number.parseInt($page.params.id);
 
 	let match: Match | undefined = $state();
 	let players: Player[] = $state([]);
+	let replacements: Player[] = $state([]);
 	let selections: Selection[] = $state([]);
 	let matchPositions: MatchPosition[] = $state([]);
 
@@ -28,6 +32,15 @@
 		);
 
 		matchPositions = await getMatchPositions(matchId);
+
+		replacements = allPlayer
+			.filter((player) => selections.some((selection) => selection.playerKey === player.key))
+			.filter(
+				(player) =>
+					matchPositions.filter(
+						(position) => position.playerKey === player.key && position.type === 'start',
+					).length === 0,
+			);
 	});
 
 	const breadcrumbs = [
@@ -44,19 +57,17 @@
 		<h1 class="h1">Manage Lineup</h1>
 		<Breadcrumb {breadcrumbs} />
 
-		<LineupSelector {players} {matchPositions} />
-
 		{#if players.length === 0}
 			<p>No players selected</p>
 		{/if}
-
-		<ul class="list">
-			{#each players as player}
-				<li>
-					<span>(icon)</span>
-					<span class="flex-auto">{player.bio.first} {player.bio.last}</span>
-				</li>
-			{/each}
-		</ul>
+		<h2 class="h2">Starters</h2>
+		<LineupSelector {players} {matchPositions} />
+		<h2 class="h2">Finishers</h2>
+		{#if replacements.length === 0}
+			<p>No players available</p>
+		{/if}
+		{#each replacements as player}
+			<FinisherCard {player} />
+		{/each}
 	</div>
 {/if}
