@@ -10,6 +10,12 @@
 	};
 
 	let { player, children }: Props = $props();
+
+	function clickToCopy(target: HTMLElement) {
+		let text = document.querySelector(target).innerText;
+
+		navigator.clipboard.writeText(text.value);
+	}
 </script>
 
 <li
@@ -31,6 +37,10 @@
 			</div>
 			<p class="mt-1 truncate text-sm text-slate-500">
 				{POSITION_NAMES.get(player.positions.main)}
+			</p>
+
+			<p use:clickToCopy class="mt-1 truncate text-sm text-slate-500">
+				{player.key}
 			</p>
 		</div>
 		<PlayerAvatar {player} />
