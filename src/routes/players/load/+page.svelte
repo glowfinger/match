@@ -5,7 +5,7 @@
 	import { type Player } from '$lib/database/IndexedDB';
 	import Breadcrumb from '$lib/components/Breadcrumb.svelte';
 	import { getApiPlayers } from '$lib/services/api/PlayerApiService';
-	import worker from '$lib/workers/PlayerImageLoader.ts?worker';
+	// import worker from '$lib/workers/PlayerImageLoader.ts?worker';
 
 	let status = $state('STARTING');
 	let cleared: Player[] = $state([]);
