@@ -1,4 +1,4 @@
-import { db, type Selection } from '$lib/IndexedDB';
+import { db, type Selection } from '$lib/database/IndexedDB';
 
 export async function setSelection(playerKey: string, matchId: number, available: string) {
 	const selection = {

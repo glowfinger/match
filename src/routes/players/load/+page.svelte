@@ -1,29 +1,36 @@
 <script lang="ts">
-	import { onMount } from 'svelte';
+	import { onDestroy, onMount } from 'svelte';
 	import type { PageData } from './$types';
 	import { addPlayers, clearPlayers, getPlayers } from '$lib/database/PlayerDBService';
-	import { type Player } from '$lib/IndexedDB';
+	import { type Player } from '$lib/database/IndexedDB';
 	import Breadcrumb from '$lib/components/Breadcrumb.svelte';
 	import { getApiPlayers } from '$lib/services/api/PlayerApiService';
+	import worker from '$lib/workers/PlayerImageLoader.ts?worker';
 
 	let status = $state('STARTING');
 	let cleared: Player[] = $state([]);
 	let added: Player[] = $state([]);
+	let imageWorker: Worker;
 
 	let names: string[] = $state([]);
 
 	onMount(async () => {
-		cleared = await getPlayers();
-		await clearPlayers();
+		// cleared = await getPlayers();
+		// await clearPlayers();
 
-		const data = await getApiPlayers();
-		await addPlayers(data);
-		added = await getPlayers();
+		// const data = await getApiPlayers();
+		// await addPlayers(data);
+		// added = await getPlayers();
 
-		names = added
-			.filter((elem) => !cleared.find(({ key }) => elem.key === key))
-			.map(({ bio }) => bio.screen);
+		// names = added
+		// 	.filter((elem) => !cleared.find(({ key }) => elem.key === key))
+		// 	.map(({ bio }) => bio.screen);
 		status = 'LOADED';
+	});
+
+	onDestroy(() => {
+		console.log('onDestroy');
+		imageWorker.terminate();
 	});
 
 	const breadcrumbs = [

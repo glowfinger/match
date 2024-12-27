@@ -7,7 +7,7 @@
 	import { getMatchPositions, getPositions } from '$lib/database/MatchPositionDBService';
 	import { getSelections } from '$lib/database/SelectionDBService';
 	import { isAvailable } from '$lib/filters/SelectionFilter';
-	import type { Match, MatchPosition, Player, Selection } from '$lib/IndexedDB';
+	import type { Match, MatchPosition, Player, Selection } from '$lib/database/IndexedDB';
 	import { onMount } from 'svelte';
 	import PlayerCard from '$lib/components/PlayerCard.svelte';
 	import PlayerAvatar from '$lib/components/avatars/PlayerAvatar.svelte';

@@ -3,11 +3,12 @@ import { google } from 'googleapis';
 import type { LayoutServerLoad } from '../../$types';
 import credentials from '$lib/server/Credentials';
 import { error } from '@sveltejs/kit';
+import { json } from '@sveltejs/kit';
 
 const SCOPES = ['https://www.googleapis.com/auth/spreadsheets.readonly'];
 const SPREADSHEET_ID = PRIVATE_GOOGLE_API_SHEET_ID;
 
-import { json } from '@sveltejs/kit';
+import { clubMapper } from '$lib/server/mappers/ClubMapper';
 
 export async function GET(match) {
 	return json(await load());
@@ -24,7 +25,6 @@ async function load() {
 	const sheets = google.sheets({ version: 'v4', auth: client as any });
 
 	const [playerResponse, images, tagResponse] = await Promise.all([
-		// const [playerResponse] = await Promise.all([
 		sheets.spreadsheets.values
 			.get({
 				spreadsheetId: SPREADSHEET_ID,
@@ -91,7 +91,7 @@ async function load() {
 	// 	}
 	// 	return player;
 	// });
-	return players;
+	return { players };
 }
 
 const CREATED_AT_COLUMN = 0;

@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { SHIRT_NUMBERS } from '$lib/counts/PlayerCounts';
-	import type { MatchPosition, Player } from '$lib/IndexedDB';
+	import type { MatchPosition, Player } from '$lib/database/IndexedDB';
 	import MatchPositionCard from './cards/MatchPositionCard.svelte';
 
 	type Props = {

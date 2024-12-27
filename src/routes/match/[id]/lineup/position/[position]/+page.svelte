@@ -16,7 +16,7 @@
 	} from '$lib/database/MatchPositionDBService';
 	import { getSelections, setSelection } from '$lib/database/SelectionDBService';
 	import { isAvailable } from '$lib/filters/SelectionFilter';
-	import type { Match, MatchPosition, Player, Selection } from '$lib/IndexedDB';
+	import type { Match, MatchPosition, Player, Selection } from '$lib/database/IndexedDB';
 	import { onMount } from 'svelte';
 
 	const matchId = Number.parseInt($page.params.id);

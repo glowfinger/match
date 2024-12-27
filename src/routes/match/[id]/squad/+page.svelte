@@ -8,7 +8,7 @@
 	import { getMatch } from '$lib/database/MatchService';
 	import { getPlayers } from '$lib/database/PlayerDBService';
 	import { getSelections, setSelection } from '$lib/database/SelectionDBService';
-	import type { Match, Player, Selection } from '$lib/IndexedDB';
+	import type { Match, Player, Selection } from '$lib/database/IndexedDB';
 	import { onMount } from 'svelte';
 
 	const matchId = Number.parseInt($page.params.id);

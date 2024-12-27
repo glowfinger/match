@@ -48,11 +48,34 @@ export interface MatchPosition {
 	type: 'start' | 'replacement' | 'possible';
 }
 
+export interface Club {
+	key: string;
+	name: string;
+	badge: string;
+	image?: string;
+}
+
+// export type Team = {
+// 	name: string;
+// 	badge: string;
+// 	country?: string;
+// 	socials?: {
+// 		facebook?: string;
+// 		twitter?: string;
+// 		instagram?: string;
+// 		linkedin?: string;
+// 		youtube?: string;
+// 	};
+// 	website?: string;
+// 	address?: string;
+// };
+
 const db = new Dexie('MatchDatabase') as Dexie & {
 	matches: EntityTable<Match, 'id'>;
 	players: EntityTable<Player, 'key'>;
 	selections: EntityTable<Selection, 'id'>;
 	matchPositions: EntityTable<MatchPosition, 'id'>;
+	clubs: EntityTable<Club, 'key'>;
 };
 
 db.version(1).stores({
@@ -61,6 +84,7 @@ db.version(1).stores({
 	selections: '++id, [matchId+playerKey]',
 	matchPositions:
 		'++id, [matchId+playerKey+position+type], [matchId+position+type], [matchId+playerKey+type]',
+	clubs: 'key',
 });
 
 export { db };

@@ -1,4 +1,4 @@
-import type { Player } from '$lib/IndexedDB';
+import type { Player } from '$lib/database/IndexedDB';
 import exp from 'constants';
 
 const LOOSE_HEAD = '1: Loose-head prop';
@@ -51,6 +51,9 @@ export const POSITION_NAMES = new Map([
 
 const FRONT_ROW = [LOOSE_HEAD, HOOKER, TIGHT_HEAD] as const;
 const BACK_ROW = [BLIND_SIDE, OPEN_SIDE, NUMBER_EIGHT] as const;
+const HALF_BACKS = [SCRUM_HALF, FLY_HALF] as const;
+const CENTRES = [INSIDE_CENTRE, OUTSIDE_CENTRE] as const;
+const BACK_THREE = [WING, FULL_BACK] as const;
 
 export function countBackRow(players: Player[]): number {
 	return players.filter((player) => canPlay(player, BACK_ROW)).length;
@@ -89,6 +92,42 @@ export function canPlay(player: Player, positions: readonly string[]): boolean {
 		positions.some((position) => isMainPosition(player, position)) ||
 		positions.some((position) => isOtherPosition(player, position))
 	);
+}
+
+export function countFlyHalves(players: Player[]): number {
+	return players.filter((player) => canPlay(player, [FLY_HALF])).length;
+}
+
+export function countScrumHalves(players: Player[]): number {
+	return players.filter((player) => canPlay(player, [SCRUM_HALF])).length;
+}
+
+export function countHalfBacks(players: Player[]): number {
+	return players.filter((player) => canPlay(player, HALF_BACKS)).length;
+}
+
+export function countCentres(players: Player[]): number {
+	return players.filter((player) => canPlay(player, CENTRES)).length;
+}
+
+export function countInsideCentres(players: Player[]): number {
+	return players.filter((player) => canPlay(player, [INSIDE_CENTRE])).length;
+}
+
+export function countOutsideCentres(players: Player[]): number {
+	return players.filter((player) => canPlay(player, [OUTSIDE_CENTRE])).length;
+}
+
+export function countBackThree(players: Player[]): number {
+	return players.filter((player) => canPlay(player, BACK_THREE)).length;
+}
+
+export function countWings(players: Player[]): number {
+	return players.filter((player) => canPlay(player, [WING])).length;
+}
+
+export function countFullBacks(players: Player[]): number {
+	return players.filter((player) => canPlay(player, [FULL_BACK])).length;
 }
 
 export function isMainPosition(player: Player, position: string): boolean {

@@ -2,7 +2,7 @@
 	import { writable } from 'svelte/store';
 	import { onMount } from 'svelte';
 
-	import type { Player } from '$lib/IndexedDB';
+	import type { Player } from '$lib/database/IndexedDB';
 	import { getPlayers } from '$lib/database/PlayerDBService';
 	import PlayerCard from '$lib/components/PlayerCard.svelte';
 	import Breadcrumb from '$lib/components/Breadcrumb.svelte';

@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { POSITION_NAMES } from '$lib/counts/PlayerCounts';
-	import type { Player } from '$lib/IndexedDB';
+	import type { Player } from '$lib/database/IndexedDB';
 	import PlayerAvatar from './avatars/PlayerAvatar.svelte';
 
 	type Props = {

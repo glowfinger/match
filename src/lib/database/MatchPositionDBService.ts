@@ -1,4 +1,4 @@
-import { db, type MatchPosition } from '$lib/IndexedDB';
+import { db, type MatchPosition } from '$lib/database/IndexedDB';
 
 export async function setPosition(
 	playerKey: string,

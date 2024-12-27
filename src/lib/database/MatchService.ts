@@ -1,4 +1,4 @@
-import { db, type Match } from '$lib/IndexedDB';
+import { db, type Match } from '$lib/database/IndexedDB';
 
 export async function getMatches(): Promise<Match[]> {
 	return await db.matches.toArray();

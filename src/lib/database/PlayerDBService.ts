@@ -1,4 +1,4 @@
-import { db, type Player } from '$lib/IndexedDB';
+import { db, type Player } from '$lib/database/IndexedDB';
 
 export async function getPlayer(key: string): Promise<Player> {
 	const player = await db.players.get(key);

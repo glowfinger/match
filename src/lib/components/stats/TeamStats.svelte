@@ -1,15 +1,24 @@
 <script lang="ts">
 	import {
 		countBackRow,
+		countBackThree,
 		countBlindSide,
+		countCentres,
+		countFlyHalves,
 		countFrontRow,
+		countFullBacks,
+		countHalfBacks,
 		countHookers,
+		countInsideCentres,
 		countNo8,
 		countOpenSide,
+		countOutsideCentres,
 		countProps,
+		countScrumHalves,
 		countSecondRow,
+		countWings,
 	} from '$lib/counts/PlayerCounts';
-	import type { Player, Position, Selection } from '$lib/IndexedDB';
+	import type { Player, Position, Selection } from '$lib/database/IndexedDB';
 	import Stat from './Stat.svelte';
 
 	type Props = {
@@ -44,5 +53,23 @@
 		<Stat title="Blind side" value={countBlindSide(players)} />
 		<Stat title="Openside" value={countOpenSide(players)} />
 		<Stat title="No. 8" value={countNo8(players)} />
+	</dl>
+
+	<dl class="grid grid-cols-4 gap-2">
+		<Stat title="Half back" value={countHalfBacks(players)} />
+		<Stat title="Scrum half" value={countScrumHalves(players)} />
+		<Stat title="Fly half" value={countFlyHalves(players)} />
+	</dl>
+
+	<dl class="grid grid-cols-4 gap-2">
+		<Stat title="Centres" value={countCentres(players)} />
+		<Stat title="Inside centre" value={countInsideCentres(players)} />
+		<Stat title="Outside centre" value={countOutsideCentres(players)} />
+	</dl>
+
+	<dl class="grid grid-cols-4 gap-2">
+		<Stat title="Back three" value={countBackThree(players)} />
+		<Stat title="Winger" value={countWings(players)} />
+		<Stat title="Fullbacks" value={countFullBacks(players)} />
 	</dl>
 </div>

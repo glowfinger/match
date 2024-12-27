@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type { Match } from '$lib/IndexedDB';
+	import type { Match } from '$lib/database/IndexedDB';
 
 	type Props = {
 		match: Match;

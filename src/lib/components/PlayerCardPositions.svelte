@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { SHIRT_NUMBERS } from '$lib/counts/PlayerCounts';
-	import type { Player } from '$lib/IndexedDB';
+	import type { Player } from '$lib/database/IndexedDB';
 
 	type Props = {
 		player: Player;

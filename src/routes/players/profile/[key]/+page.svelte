@@ -2,7 +2,8 @@
 	import { page } from '$app/stores';
 	import Breadcrumb from '$lib/components/Breadcrumb.svelte';
 	import { getPlayer } from '$lib/database/PlayerDBService';
-	import type { Player } from '$lib/IndexedDB';
+	import type { Player } from '$lib/database/IndexedDB';
+
 	import { onMount } from 'svelte';
 
 	const { key } = $page.params;
@@ -32,4 +33,5 @@
 		<p>{player.bio.screen}</p>
 		<p>{player.key}</p>
 	</div>
+	<pre>{JSON.stringify(player, null, 2)}</pre>
 {/if}

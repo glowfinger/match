@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type { Player, PlayerImage } from '$lib/IndexedDB';
+	import type { Player, PlayerImage } from '$lib/database/IndexedDB';
 
 	type Props = {
 		player: Player;

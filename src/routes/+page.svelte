@@ -2,7 +2,7 @@
 	import Breadcrumb from '$lib/components/Breadcrumb.svelte';
 	import MatchCard from '$lib/components/cards/MatchCard.svelte';
 	import { getMatch, getMatches } from '$lib/database/MatchService';
-	import type { Match } from '$lib/IndexedDB';
+	import type { Match } from '$lib/database/IndexedDB';
 	import { onMount } from 'svelte';
 
 	let matches: Match[] = $state([]);
@@ -22,7 +22,7 @@
 	<a href="/match/new" class="variant-filled-primary btn">Add New match</a>
 
 	<a href="/players" class="variant-filled-primary btn">View players</a>
-	<a href="/teams" class="variant-filled-primary btn">View Teams</a>
+	<a href="/clubs" class="variant-filled-primary btn">View Clubs</a>
 </div>
 <div class="grid grid-cols-1 gap-2">
 	<h2 class="h2">Matches</h2>

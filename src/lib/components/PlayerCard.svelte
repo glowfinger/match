@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { POSITION_NAMES } from '$lib/counts/PlayerCounts';
-	import type { Player } from '$lib/IndexedDB';
+	import type { Player } from '$lib/database/IndexedDB';
 	import PlayerAvatar from './avatars/PlayerAvatar.svelte';
 	import PlayerCardPositions from './PlayerCardPositions.svelte';
 
@@ -10,12 +10,6 @@
 	};
 
 	let { player, children }: Props = $props();
-
-	function clickToCopy(target: HTMLElement) {
-		let text = document.querySelector(target).innerText;
-
-		navigator.clipboard.writeText(text.value);
-	}
 </script>
 
 <li
@@ -39,7 +33,7 @@
 				{POSITION_NAMES.get(player.positions.main)}
 			</p>
 
-			<p use:clickToCopy class="mt-1 truncate text-sm text-slate-500">
+			<p class="mt-1 truncate text-sm text-slate-500">
 				{player.key}
 			</p>
 		</div>

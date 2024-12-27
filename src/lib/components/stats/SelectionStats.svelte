@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type { Player, Selection } from '$lib/IndexedDB';
+	import type { Player, Selection } from '$lib/database/IndexedDB';
 	import Stat from './Stat.svelte';
 
 	type Props = {
