@@ -13,9 +13,7 @@ const config = {
 		// See https://svelte.dev/docs/kit/adapters for more information about adapters.
 		adapter: adapter(),
 	},
-	compilerOptions: {
-		runes: true,
-	},
+	compilerOptions: {},
 };
 
 export default config;

@@ -4,10 +4,12 @@
 	import { onDestroy, onMount } from 'svelte';
 	// import PlayerImageWorker from '$lib/workers/PlayerImage.worker.ts?worker';
 	import ClubWorker from '$lib/workers/ClubImage.worker.ts?worker';
+	import { Toaster } from '$lib/components/ui/sonner/index.js';
 
 	import '../app.css';
 
 	import { requiredClubImages } from '$lib/stores/BlobStore.svelte';
+	import { toast } from 'svelte-sonner';
 
 	let { children } = $props();
 
@@ -31,6 +33,7 @@
 		} else {
 			console.error('StorageManager not found');
 		}
+		toast('Hello world');
 	});
 
 	$effect(() => {
@@ -45,6 +48,8 @@
 </script>
 
 <svelte:window ononline={handleOnline} onoffline={handleOffline} />
+
+<Toaster />
 <!-- <Toast /> -->
 <Navbar />
 <div class="flex min-h-full justify-center">
