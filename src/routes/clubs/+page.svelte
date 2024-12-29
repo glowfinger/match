@@ -4,12 +4,13 @@
 	import { addClubs, clearClubs, getClubs } from '$lib/database/ClubDbService';
 	import type { Club } from '$lib/database/IndexedDB';
 	import { getApiClubs } from '$lib/services/api/ClubApiService';
+	import { requiredClubImages } from '$lib/stores/BlobStore.svelte';
 
 	import { onMount } from 'svelte';
 
 	const breadcrumbs = [
 		{ name: 'Home', href: '/' },
-		{ name: 'Teams', href: '/clubs' },
+		{ name: 'Clubs', href: '/clubs' },
 	];
 
 	let clubs: Club[] = $state([]);
@@ -24,6 +25,7 @@
 			const apiClubs = await getApiClubs();
 			await addClubs(apiClubs);
 			clubs = await getClubs();
+			requiredClubImages.push(...clubs);
 		} catch (e) {
 			error = true;
 		}
@@ -38,6 +40,7 @@
 			const apiClubs = await getApiClubs();
 			await addClubs(apiClubs);
 			clubs = await getClubs();
+			requiredClubImages.push(...clubs);
 		}
 
 		loading = false;

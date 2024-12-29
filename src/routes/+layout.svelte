@@ -1,12 +1,16 @@
 <script lang="ts">
 	import Navbar from '$lib/components/layout/Navbar.svelte';
 	import { network } from '$lib/stores/NetworkStore.svelte';
-	import { onMount } from 'svelte';
+	import { onDestroy, onMount } from 'svelte';
 	// import PlayerImageWorker from '$lib/workers/PlayerImage.worker.ts?worker';
-	// import ClubWorker from '$lib/workers/PlayerImageLoader.ts?worker';
+	import ClubWorker from '$lib/workers/ClubImage.worker.ts?worker';
 	import '../app.css';
 
+	import { requiredClubImages } from '$lib/stores/BlobStore.svelte';
+
 	let { children } = $props();
+
+	let clubWorker: Worker = new ClubWorker();
 
 	let playerImageWorker: Worker;
 
@@ -26,8 +30,16 @@
 		} else {
 			console.error('StorageManager not found');
 		}
+	});
 
-		// playerImageWorker = new PlayerImageWorker();
+	$effect(() => {
+		// if (requiredClubImages.length > 0 && clubWorker) {
+		clubWorker.postMessage(JSON.parse(JSON.stringify(requiredClubImages)));
+		// }
+	});
+
+	onDestroy(() => {
+		clubWorker.terminate();
 	});
 </script>
 
