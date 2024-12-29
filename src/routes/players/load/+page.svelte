@@ -28,11 +28,6 @@
 		status = 'LOADED';
 	});
 
-	onDestroy(() => {
-		console.log('onDestroy');
-		imageWorker.terminate();
-	});
-
 	const breadcrumbs = [
 		{ name: 'Home', href: '/' },
 		{ name: 'Players', href: '/players' },
