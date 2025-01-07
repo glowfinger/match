@@ -14,6 +14,10 @@ export async function addMatch(data: Match): Promise<Match> {
 	throw new Error('Match not found');
 }
 
+export async function updateMatch(id: number, data: Match) {
+	await db.matches.update(id, { schedule: { ...data.schedule } });
+	return await db.matches.get(id);
+}
 export async function deleteMatch(id: number) {
 	return await db.matches.delete(id);
 }

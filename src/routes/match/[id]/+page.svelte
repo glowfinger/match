@@ -36,11 +36,12 @@
 	{#if !match}
 		<p>Match not found</p>
 	{:else}
-		<a href={`/match/${match.id}/squad`} class="variant-filled-primary btn">Manage squad</a>
-		<a href={`/match/${match.id}/lineup`} class="variant-filled-primary btn">Manage lineup</a>
 		<a href={`/match/${match.id}/details`} class="variant-filled-primary btn">Match details</a>
+		<a href={`/match/${match.id}/schedule`} class="variant-filled-primary btn">Schedule</a>
 		<a href={`/match/${match.id}/teams`} class="variant-filled-primary btn">Teams</a>
 		<a href={`/match/${match.id}/images`} class="variant-filled-primary btn">Images</a>
+		<a href={`/match/${match.id}/squad`} class="variant-filled-primary btn">Manage squad</a>
+		<a href={`/match/${match.id}/lineup`} class="variant-filled-primary btn">Manage lineup</a>
 	{/if}
 
 	<TeamStats {players} />

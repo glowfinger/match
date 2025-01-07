@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { ModeWatcher } from 'mode-watcher';
 	import Navbar from '$lib/components/layout/Navbar.svelte';
 	import { network } from '$lib/stores/NetworkStore.svelte';
 	import { onDestroy, onMount } from 'svelte';
@@ -9,8 +10,6 @@
 	import '../app.css';
 
 	import { requiredClubImages } from '$lib/stores/BlobStore.svelte';
-	import { toast } from 'svelte-sonner';
-
 	let { children } = $props();
 
 	let clubWorker: Worker = new ClubWorker();
@@ -33,7 +32,6 @@
 		} else {
 			console.error('StorageManager not found');
 		}
-		toast('Hello world');
 	});
 
 	$effect(() => {
@@ -48,7 +46,7 @@
 </script>
 
 <svelte:window ononline={handleOnline} onoffline={handleOffline} />
-
+<ModeWatcher />
 <Toaster />
 <!-- <Toast /> -->
 <Navbar />

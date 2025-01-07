@@ -6,6 +6,13 @@ export interface Match {
 	matchOn: string;
 	squad: string;
 	team: string;
+	schedule?: MatchSchedule;
+}
+
+export interface MatchSchedule {
+	matchOn: string;
+	meetAt: string;
+	kickOffAt: string;
 }
 
 export interface Player {
