@@ -1,12 +1,11 @@
-import { db, type Match } from '$lib/database/IndexedDB';
+import { db, type Match, type MatchDetail, type MatchSchedule } from '$lib/database/IndexedDB';
 
 export async function getMatches(): Promise<Match[]> {
 	return await db.matches.toArray();
 }
 
-export async function addMatch(data: Match): Promise<Match> {
-	const { matchOn, type, team, squad } = data;
-	const id = await db.matches.add({ matchOn, type, team, squad });
+export async function addMatch(createdAt: string, userAgent: string): Promise<Match> {
+	const id = await db.matches.add({ userAgent, createdAt });
 	const match = await db.matches.get(id);
 	if (match) {
 		return match;
@@ -18,6 +17,17 @@ export async function updateMatch(id: number, data: Match) {
 	await db.matches.update(id, { schedule: { ...data.schedule } });
 	return await db.matches.get(id);
 }
+
+export async function updateMatchSchedule(id: number, schedule: MatchSchedule) {
+	await db.matches.update(id, { schedule });
+	return await db.matches.get(id);
+}
+
+export async function updateMatchDetail(id: number, detail: MatchDetail) {
+	await db.matches.update(id, { detail });
+	return await db.matches.get(id);
+}
+
 export async function deleteMatch(id: number) {
 	return await db.matches.delete(id);
 }

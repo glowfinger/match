@@ -47,7 +47,7 @@
 
 <svelte:window ononline={handleOnline} onoffline={handleOffline} />
 <ModeWatcher />
-<Toaster />
+<Toaster position="bottom-center" />
 <!-- <Toast /> -->
 <Navbar />
 <div class="flex min-h-full justify-center">

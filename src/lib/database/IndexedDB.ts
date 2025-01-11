@@ -2,17 +2,40 @@ import Dexie, { type EntityTable } from 'dexie';
 
 export interface Match {
 	id: number;
+	createdAt: string;
+	userAgent: string;
+	team?: MatchTeam;
+	opponent?: MatchOpponent;
+	schedule?: MatchSchedule;
+	detail?: MatchDetail;
+}
+
+export interface MatchCompetition {
 	type: string;
-	matchOn: string;
+	round: number;
+	stage: string;
+	other: string;
+}
+
+export interface MatchTeam {
 	squad: string;
 	team: string;
-	schedule?: MatchSchedule;
+}
+
+export interface MatchOpponent {
+	squad: string;
+	team: string;
 }
 
 export interface MatchSchedule {
 	matchOn: string;
 	meetAt: string;
 	kickOffAt: string;
+}
+
+export interface MatchDetail {
+	venue: string;
+	address: string;
 }
 
 export interface Player {
@@ -86,7 +109,7 @@ const db = new Dexie('MatchDatabase') as Dexie & {
 };
 
 db.version(1).stores({
-	matches: '++id, [matchOn+team+squad+type]',
+	matches: '++id',
 	players: 'key',
 	selections: '++id, [matchId+playerKey]',
 	matchPositions:

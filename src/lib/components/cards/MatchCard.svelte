@@ -6,6 +6,10 @@
 	};
 
 	let { match }: Props = $props();
+
+	function isNewMatch() {
+		return Object.keys(match).length === 3;
+	}
 </script>
 
 <div
@@ -20,10 +24,16 @@
 	</div> -->
 	<div class="min-w-0 flex-1">
 		<a href={`/match/${match.id}`} class="focus:outline-none">
-			<span class="absolute inset-0" aria-hidden="true"></span>
+			{#if isNewMatch()}
+				<span class="absolute inset-0" aria-hidden="true"></span>
+				<p class="text-sm font-medium text-slate-900">No information set</p>
+				<p class="truncate text-sm text-slate-500">{match.createdAt}</p>
+			{/if}
+
+			<!-- <span class="absolute inset-0" aria-hidden="true"></span>
 			<p class="text-sm font-medium text-slate-900">{match.team}</p>
 			<p class="truncate text-sm text-slate-500">{match.matchOn}</p>
-			<p class="truncate text-sm text-slate-500">{match.squad}</p>
+			<p class="truncate text-sm text-slate-500">{match.squad}</p> -->
 		</a>
 	</div>
 </div>
