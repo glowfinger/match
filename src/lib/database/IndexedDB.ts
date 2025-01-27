@@ -10,13 +10,6 @@ export interface Match {
 	detail?: MatchDetail;
 }
 
-export interface MatchCompetition {
-	type: string;
-	round: number;
-	stage: string;
-	other: string;
-}
-
 export interface MatchTeam {
 	key: string;
 	club: string;
@@ -38,8 +31,12 @@ export interface MatchSchedule {
 }
 
 export interface MatchDetail {
-	venue: string;
 	address: string;
+	venue: string;
+	type: string;
+	round: number;
+	stage: string;
+	other: string;
 }
 
 export interface Player {

@@ -32,6 +32,7 @@
 
 	onMount(async () => {
 		match = await getMatch(matchId);
+		data = { venue: match.venue, type: match.type, address: match.address };
 	});
 
 	async function handleSubmit(e: SubmitEvent) {
