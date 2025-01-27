@@ -1,4 +1,3 @@
-import exp from 'constants';
 import { z } from 'zod';
 
 export const matchSchema = z.object({
@@ -18,4 +17,14 @@ export const matchDetailSchema = z.object({
 	venue: z.string().min(1),
 	type: z.string().min(1),
 	address: z.string().min(1),
+});
+
+export const matchTeamSchema = z.object({
+	club: z.string().min(1),
+	squad: z.string().min(1),
+});
+
+export const matchOpponentSchema = z.object({
+	club: z.string().min(1),
+	squad: z.string().min(1),
 });

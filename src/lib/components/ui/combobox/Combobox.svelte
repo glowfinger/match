@@ -38,6 +38,7 @@
 			document.getElementById(triggerId)?.focus();
 		});
 	}
+	// TODO the list of clubs should be limited in the dropdown
 </script>
 
 <Popover.Root bind:open let:ids>
@@ -59,16 +60,16 @@
 			<Command.Empty>{empty}</Command.Empty>
 			{#key search}
 				<Command.Group>
-					{#each values as framework}
+					{#each values as item}
 						<Command.Item
-							value={framework.value}
+							value={item.value}
 							onSelect={(currentValue) => {
 								search = currentValue;
 								closeAndFocusTrigger(ids.trigger);
 							}}
 						>
-							<Check class={cn('mr-2 h-4 w-4', search !== framework.value && 'text-transparent')} />
-							{framework.label}
+							<Check class={cn('mr-2 h-4 w-4', search !== item.value && 'text-transparent')} />
+							{item.label}
 						</Command.Item>
 					{/each}
 				</Command.Group>

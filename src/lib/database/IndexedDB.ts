@@ -18,13 +18,17 @@ export interface MatchCompetition {
 }
 
 export interface MatchTeam {
+	key: string;
+	club: string;
 	squad: string;
-	team: string;
+	badge: string;
 }
 
 export interface MatchOpponent {
+	key: string;
 	squad: string;
-	team: string;
+	club: string;
+	badge: string;
 }
 
 export interface MatchSchedule {

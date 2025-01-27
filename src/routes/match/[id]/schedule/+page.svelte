@@ -7,7 +7,7 @@
 	import HeadingLg from '$lib/components/typography/HeadingLg.svelte';
 	import Button from '$lib/components/ui/button/button.svelte';
 	import type { Match } from '$lib/database/IndexedDB';
-	import { getMatch, updateMatch, updateMatchSchedule } from '$lib/database/MatchService';
+	import { getMatch, updateMatchSchedule } from '$lib/database/MatchService';
 	import { matchScheduleSchema } from '$lib/validation/Schemas';
 	import { getErrors, isValid } from '$lib/validation/Validator';
 	import { onMount } from 'svelte';

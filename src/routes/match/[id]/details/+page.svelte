@@ -9,7 +9,7 @@
 	import Label from '$lib/components/ui/label/label.svelte';
 	import { Textarea } from '$lib/components/ui/textarea';
 	import type { Match, MatchDetail } from '$lib/database/IndexedDB';
-	import { getMatch } from '$lib/database/MatchService';
+	import { getMatch, updateMatchDetail } from '$lib/database/MatchService';
 	import { matchDetailSchema, matchScheduleSchema } from '$lib/validation/Schemas';
 	import { getErrors, isValid } from '$lib/validation/Validator';
 	import { onMount } from 'svelte';
@@ -39,10 +39,10 @@
 
 		if (!isValid(data, matchDetailSchema)) {
 			errors = getErrors(data, matchDetailSchema);
-			console.log(errors);
 			return;
 		}
 
+		updateMatchDetail(matchId, { ...data });
 		toast.success('Match details updated');
 		goto(`/match/${matchId}`);
 	}

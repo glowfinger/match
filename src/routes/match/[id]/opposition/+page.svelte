@@ -1,8 +1,8 @@
 <script lang="ts">
 	import Breadcrumb from '$lib/components/Breadcrumb.svelte';
-	import { getMatch } from '$lib/database/MatchService';
+	import { getMatch, updateOpponent } from '$lib/database/MatchService';
 
-	import type { Club, Match } from '$lib/database/IndexedDB';
+	import type { Club, Match, MatchOpponent, MatchPosition } from '$lib/database/IndexedDB';
 	import { onMount } from 'svelte';
 	import HeadingLg from '$lib/components/typography/HeadingLg.svelte';
 	import { page } from '$app/state';
@@ -11,20 +11,52 @@
 	import Input from '$lib/components/ui/input/input.svelte';
 	import Button from '$lib/components/ui/button/button.svelte';
 	import { Label } from '$lib/components/ui/label';
+	import { getErrors, isValid } from '$lib/validation/Validator';
+	import { matchOpponentSchema } from '$lib/validation/Schemas';
+	import ErrorLabel from '$lib/components/forms/ErrorLabel.svelte';
+	import { toast } from 'svelte-sonner';
+	import { goto } from '$app/navigation';
 
 	const matchId = Number.parseInt(page.params.id);
 
 	let match: Match | undefined = $state();
 	let clubs: Club[] = $state([]);
 
-	let data = $state({
+	let data = $state<MatchOpponent>({
+		key: '',
+		club: '',
+		squad: '',
+		badge: '',
+	});
+
+	let errors = $state({
 		club: '',
 		squad: '',
 	});
 
 	onMount(async () => {
 		match = await getMatch(matchId);
+
+		// TODO this is being overridden
+		if (match.opponent !== undefined) {
+			data = { ...match.opponent };
+		}
+
 		clubs = await getClubs();
+	});
+
+	$effect(() => {
+		// TODO The combobox should be set a default value
+		// TODO this should be from the key/value not the label
+		const club = clubs.find((c) => c.name === data.club);
+
+		if (club) {
+			data.badge = club.badge;
+			data.key = club.key;
+		} else {
+			data.badge = '';
+			data.key = '';
+		}
 	});
 
 	const breadcrumbs = [
@@ -37,9 +69,17 @@
 		return { value: club.key, label: club.name };
 	}
 
-	function handleSubmission(event: Event) {
+	async function handleSubmission(event: Event) {
 		event.preventDefault();
-		console.log(event.target);
+
+		if (!isValid(data, matchOpponentSchema)) {
+			errors = getErrors(data, matchOpponentSchema);
+			return;
+		}
+
+		await updateOpponent(matchId, { ...data });
+		toast.success('Opponent updated');
+		goto(`/match/${matchId}`);
 	}
 </script>
 
@@ -49,9 +89,10 @@
 	{#if !match}
 		<p>Match not found</p>
 	{:else}
+		<pre>{JSON.stringify(errors, null, 2)}</pre>
 		<form class="grid grid-cols-1 gap-2" onsubmit={handleSubmission}>
 			<div class="grid w-full max-w-sm gap-1.5">
-				<Label for="match-type">Type</Label>
+				<Label for="match-type">Club</Label>
 				<Combobox
 					values={clubs.map(clubToComboboxValue)}
 					placeholder="Select an opposition"
@@ -60,10 +101,10 @@
 				/>
 			</div>
 			<div class="grid w-full max-w-sm items-center gap-1.5">
-				<Label for="match-type">Type</Label>
+				<Label for="match-type">squad</Label>
 
 				<Input type="text" id="match-type" bind:value={data.squad} />
-				<!-- <ErrorLabel>{errors.type}</ErrorLabel> -->
+				<ErrorLabel>{errors.squad}</ErrorLabel>
 			</div>
 
 			<Button type="submit">Save</Button>

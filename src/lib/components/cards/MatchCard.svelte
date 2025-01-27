@@ -12,28 +12,53 @@
 	}
 </script>
 
-<div
-	class="relative flex items-center space-x-2 rounded-lg border border-slate-300 bg-white p-2 shadow-sm focus-within:ring-2 focus-within:ring-indigo-500 focus-within:ring-offset-2 hover:border-slate-400"
->
-	<!-- <div class="shrink-0">
-		<img
-			class="size-10 rounded-full"
-			src={`https://glowfinger.blob.core.windows.net/smg/other-badges/bream.jpg`}
-			alt=""
-		/>
-	</div> -->
-	<div class="min-w-0 flex-1">
-		<a href={`/match/${match.id}`} class="focus:outline-none">
-			{#if isNewMatch()}
-				<span class="absolute inset-0" aria-hidden="true"></span>
-				<p class="text-sm font-medium text-slate-900">No information set</p>
-				<p class="truncate text-sm text-slate-500">{match.createdAt}</p>
-			{/if}
+<div class="overflow-hidden rounded-b-2xl border border-slate-500">
+	<a href={`/match/${match.id}`} class="focus:outline-none">
+		{#if isNewMatch()}
+			<div class="flex items-center gap-x-4 border-b bg-slate-500 p-2">
+				<div class="text-sm/6 font-medium text-gray-900">New Match</div>
+			</div>
+		{:else}
+			<div class="flex items-center gap-x-4 border-b border-gray-900/5 bg-gray-50 p-2">
+				{#if match.team}
+					<img
+						src={match.team.badge}
+						alt="Reform"
+						class="size-12 flex-none rounded-lg border border-gray-900 bg-white object-cover"
+					/>
 
-			<!-- <span class="absolute inset-0" aria-hidden="true"></span>
-			<p class="text-sm font-medium text-slate-900">{match.team}</p>
-			<p class="truncate text-sm text-slate-500">{match.matchOn}</p>
-			<p class="truncate text-sm text-slate-500">{match.squad}</p> -->
-		</a>
-	</div>
+					<div class="text-sm/6 font-medium text-gray-900">
+						{match.team.club}
+						{match.team.squad}
+					</div>
+				{:else}
+					<div class="text-sm/6 font-medium text-gray-900">-</div>
+				{/if}
+
+				<p class="text-lg">v</p>
+
+				{#if match.opponent}
+					<div class="text-sm/6 font-medium text-gray-900">
+						{match.opponent.club}
+						{match.opponent.squad}
+					</div>
+					<img
+						src={match.opponent.badge}
+						alt="Reform"
+						class="relative size-12 flex-none rounded-lg bg-white object-cover"
+					/>
+				{:else}
+					<div class="text-sm/6 font-medium text-gray-900">-</div>
+				{/if}
+			</div>
+
+			{#if match.schedule}
+				<div
+					class="flex items-center gap-x-4 border-b border-t border-slate-900/5 bg-slate-200 p-2"
+				>
+					<div class="text-sm/6 font-medium text-gray-900">Date: {match.schedule.matchOn}</div>
+				</div>
+			{/if}
+		{/if}
+	</a>
 </div>

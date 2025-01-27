@@ -38,6 +38,7 @@
 	{#if !match}
 		<p>Match not found</p>
 	{:else}
+		<pre>{JSON.stringify(match, null, 2)}</pre>
 		<Separator />
 		<HeadingMd>Info</HeadingMd>
 		<a href={`/match/${match.id}/team`} class="variant-filled-primary btn">Team</a>
