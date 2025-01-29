@@ -111,66 +111,64 @@
 	});
 </script>
 
-<div class="mt-4 grid grid-cols-1 gap-2">
-	<Breadcrumb {breadcrumbs} />
-	<HeadingLg>Opposition</HeadingLg>
-	{#if !match}
-		<p>Match not found</p>
-	{:else}
-		<form class="grid grid-cols-1 gap-2" onsubmit={handleSubmission}>
-			<div class="grid w-full max-w-sm gap-1.5">
-				<Label for="match-type">Club</Label>
+<Breadcrumb {breadcrumbs} />
+<HeadingLg>Opposition</HeadingLg>
+{#if !match}
+	<p>Match not found</p>
+{:else}
+	<form class="grid grid-cols-1 gap-2" onsubmit={handleSubmission}>
+		<div class="grid w-full max-w-sm gap-1.5">
+			<Label for="match-type">Club</Label>
 
-				<Popover.Root bind:open>
-					<Popover.Trigger bind:ref={triggerRef}>
-						{#snippet child({ props })}
-							<Button
-								variant="outline"
-								class="w-full justify-between"
-								{...props}
-								role="combobox"
-								aria-expanded={open}
-							>
-								{selectedValue || 'Select a club...'}
-								<ChevronsUpDown class="opacity-50" />
-							</Button>
-						{/snippet}
-					</Popover.Trigger>
-					<Popover.Content class="w-[200px] p-0">
-						<Command.Root>
-							<Command.Input placeholder="Search clubs..." />
-							<Command.List>
-								<Command.Empty>No club found.</Command.Empty>
-								<Command.Group>
-									{#each options as option}
-										<Command.Item
-											value={option.value}
-											onSelect={() => {
-												value = option.value;
-												closeAndFocusTrigger();
-											}}
-										>
-											<Check class={cn(value !== option.value && 'text-transparent')} />
-											{option.label}
-										</Command.Item>
-									{/each}
-								</Command.Group>
-							</Command.List>
-						</Command.Root>
-					</Popover.Content>
-				</Popover.Root>
-				<ErrorLabel>{errors.club}</ErrorLabel>
-			</div>
-			<div class="grid w-full max-w-sm items-center gap-1.5">
-				<Label for="match-type">squad</Label>
-				<Input type="text" name="opposition-team" id="match-type" bind:value={data.squad} />
-				<ErrorLabel>{errors.squad}</ErrorLabel>
-			</div>
+			<Popover.Root bind:open>
+				<Popover.Trigger bind:ref={triggerRef}>
+					{#snippet child({ props })}
+						<Button
+							variant="outline"
+							class="w-full justify-between"
+							{...props}
+							role="combobox"
+							aria-expanded={open}
+						>
+							{selectedValue || 'Select a club...'}
+							<ChevronsUpDown class="opacity-50" />
+						</Button>
+					{/snippet}
+				</Popover.Trigger>
+				<Popover.Content class="w-[200px] p-0">
+					<Command.Root>
+						<Command.Input placeholder="Search clubs..." />
+						<Command.List>
+							<Command.Empty>No club found.</Command.Empty>
+							<Command.Group>
+								{#each options as option}
+									<Command.Item
+										value={option.value}
+										onSelect={() => {
+											value = option.value;
+											closeAndFocusTrigger();
+										}}
+									>
+										<Check class={cn(value !== option.value && 'text-transparent')} />
+										{option.label}
+									</Command.Item>
+								{/each}
+							</Command.Group>
+						</Command.List>
+					</Command.Root>
+				</Popover.Content>
+			</Popover.Root>
+			<ErrorLabel>{errors.club}</ErrorLabel>
+		</div>
+		<div class="grid w-full max-w-sm items-center gap-1.5">
+			<Label for="match-type">squad</Label>
+			<Input type="text" name="opposition-team" id="match-type" bind:value={data.squad} />
+			<ErrorLabel>{errors.squad}</ErrorLabel>
+		</div>
 
-			<Separator />
+		<Separator />
 
-			<Button href={`/match/${matchId}`} variant="outline">Cancel</Button>
-			<Button type="submit">Save</Button>
-		</form>
-	{/if}
-</div>
+		<Button href={`/match/${matchId}`} variant="outline">Cancel</Button>
+		<Button type="submit">Save</Button>
+	</form>
+{/if}

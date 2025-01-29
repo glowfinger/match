@@ -16,6 +16,7 @@ export async function addPlayers(data: Player[]): Promise<Player[]> {
 	await db.players.bulkAdd(data);
 	return await getPlayers();
 }
+
 export async function clearPlayers() {
 	return await db.players.clear();
 }

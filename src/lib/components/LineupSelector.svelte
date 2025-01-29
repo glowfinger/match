@@ -6,9 +6,10 @@
 	type Props = {
 		players: Player[];
 		matchPositions: MatchPosition[];
+		matchId: number;
 	};
 
-	let { players = [], matchPositions = [] }: Props = $props();
+	let { players = [], matchPositions = [], matchId }: Props = $props();
 
 	function getPlayerByPosition(position: string): Player | null {
 		const found =
@@ -23,6 +24,7 @@
 <div class="grid grid-cols-1 gap-2">
 	{#each [...SHIRT_NUMBERS] as [positionNumber, positionName]}
 		<MatchPositionCard
+			{matchId}
 			{positionNumber}
 			{positionName}
 			player={getPlayerByPosition(positionNumber)}

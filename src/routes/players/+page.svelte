@@ -7,6 +7,7 @@
 	import CardList from '$lib/components/CardList.svelte';
 	import TeamStats from '$lib/components/stats/TeamStats.svelte';
 	import * as Sheet from '$lib/components/ui/sheet/index.js';
+	import HeadingLg from '$lib/components/typography/HeadingLg.svelte';
 
 	let players: Player[] = $state([]);
 
@@ -33,11 +34,10 @@
 		</Sheet.Footer>
 	</Sheet.Content>
 </Sheet.Root>
+<Breadcrumb {breadcrumbs} />
+<HeadingLg>Match Schedule</HeadingLg>
 
 <div class="grid grid-cols-1 gap-2">
-	<h1 class="h1">Players</h1>
-
-	<Breadcrumb {breadcrumbs} />
 	<button class="variant-filled-primary btn" onclick={() => (filtersOpen = true)}
 		>Open filters {filtersOpen}</button
 	>

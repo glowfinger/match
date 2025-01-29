@@ -28,10 +28,8 @@
 {#if !player}
 	<p>Player not found</p>
 {:else}
-	<div class="grid grid-cols-1 gap-4">
-		<h1 class="h1">{player.bio.first} {player.bio.last}</h1>
-		<p>{player.bio.screen}</p>
-		<p>{player.key}</p>
-	</div>
+	<h1 class="h1">{player.bio.first} {player.bio.last}</h1>
+	<p>{player.bio.screen}</p>
+	<p>{player.key}</p>
 	<pre>{JSON.stringify(player, null, 2)}</pre>
 {/if}

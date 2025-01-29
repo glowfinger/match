@@ -56,11 +56,10 @@
 	}
 </script>
 
+<Breadcrumb {breadcrumbs} />
+<HeadingLg>Team</HeadingLg>
 <form onsubmit={handleSubmit} novalidate>
 	<div class="mt-4 grid grid-cols-1 gap-2">
-		<Breadcrumb {breadcrumbs} />
-		<HeadingLg>Team</HeadingLg>
-
 		{#if !match}
 			<p>Match not found</p>
 		{:else}

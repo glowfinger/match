@@ -8,11 +8,15 @@
 	import HeadingLg from '$lib/components/typography/HeadingLg.svelte';
 	import HeadingMd from '$lib/components/typography/HeadingMd.svelte';
 	import { goto } from '$app/navigation';
+	import Sonner from '$lib/components/ui/sonner/sonner.svelte';
+	import { toast } from 'svelte-sonner';
 
 	let matches: Match[] = $state([]);
+	let emptyMatches: Match[] = $state([]);
 
 	onMount(async () => {
 		matches = await getMatches();
+		emptyMatches = matches.filter(isNewMatch);
 	});
 
 	function isNewMatch(match: Match) {
@@ -24,7 +28,9 @@
 			await deleteMatch(match.id);
 		});
 
+		toast.success('Empty matches removed');
 		matches = await getMatches();
+		emptyMatches = matches.filter(isNewMatch);
 	}
 
 	const breadcrumbs = [
@@ -33,13 +39,13 @@
 	];
 </script>
 
-<div class="mt-4 grid grid-cols-1 gap-2">
-	<Breadcrumb {breadcrumbs} />
-	<HeadingLg>Admin</HeadingLg>
+<Breadcrumb {breadcrumbs} />
+<HeadingLg>Admin</HeadingLg>
 
-	<HeadingMd>Matches</HeadingMd>
-	<p>This will remove matches that have no information set</p>
-	<Button variant="destructive" on:click={handleClearEmptyMatches}>Delete empty matches</Button>
-	<a href="/players" class="variant-filled-primary btn">View players</a>
-	<a href="/clubs" class="variant-filled-primary btn">View Clubs</a>
-</div>
+<HeadingMd>Matches</HeadingMd>
+<p>This will remove matches that have no information set</p>
+<Button variant="destructive" onclick={handleClearEmptyMatches}
+	>Delete empty matches ({emptyMatches.length})</Button
+>
+<a href="/players" class="variant-filled-primary btn">View players</a>
+<a href="/clubs" class="variant-filled-primary btn">View Clubs</a>

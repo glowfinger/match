@@ -2,6 +2,7 @@
 	import { goto } from '$app/navigation';
 
 	import { page } from '$app/state';
+	import Breadcrumb from '$lib/components/Breadcrumb.svelte';
 	import DateInput from '$lib/components/forms/DateInput.svelte';
 	import TimeInput from '$lib/components/forms/TimeInput.svelte';
 	import HeadingLg from '$lib/components/typography/HeadingLg.svelte';
@@ -54,11 +55,18 @@
 		toast.success('Match schedule updated');
 		goto(`/match/${matchId}`);
 	}
+
+	const breadcrumbs = [
+		{ name: 'Home', href: '/' },
+		{ name: 'Match', href: `/match/${matchId}` },
+		{ name: 'Schedule', href: `/match/${matchId}/schedule` },
+	];
 </script>
 
+<Breadcrumb {breadcrumbs} />
+<HeadingLg>Match Schedule</HeadingLg>
 <form onsubmit={handleSubmit} novalidate>
 	<div class="mt-2 grid grid-cols-1 gap-4">
-		<HeadingLg>Match Schedule</HeadingLg>
 		<DateInput id="matchOn" label="Date" error={errors.matchOn} bind:value={data.matchOn} />
 		<TimeInput id="meetAt" label="Meet time" error={errors.meetAt} bind:value={data.meetAt} />
 		<TimeInput

@@ -53,21 +53,19 @@
 {#if !match}
 	<p>Match not found</p>
 {:else}
-	<div class="grid grid-cols-1 gap-4">
-		<h1 class="h1">Manage Lineup</h1>
-		<Breadcrumb {breadcrumbs} />
+	<h1 class="h1">Manage Lineup</h1>
+	<Breadcrumb {breadcrumbs} />
 
-		{#if players.length === 0}
-			<p>No players selected</p>
-		{/if}
-		<h2 class="h2">Starters</h2>
-		<LineupSelector {players} {matchPositions} />
-		<h2 class="h2">Finishers</h2>
-		{#if replacements.length === 0}
-			<p>No players available</p>
-		{/if}
-		{#each replacements as player}
-			<FinisherCard {player} />
-		{/each}
-	</div>
+	{#if players.length === 0}
+		<p>No players selected</p>
+	{/if}
+	<h2 class="h2">Starters</h2>
+	<LineupSelector {matchId} {players} {matchPositions} />
+	<h2 class="h2">Finishers</h2>
+	{#if replacements.length === 0}
+		<p>No players available</p>
+	{/if}
+	{#each replacements as player}
+		<FinisherCard {player} />
+	{/each}
 {/if}

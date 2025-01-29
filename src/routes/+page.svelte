@@ -8,6 +8,7 @@
 	import HeadingLg from '$lib/components/typography/HeadingLg.svelte';
 	import HeadingMd from '$lib/components/typography/HeadingMd.svelte';
 	import { goto } from '$app/navigation';
+	import { Separator } from '$lib/components/ui/separator/index.js';
 
 	let matches: Match[] = $state([]);
 
@@ -28,14 +29,16 @@
 	const breadcrumbs = [{ name: 'Home', href: '/' }];
 </script>
 
-<div class="mt-2 grid grid-cols-1 gap-4">
-	<Breadcrumb {breadcrumbs} />
-	<HeadingLg>Match manager</HeadingLg>
-
-	<Button onclick={handleNewMatch}>Add New match</Button>
-
-	<HeadingMd>Matches</HeadingMd>
-	{#each matches as match}
-		<MatchCard {match} />
-	{/each}
-</div>
+<Breadcrumb {breadcrumbs} />
+<HeadingLg>Match manager</HeadingLg>
+<Button onclick={handleNewMatch}>Add New match</Button>
+<HeadingMd>Matches</HeadingMd>
+{#each matches as match}
+	<MatchCard {match} />
+{/each}
+<Separator />
+<HeadingMd>Players</HeadingMd>
+<a href={`/players`} class="variant-filled-primary btn">View player</a>
+<Separator />
+<HeadingMd>Admin</HeadingMd>
+<a href={`/admin`} class="variant-filled-primary btn">Admin</a>

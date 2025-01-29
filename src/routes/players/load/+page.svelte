@@ -1,6 +1,5 @@
 <script lang="ts">
 	import { onDestroy, onMount } from 'svelte';
-	import type { PageData } from './$types';
 	import { addPlayers, clearPlayers, getPlayers } from '$lib/database/PlayerDBService';
 	import { type Player } from '$lib/database/IndexedDB';
 	import Breadcrumb from '$lib/components/Breadcrumb.svelte';
@@ -15,16 +14,17 @@
 	let names: string[] = $state([]);
 
 	onMount(async () => {
-		// cleared = await getPlayers();
-		// await clearPlayers();
+		cleared = await getPlayers();
+		await clearPlayers();
 
-		// const data = await getApiPlayers();
-		// await addPlayers(data);
-		// added = await getPlayers();
+		const data = await getApiPlayers();
 
-		// names = added
-		// 	.filter((elem) => !cleared.find(({ key }) => elem.key === key))
-		// 	.map(({ bio }) => bio.screen);
+		await addPlayers(data.players);
+		added = await getPlayers();
+
+		names = added
+			.filter((elem) => !cleared.find(({ key }) => elem.key === key))
+			.map(({ bio }) => bio.screen);
 		status = 'LOADED';
 	});
 

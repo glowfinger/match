@@ -64,50 +64,48 @@
 	];
 </script>
 
-<div class="mt-4 grid grid-cols-1 gap-2">
-	<Breadcrumb {breadcrumbs} />
-	<HeadingLg>Opposition</HeadingLg>
-	{#if !match}
-		<p>Match not found</p>
-	{:else}
-		<form onsubmit={handleSubmit} novalidate>
-			<div class="mt-2 grid grid-cols-1 gap-4">
-				<div class="grid w-full max-w-sm items-center gap-1.5">
-					<Label for="match-venue">Venue</Label>
+<Breadcrumb {breadcrumbs} />
+<HeadingLg>Opposition</HeadingLg>
+{#if !match}
+	<p>Match not found</p>
+{:else}
+	<form onsubmit={handleSubmit} novalidate>
+		<div class="mt-2 grid grid-cols-1 gap-4">
+			<div class="grid w-full max-w-sm items-center gap-1.5">
+				<Label for="match-venue">Venue</Label>
 
-					<Select.Root type="single" bind:value={data.venue}>
-						<Select.Trigger class="w-full">
-							{data.venue ? data.venue : 'Select a verified email to display'}
-						</Select.Trigger>
-						<Select.Content>
-							{#each venues as venue}
-								<Select.Item value={venue.value}>{venue.label}</Select.Item>
-							{/each}
-						</Select.Content>
-					</Select.Root>
+				<Select.Root type="single" bind:value={data.venue}>
+					<Select.Trigger class="w-full">
+						{data.venue ? data.venue : 'Select a verified email to display'}
+					</Select.Trigger>
+					<Select.Content>
+						{#each venues as venue}
+							<Select.Item value={venue.value}>{venue.label}</Select.Item>
+						{/each}
+					</Select.Content>
+				</Select.Root>
 
-					<ErrorLabel>{errors.venue}</ErrorLabel>
-				</div>
-
-				<div class="grid w-full max-w-sm items-center gap-1.5">
-					<Label for="match-type">Type</Label>
-
-					<Input type="text" id="match-type" bind:value={data.type} />
-					<ErrorLabel>{errors.type}</ErrorLabel>
-				</div>
-
-				<div class="grid w-full gap-1.5">
-					<Label for="match-address">Address</Label>
-					<Textarea id="match-address" bind:value={data.address} />
-					<ErrorLabel>{errors.address}</ErrorLabel>
-				</div>
-
-				<div class="mt-6 flex items-center justify-end gap-x-6">
-					<Button href={`/match/${matchId}`} variant="outline">Cancel</Button>
-					<Button type="submit">Save</Button>
-				</div>
+				<ErrorLabel>{errors.venue}</ErrorLabel>
 			</div>
-		</form>
-		<pre>{JSON.stringify(data, null, 2)}</pre>
-	{/if}
-</div>
+
+			<div class="grid w-full max-w-sm items-center gap-1.5">
+				<Label for="match-type">Type</Label>
+
+				<Input type="text" id="match-type" bind:value={data.type} />
+				<ErrorLabel>{errors.type}</ErrorLabel>
+			</div>
+
+			<div class="grid w-full gap-1.5">
+				<Label for="match-address">Address</Label>
+				<Textarea id="match-address" bind:value={data.address} />
+				<ErrorLabel>{errors.address}</ErrorLabel>
+			</div>
+
+			<div class="mt-6 flex items-center justify-end gap-x-6">
+				<Button href={`/match/${matchId}`} variant="outline">Cancel</Button>
+				<Button type="submit">Save</Button>
+			</div>
+		</div>
+	</form>
+	<pre>{JSON.stringify(data, null, 2)}</pre>
+{/if}

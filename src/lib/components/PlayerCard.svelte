@@ -40,8 +40,6 @@
 		<PlayerAvatar {player} />
 	</div>
 
-	<PlayerCardPositions {player} />
-
 	{#if children}
 		<div class="-mt-px flex divide-x divide-slate-200">
 			{@render children()}
@@ -60,4 +58,5 @@
 			</div>
 		</div>
 	{/if}
+	<PlayerCardPositions {player} />
 </li>

@@ -3,12 +3,13 @@
 	import PlayerAvatar from '../avatars/PlayerAvatar.svelte';
 
 	type Props = {
+		matchId: number;
 		positionName: string;
 		positionNumber: string;
 		player: Player | undefined | null;
 	};
 
-	let { positionName, positionNumber, player }: Props = $props();
+	let { positionName, positionNumber, player, matchId }: Props = $props();
 
 	function hasPlayerImage(player: Player | undefined | null): boolean {
 		return !!player && player.images?.length > 0;
@@ -44,7 +45,7 @@
 		</div>
 	{/if}
 	<div class="min-w-0 flex-1">
-		<a href="/match/1/lineup/position/{positionNumber}" class="focus:outline-none">
+		<a href={`/match/${matchId}/lineup/position/${positionNumber}`} class="focus:outline-none">
 			<span class="absolute inset-0" aria-hidden="true"></span>
 			{#if player}
 				<p class="text-sm font-medium text-slate-900">{player.bio.first} {player.bio.last}</p>
