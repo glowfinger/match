@@ -1,5 +1,4 @@
 <script lang="ts">
-	import ErrorIcon from '../icons/ErrorIcon.svelte';
 	import ErrorLabel from './ErrorLabel.svelte';
 
 	type Props = {

@@ -32,7 +32,7 @@
 	<Breadcrumb {breadcrumbs} />
 	<HeadingLg>Match manager</HeadingLg>
 
-	<Button on:click={handleNewMatch}>Add New match</Button>
+	<Button onclick={handleNewMatch}>Add New match</Button>
 
 	<HeadingMd>Matches</HeadingMd>
 	{#each matches as match}

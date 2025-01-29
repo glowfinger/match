@@ -8,9 +8,10 @@
 	import { onMount } from 'svelte';
 	import HeadingLg from '$lib/components/typography/HeadingLg.svelte';
 	import HeadingMd from '$lib/components/typography/HeadingMd.svelte';
-	import Separator from '$lib/components/ui/separator/separator.svelte';
+
 	import { page } from '$app/state';
 	import MatchCard from '$lib/components/cards/MatchCard.svelte';
+	import { Separator } from '$lib/components/ui/separator/index.js';
 
 	const matchId = Number.parseInt(page.params.id);
 
@@ -40,7 +41,6 @@
 		<p>Match not found</p>
 	{:else}
 		<MatchCard {match} />
-		<pre>{JSON.stringify(match, null, 2)}</pre>
 		<Separator />
 		<HeadingMd>Info</HeadingMd>
 		<a href={`/match/${match.id}/team`} class="variant-filled-primary btn">Team</a>

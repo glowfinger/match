@@ -34,9 +34,6 @@ export interface MatchDetail {
 	address: string;
 	venue: string;
 	type: string;
-	round: number;
-	stage: string;
-	other: string;
 }
 
 export interface Player {
