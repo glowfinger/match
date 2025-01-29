@@ -76,6 +76,15 @@
 		matchPositions = await getMatchPositions(matchId);
 	}
 
+	function alreadyStarting(playerKey: string): boolean {
+		return matchPositions.some(
+			(matchPosition) =>
+				matchPosition.matchId === matchId &&
+				matchPosition.playerKey === playerKey &&
+				matchPosition.type === 'start',
+		);
+	}
+
 	function hasStart(playerKey: string): boolean {
 		return matchPositions.some(
 			(matchPosition) =>
@@ -123,7 +132,7 @@
 	<h2 class="h2">Secondary</h2>
 	<CardList>
 		{#each secondary as player}
-			<PlayerCard {player}>
+			<PlayerCard {player} isSelected={alreadyStarting(player.key)}>
 				<CardButton onClick={() => handleStart(player.key)} active={hasStart(player.key)}
 					>Start</CardButton
 				>
@@ -137,7 +146,7 @@
 	<h2 class="h2">Unfavoured</h2>
 	<CardList>
 		{#each not as player}
-			<PlayerCard {player}>
+			<PlayerCard {player} isSelected={alreadyStarting(player.key)}>
 				<CardButton onClick={() => handleStart(player.key)} active={hasStart(player.key)}
 					>Start</CardButton
 				>

@@ -6,15 +6,24 @@
 
 	type Props = {
 		player: Player;
+		isSelected?: boolean;
 		children?: any;
 	};
 
-	let { player, children }: Props = $props();
+	let { player, children, isSelected = false }: Props = $props();
 </script>
 
 <li
 	class="rounded- col-span-1 divide-y divide-slate-200 border border-slate-400 bg-slate-50 shadow"
 >
+	{#if isSelected}
+		<div
+			class="flex w-full items-center justify-between space-x-2 bg-slate-600 px-2 text-slate-100"
+		>
+			Already starting
+		</div>
+	{/if}
+
 	<div class="flex w-full items-center justify-between space-x-2 bg-slate-200 p-2">
 		<div class="flex-1 truncate">
 			<div class="flex items-center space-x-3">
@@ -37,7 +46,18 @@
 				{player.key}
 			</p>
 		</div>
-		<PlayerAvatar {player} />
+
+		{#if player && player.images?.length > 0}
+			<div class="shrink-0">
+				<img
+					class="size-10 rounded-full"
+					src={`https://glowfinger.blob.core.windows.net/smg/thumbnails-260x260/${player.images[0].url}.png`}
+					alt=""
+				/>
+			</div>
+		{:else if player}
+			<PlayerAvatar {player} />
+		{/if}
 	</div>
 
 	{#if children}
