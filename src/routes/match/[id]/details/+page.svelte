@@ -76,7 +76,7 @@
 
 				<Select.Root type="single" bind:value={data.venue}>
 					<Select.Trigger class="w-full">
-						{data.venue ? data.venue : 'Select a verified email to display'}
+						{data.venue ? data.venue : 'Select a venue'}
 					</Select.Trigger>
 					<Select.Content>
 						{#each venues as venue}

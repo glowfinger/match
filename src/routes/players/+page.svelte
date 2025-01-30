@@ -23,7 +23,7 @@
 	];
 </script>
 
-<Sheet.Root open={filtersOpen} onOpenChange={() => (filtersOpen = !filtersOpen)}>
+<!-- <Sheet.Root open={filtersOpen} onOpenChange={() => (filtersOpen = !filtersOpen)}>
 	<Sheet.Content side="right">
 		<Sheet.Header>
 			<Sheet.Title>Filters</Sheet.Title>
@@ -33,14 +33,14 @@
 			<Sheet.Close>Save changes</Sheet.Close>
 		</Sheet.Footer>
 	</Sheet.Content>
-</Sheet.Root>
+</Sheet.Root> -->
 <Breadcrumb {breadcrumbs} />
 <HeadingLg>Match Schedule</HeadingLg>
 
 <div class="grid grid-cols-1 gap-2">
-	<button class="variant-filled-primary btn" onclick={() => (filtersOpen = true)}
+	<!-- <button class="variant-filled-primary btn" onclick={() => (filtersOpen = true)}
 		>Open filters {filtersOpen}</button
-	>
+	> -->
 
 	<a href="/players/load" class="variant-filled-primary btn">Load players</a>
 

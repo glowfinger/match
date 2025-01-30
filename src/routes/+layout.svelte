@@ -10,11 +10,19 @@
 	import '../app.css';
 
 	import { requiredClubImages } from '$lib/stores/BlobStore.svelte';
+	import { addClubs, getClubs } from '$lib/database/ClubDbService';
+	import { getApiClubs } from '$lib/services/api/ClubApiService';
+	import { addPlayers, getPlayers } from '$lib/database/PlayerDBService';
+	import { getApiPlayers } from '$lib/services/api/PlayerApiService';
+	import { toast } from 'svelte-sonner';
 	let { children } = $props();
 
 	let clubWorker: Worker = new ClubWorker();
 
 	let playerImageWorker: Worker;
+
+	let loading = $state(false);
+	let error = $state(false);
 
 	function handleOnline() {
 		network.online = true;
@@ -25,13 +33,27 @@
 	}
 
 	onMount(async () => {
-		if (navigator.storage && navigator.storage.estimate) {
-			const estimation = await navigator.storage.estimate();
-			console.log(`Quota: ${estimation.quota}`);
-			console.log(`Usage: ${estimation.usage}`);
-		} else {
-			console.error('StorageManager not found');
+		loading = true;
+		const clubs = await getClubs();
+		const players = await getPlayers();
+
+		if (clubs.length === 0 && players.length === 0) {
+			const [apiClubs, apiPlayes] = await Promise.all([getApiClubs(), getApiPlayers()]);
+
+			await addClubs(apiClubs);
+			await addPlayers(apiPlayes.players);
+			toast('Clubs and Players loaded');
 		}
+
+		loading = false;
+
+		// if (navigator.storage && navigator.storage.estimate) {
+		// 	const estimation = await navigator.storage.estimate();
+		// 	console.log(`Quota: ${estimation.quota}`);
+		// 	console.log(`Usage: ${estimation.usage}`);
+		// } else {
+		// 	console.error('StorageManager not found');
+		// }
 	});
 
 	$effect(() => {
@@ -48,12 +70,19 @@
 <svelte:window ononline={handleOnline} onoffline={handleOffline} />
 <ModeWatcher />
 <Toaster position="bottom-center" />
-<!-- <Toast /> -->
+
 <Navbar />
-<div class="flex min-h-full justify-center">
-	<div class=" w-full max-w-sm">
-		<div class="mt-2 grid grid-cols-1 gap-2">
-			{@render children()}
+
+{#if loading}
+	<p>Loading...</p>
+{:else if error}
+	<p>Error loading clubs</p>
+{:else}
+	<div class="flex min-h-full justify-center">
+		<div class=" w-full max-w-sm">
+			<div class="mt-2 grid grid-cols-1 gap-2">
+				{@render children()}
+			</div>
 		</div>
 	</div>
-</div>
+{/if}
