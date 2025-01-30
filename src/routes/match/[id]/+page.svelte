@@ -51,9 +51,9 @@
 	<a href={`/match/${match.id}/squad`} class="variant-filled-primary btn">Manage squad</a>
 	<a href={`/match/${match.id}/lineup`} class="variant-filled-primary btn">Manage lineup</a>
 	<Separator />
+
+	<HeadingMd>Media</HeadingMd>
+	<a href={`/match/${match.id}/media`} class="variant-filled-primary btn">Media</a>
 	<HeadingMd>Admin</HeadingMd>
 	<a href={`/match/${match.id}/remove`} class="variant-filled-primary btn">Remove match</a>
-	<a href={`/match/${match.id}/archive`} class="variant-filled-primary btn">Archive match</a>
-	<!-- <HeadingMd>Media</HeadingMd> -->
-	<!-- <a href={`/match/${match.id}/media`} class="variant-filled-primary btn">Media</a> -->
 {/if}

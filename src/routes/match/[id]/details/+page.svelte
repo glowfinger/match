@@ -6,7 +6,7 @@
 	import { Button } from '$lib/components/ui/button';
 	import Input from '$lib/components/ui/input/input.svelte';
 	import * as Select from '$lib/components/ui/select/index.js';
-
+	import { Separator } from '$lib/components/ui/separator/index.js';
 	import Label from '$lib/components/ui/label/label.svelte';
 	import { Textarea } from '$lib/components/ui/textarea';
 	import type { Match, MatchDetail } from '$lib/database/IndexedDB';
@@ -100,12 +100,9 @@
 				<Textarea id="match-address" bind:value={data.address} />
 				<ErrorLabel>{errors.address}</ErrorLabel>
 			</div>
-
-			<div class="mt-6 flex items-center justify-end gap-x-6">
-				<Button href={`/match/${matchId}`} variant="outline">Cancel</Button>
-				<Button type="submit">Save</Button>
-			</div>
+			<Separator />
+			<Button href={`/match/${matchId}`} variant="outline">Cancel</Button>
+			<Button type="submit">Save</Button>
 		</div>
 	</form>
-	<pre>{JSON.stringify(data, null, 2)}</pre>
 {/if}

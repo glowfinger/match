@@ -34,7 +34,9 @@
 <Button onclick={handleNewMatch}>Add New match</Button>
 <HeadingMd>Matches</HeadingMd>
 {#each matches as match}
-	<MatchCard {match} />
+	<a href={`/match/${match.id}`} class="focus:outline-none">
+		<MatchCard {match} />
+	</a>
 {/each}
 <Separator />
 <HeadingMd>Players</HeadingMd>

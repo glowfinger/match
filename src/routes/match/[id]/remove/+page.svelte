@@ -42,7 +42,7 @@
 			<div class="m-2">
 				<div class="mt-2 text-sm text-red-700">
 					<ul role="list" class="list-disc space-y-1 pl-5">
-						<li>This will be remove permanantly</li>
+						<li>This match will be removed permanantly</li>
 					</ul>
 				</div>
 			</div>
