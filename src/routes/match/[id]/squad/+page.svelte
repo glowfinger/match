@@ -14,6 +14,7 @@
 	import HeadingLg from '$lib/components/typography/HeadingLg.svelte';
 	import HeadingMd from '$lib/components/typography/HeadingMd.svelte';
 	import { Separator } from '$lib/components/ui/separator/index.js';
+	import { deleteMatchAllositions } from '$lib/database/MatchPositionDBService';
 
 	const matchId = Number.parseInt(page.params.id);
 
@@ -36,6 +37,7 @@
 
 	async function handleNo(key: string) {
 		await setSelection(key, matchId, 'no');
+		await deleteMatchAllositions(matchId, key);
 		selections = await getSelections(matchId);
 	}
 

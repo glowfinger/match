@@ -12,6 +12,8 @@
 	import PlayerCard from '$lib/components/PlayerCard.svelte';
 	import PlayerAvatar from '$lib/components/avatars/PlayerAvatar.svelte';
 	import FinisherCard from '$lib/components/cards/FinisherCard.svelte';
+	import HeadingLg from '$lib/components/typography/HeadingLg.svelte';
+	import HeadingMd from '$lib/components/typography/HeadingMd.svelte';
 
 	const matchId = Number.parseInt($page.params.id);
 
@@ -50,22 +52,21 @@
 	];
 </script>
 
+<Breadcrumb {breadcrumbs} />
+<HeadingLg>Manage Lineup</HeadingLg>
+
 {#if !match}
 	<p>Match not found</p>
+{:else if players.length === 0}
+	<p>No players selected</p>
 {:else}
-	<h1 class="h1">Manage Lineup</h1>
-	<Breadcrumb {breadcrumbs} />
-
-	{#if players.length === 0}
-		<p>No players selected</p>
-	{/if}
-	<h2 class="h2">Starters</h2>
+	<HeadingMd>Starters</HeadingMd>
 	<LineupSelector {matchId} {players} {matchPositions} />
-	<h2 class="h2">Finishers</h2>
-	{#if replacements.length === 0}
-		<p>No players available</p>
-	{/if}
+
+	<HeadingMd>Finishers</HeadingMd>
 	{#each replacements as player}
 		<FinisherCard {player} />
+	{:else}
+		<p>No bench</p>
 	{/each}
 {/if}

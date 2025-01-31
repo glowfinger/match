@@ -76,6 +76,13 @@ export interface MatchPosition {
 	type: 'start' | 'replacement' | 'possible';
 }
 
+export interface MatchRole {
+	id: number;
+	matchId: number;
+	playerKey: string;
+	role: string;
+}
+
 export interface Club {
 	key: string;
 	name: string;
@@ -103,6 +110,7 @@ const db = new Dexie('MatchDatabase') as Dexie & {
 	players: EntityTable<Player, 'key'>;
 	selections: EntityTable<Selection, 'id'>;
 	matchPositions: EntityTable<MatchPosition, 'id'>;
+	matchRoles: EntityTable<MatchRole, 'id'>;
 	clubs: EntityTable<Club, 'key'>;
 };
 
@@ -112,6 +120,7 @@ db.version(1).stores({
 	selections: '++id, [matchId+playerKey]',
 	matchPositions:
 		'++id, [matchId+playerKey+position+type], [matchId+position+type], [matchId+playerKey+type]',
+	matchRoles: '++id, [matchId+playerKey+role]',
 	clubs: 'key',
 });
 

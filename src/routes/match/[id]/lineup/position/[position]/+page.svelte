@@ -18,6 +18,8 @@
 	import { isAvailable } from '$lib/filters/SelectionFilter';
 	import type { Match, MatchPosition, Player, Selection } from '$lib/database/IndexedDB';
 	import { onMount } from 'svelte';
+	import HeadingLg from '$lib/components/typography/HeadingLg.svelte';
+	import HeadingMd from '$lib/components/typography/HeadingMd.svelte';
 
 	const matchId = Number.parseInt($page.params.id);
 	const position = $page.params.position;
@@ -107,17 +109,15 @@
 </script>
 
 <Breadcrumb {breadcrumbs} />
+<HeadingLg>{key}</HeadingLg>
 
 {#if !match}
 	<p>Match not found</p>
 {:else}
-	<h1 class="h1">{position}</h1>
-	<h2 class="h2">{key}</h2>
-
-	<h2 class="h2">Main</h2>
+	<HeadingMd>Main</HeadingMd>
 	<CardList>
 		{#each mains as player}
-			<PlayerCard {player}>
+			<PlayerCard {player} isSelected={alreadyStarting(player.key)}>
 				<CardButton onClick={() => handleStart(player.key)} active={hasStart(player.key)}
 					>Start</CardButton
 				>
@@ -129,7 +129,7 @@
 		{/each}
 	</CardList>
 
-	<h2 class="h2">Secondary</h2>
+	<HeadingMd>Secondary</HeadingMd>
 	<CardList>
 		{#each secondary as player}
 			<PlayerCard {player} isSelected={alreadyStarting(player.key)}>
@@ -143,7 +143,7 @@
 			</PlayerCard>
 		{/each}
 	</CardList>
-	<h2 class="h2">Unfavoured</h2>
+	<HeadingMd>Unfavoured</HeadingMd>
 	<CardList>
 		{#each not as player}
 			<PlayerCard {player} isSelected={alreadyStarting(player.key)}>

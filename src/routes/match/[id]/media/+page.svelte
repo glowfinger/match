@@ -8,6 +8,7 @@
 	import { isAvailable } from '$lib/filters/SelectionFilter';
 	import type { Match, MatchPosition, Player, Selection } from '$lib/database/IndexedDB';
 	import { onMount } from 'svelte';
+	import HeadingLg from '$lib/components/typography/HeadingLg.svelte';
 	const matchId = Number.parseInt($page.params.id);
 
 	const breadcrumbs = [
@@ -45,8 +46,5 @@
 	});
 </script>
 
-<div class="grid grid-cols-1 gap-4">
-	<h1 class="h1">Images</h1>
-	<Breadcrumb {breadcrumbs} />
-	<pre>{JSON.stringify(matchPositions, null, 2)}</pre>
-</div>
+<Breadcrumb {breadcrumbs} />
+<HeadingLg>Media</HeadingLg>

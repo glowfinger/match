@@ -47,9 +47,10 @@
 	<a href={`/match/${match.id}/details`} class="variant-filled-primary btn">Details</a>
 	<a href={`/match/${match.id}/schedule`} class="variant-filled-primary btn">Schedule</a>
 	<Separator />
-	<HeadingMd>Roster</HeadingMd>
-	<a href={`/match/${match.id}/squad`} class="variant-filled-primary btn">Manage squad</a>
-	<a href={`/match/${match.id}/lineup`} class="variant-filled-primary btn">Manage lineup</a>
+	<HeadingMd>Manage</HeadingMd>
+	<a href={`/match/${match.id}/squad`} class="variant-filled-primary btn">Squad</a>
+	<a href={`/match/${match.id}/lineup`} class="variant-filled-primary btn">Lineup</a>
+	<a href={`/match/${match.id}/roles`} class="variant-filled-primary btn">Roles</a>
 	<Separator />
 
 	<HeadingMd>Media</HeadingMd>

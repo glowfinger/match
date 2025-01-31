@@ -34,7 +34,7 @@ export async function getMatchPositions(matchId: number): Promise<MatchPosition[
 export async function deleteMatchPositions(
 	matchId: number,
 	position: string,
-	type: 'start' | 'replacement' | 'possible',
+	type: 'start' | 'replacement',
 ): Promise<void> {
 	await db.matchPositions.where({ matchId, position, type }).delete();
 }
@@ -42,7 +42,11 @@ export async function deleteMatchPositions(
 export async function deleteMatchPlayer(
 	matchId: number,
 	playerKey: string,
-	type: 'start' | 'replacement' | 'possible',
+	type: 'start' | 'replacement',
 ): Promise<void> {
 	await db.matchPositions.where({ matchId, playerKey, type }).delete();
+}
+
+export async function deleteMatchAllositions(matchId: number, playerKey: string): Promise<void> {
+	await db.matchPositions.where({ matchId, playerKey }).delete();
 }
