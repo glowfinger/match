@@ -51,11 +51,11 @@
 	<HeadingMd>Manage</HeadingMd>
 	<a href={`/match/${match.id}/squad`} class="variant-filled-primary btn">Squad</a>
 	<a href={`/match/${match.id}/lineup`} class="variant-filled-primary btn">Lineup</a>
-	<a href={`/match/${match.id}/roles`} class="variant-filled-primary btn">Roles (WIP)</a>
+	<!-- <a href={`/match/${match.id}/roles`} class="variant-filled-primary btn">Roles (WIP)</a> -->
 	<Separator />
 
-	<HeadingMd>Media</HeadingMd>
-	<a href={`/match/${match.id}/media`} class="variant-filled-primary btn">Media (WIP)</a>
+	<!-- <HeadingMd>Media</HeadingMd>
+	<a href={`/match/${match.id}/media`} class="variant-filled-primary btn">Media (WIP)</a> -->
 	<HeadingMd>Admin</HeadingMd>
 	<a href={`/match/${match.id}/remove`} class="variant-filled-primary btn">Remove match</a>
 {/if}

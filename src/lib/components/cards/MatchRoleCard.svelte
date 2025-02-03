@@ -33,15 +33,4 @@
 			</span>
 		</div>
 	{/if}
-	<div class="min-w-0 flex-1">
-		<a href={`/match/${matchId}/roles/${role.value}`} class="focus:outline-none">
-			<span class="absolute inset-0" aria-hidden="true"></span>
-			{#if player}
-				<p class="text-sm font-medium text-slate-900">{player.bio.first} {player.bio.last}</p>
-			{:else}
-				<p class="truncate text-sm text-slate-900">Select player</p>
-			{/if}
-			<p class="truncate text-sm text-slate-500">{role.label}</p>
-		</a>
-	</div>
 </div>
