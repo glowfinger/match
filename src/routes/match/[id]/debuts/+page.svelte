@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { page } from '$app/stores';
+	import { page } from '$app/state';
 	import Breadcrumb from '$lib/components/Breadcrumb.svelte';
 	import LineupSelector from '$lib/components/LineupSelector.svelte';
 	import { getMatch } from '$lib/database/MatchService';
@@ -17,7 +17,7 @@
 	import { SHIRT_NUMBERS, SHIRT_NUMBERS_LINEUP } from '$lib/counts/PlayerCounts';
 	import PlayerAvatar from '$lib/components/avatars/PlayerAvatar.svelte';
 
-	const matchId = Number.parseInt($page.params.id);
+	const matchId = Number.parseInt(page.params.id);
 
 	let match: Match | undefined = $state();
 	let players: Player[] = $state([]);

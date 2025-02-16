@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
-	import { page } from '$app/stores';
+	import { page } from '$app/state';
 	import Breadcrumb from '$lib/components/Breadcrumb.svelte';
 	import CardButton from '$lib/components/CardButton.svelte';
 	import CardList from '$lib/components/CardList.svelte';
@@ -22,8 +22,8 @@
 	import HeadingMd from '$lib/components/typography/HeadingMd.svelte';
 	import { toast } from 'svelte-sonner';
 
-	const matchId = Number.parseInt($page.params.id);
-	const position = $page.params.position;
+	const matchId = Number.parseInt(page.params.id);
+	const position = page.params.position;
 
 	let match: Match | undefined = $state();
 	let players: Player[] = $state([]);
@@ -36,7 +36,7 @@
 	onMount(async () => {
 		const allPlayer = await getPlayers();
 
-		match = await getMatch(Number.parseInt($page.params.id));
+		match = await getMatch(matchId);
 
 		selections = (await getSelections(matchId)).filter(isAvailable);
 		players = allPlayer.filter((player) =>

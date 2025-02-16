@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { page } from '$app/stores';
+	import { page } from '$app/state';
 	import Breadcrumb from '$lib/components/Breadcrumb.svelte';
 	import { getMatchPositions } from '$lib/database/MatchPositionDBService';
 	import { getMatch } from '$lib/database/MatchService';
@@ -9,7 +9,7 @@
 	import type { Match, MatchPosition, Player, Selection } from '$lib/database/IndexedDB';
 	import { onMount } from 'svelte';
 	import HeadingLg from '$lib/components/typography/HeadingLg.svelte';
-	const matchId = Number.parseInt($page.params.id);
+	const matchId = Number.parseInt(page.params.id);
 
 	const breadcrumbs = [
 		{ name: 'Home', href: '/' },

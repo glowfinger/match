@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { page } from '$app/stores';
+	import { page } from '$app/state';
 	import Breadcrumb from '$lib/components/Breadcrumb.svelte';
 	import LineupSelector from '$lib/components/LineupSelector.svelte';
 	import { getMatch } from '$lib/database/MatchService';
@@ -15,7 +15,7 @@
 	import HeadingLg from '$lib/components/typography/HeadingLg.svelte';
 	import HeadingMd from '$lib/components/typography/HeadingMd.svelte';
 
-	const matchId = Number.parseInt($page.params.id);
+	const matchId = Number.parseInt(page.params.id);
 
 	let match: Match | undefined = $state();
 	let players: Player[] = $state([]);
@@ -26,7 +26,7 @@
 	onMount(async () => {
 		const allPlayer = await getPlayers();
 
-		match = await getMatch(Number.parseInt($page.params.id));
+		match = await getMatch(matchId);
 
 		selections = (await getSelections(matchId)).filter(isAvailable);
 		players = allPlayer.filter((player) =>
