@@ -43,6 +43,20 @@
 						(position) => position.playerKey === player.key && position.type === 'start',
 					).length === 0,
 			);
+
+		const info = matchPositions.map((position) => {
+			const player = players.find((player) => player.key === position.playerKey);
+			return { key: player?.key, position: position.position };
+		});
+		console.log(
+			JSON.stringify(
+				info.map((player) => {
+					return { key: player.key, position: parseInt(player.position) };
+				}),
+			),
+		);
+
+		console.log(JSON.stringify(replacements.map((player) => player.key)));
 	});
 
 	const breadcrumbs = [

@@ -1,5 +1,4 @@
 import type { Player } from '$lib/database/IndexedDB';
-import exp from 'constants';
 
 const LOOSE_HEAD = '1: Loose-head prop';
 const HOOKER = '2: Hooker';
@@ -31,6 +30,24 @@ export const SHIRT_NUMBERS = new Map([
 	['13', OUTSIDE_CENTRE],
 	['14', WING],
 	['15', FULL_BACK],
+]);
+
+export const SHIRT_NUMBERS_LINEUP = new Map([
+	['1', 'Loose-head prop'],
+	['2', 'Hooker'],
+	['3', 'Tight-head prop'],
+	['4', 'Second row'],
+	['5', 'Second row'],
+	['6', 'Blind-side flanker'],
+	['7', 'Open-side flanker'],
+	['8', 'Number 8'],
+	['9', 'Scrum-half'],
+	['10', 'Fly-half'],
+	['11', 'Wing'],
+	['12', 'Inside centre'],
+	['13', 'Outside centre'],
+	['14', 'Wing'],
+	['15', 'Full-back'],
 ]);
 
 export const POSITION_NAMES = new Map([

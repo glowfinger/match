@@ -9,6 +9,7 @@
 	import HeadingMd from '$lib/components/typography/HeadingMd.svelte';
 	import { goto } from '$app/navigation';
 	import { Separator } from '$lib/components/ui/separator/index.js';
+	import { sortByDate } from '$lib/utils/sorts/ClubSort';
 
 	let matches: Match[] = $state([]);
 
@@ -33,7 +34,7 @@
 <HeadingLg>Match manager</HeadingLg>
 <Button onclick={handleNewMatch}>Add New match</Button>
 <HeadingMd>Matches</HeadingMd>
-{#each matches as match}
+{#each matches.toSorted(sortByDate) as match}
 	<a href={`/match/${match.id}`} class="focus:outline-none">
 		<MatchCard {match} />
 	</a>

@@ -20,6 +20,7 @@
 	import { onMount } from 'svelte';
 	import HeadingLg from '$lib/components/typography/HeadingLg.svelte';
 	import HeadingMd from '$lib/components/typography/HeadingMd.svelte';
+	import { toast } from 'svelte-sonner';
 
 	const matchId = Number.parseInt($page.params.id);
 	const position = $page.params.position;
@@ -69,6 +70,9 @@
 			await setPosition(playerKey, matchId, position, 'start');
 			matchPositions = await getMatchPositions(matchId);
 		}
+
+		toast.success('Selected');
+		goto(`/match/${matchId}/lineup`);
 	}
 
 	async function handleReplacement(playerKey: string) {
@@ -121,10 +125,6 @@
 				<CardButton onClick={() => handleStart(player.key)} active={hasStart(player.key)}
 					>Start</CardButton
 				>
-				<CardButton
-					onClick={() => handleReplacement(player.key)}
-					active={hasReplacement(player.key)}>Replacement</CardButton
-				>
 			</PlayerCard>
 		{/each}
 	</CardList>
@@ -136,10 +136,6 @@
 				<CardButton onClick={() => handleStart(player.key)} active={hasStart(player.key)}
 					>Start</CardButton
 				>
-				<CardButton
-					onClick={() => handleReplacement(player.key)}
-					active={hasReplacement(player.key)}>Replacement</CardButton
-				>
 			</PlayerCard>
 		{/each}
 	</CardList>
@@ -149,10 +145,6 @@
 			<PlayerCard {player} isSelected={alreadyStarting(player.key)}>
 				<CardButton onClick={() => handleStart(player.key)} active={hasStart(player.key)}
 					>Start</CardButton
-				>
-				<CardButton
-					onClick={() => handleReplacement(player.key)}
-					active={hasReplacement(player.key)}>Replacement</CardButton
 				>
 			</PlayerCard>
 		{/each}

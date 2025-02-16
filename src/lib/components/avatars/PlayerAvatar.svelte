@@ -1,4 +1,5 @@
 <script lang="ts">
+	// TODO: This is a duplicate of the function in CardPlayerAvatar.svelte and should be removed
 	import type { Player, PlayerImage } from '$lib/database/IndexedDB';
 
 	type Props = {

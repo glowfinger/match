@@ -78,9 +78,9 @@
 {:else if error}
 	<p>Error loading clubs</p>
 {:else}
-	<div class="flex min-h-full justify-center">
-		<div class=" w-full max-w-sm">
-			<div class="mt-2 grid grid-cols-1 gap-2">
+	<div class="m-2 flex min-h-full justify-center">
+		<div class="w-full max-w-md">
+			<div class="grid grid-cols-1 gap-2">
 				{@render children()}
 			</div>
 		</div>

@@ -83,6 +83,13 @@ export interface MatchRole {
 	role: string;
 }
 
+export interface MatchTag {
+	id: number;
+	matchId: number;
+	playerKey: string;
+	type: string;
+}
+
 export interface Club {
 	key: string;
 	name: string;
@@ -90,27 +97,13 @@ export interface Club {
 	image?: string;
 }
 
-// export type Team = {
-// 	name: string;
-// 	badge: string;
-// 	country?: string;
-// 	socials?: {
-// 		facebook?: string;
-// 		twitter?: string;
-// 		instagram?: string;
-// 		linkedin?: string;
-// 		youtube?: string;
-// 	};
-// 	website?: string;
-// 	address?: string;
-// };
-
 const db = new Dexie('MatchDatabase') as Dexie & {
 	matches: EntityTable<Match, 'id'>;
 	players: EntityTable<Player, 'key'>;
 	selections: EntityTable<Selection, 'id'>;
 	matchPositions: EntityTable<MatchPosition, 'id'>;
 	matchRoles: EntityTable<MatchRole, 'id'>;
+	matchTags: EntityTable<MatchTag, 'id'>;
 	clubs: EntityTable<Club, 'key'>;
 };
 
@@ -120,7 +113,8 @@ db.version(1).stores({
 	selections: '++id, [matchId+playerKey]',
 	matchPositions:
 		'++id, [matchId+playerKey+position+type], [matchId+position+type], [matchId+playerKey+type]',
-	matchRoles: '++id, [matchId+playerKey+role]',
+	matchRoles: '++id, [matchId+playerKey+role],  [matchId+role]',
+	matchTags: '++id, [matchId+playerKey+type], [matchId+type]',
 	clubs: 'key',
 });
 
