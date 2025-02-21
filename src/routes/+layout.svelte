@@ -15,6 +15,10 @@
 	import { addPlayers, getPlayers } from '$lib/database/PlayerDBService';
 	import { getApiPlayers } from '$lib/services/api/PlayerApiService';
 	import { toast } from 'svelte-sonner';
+	import * as Sidebar from '$lib/components/ui/sidebar/index.js';
+	import AppSidebar from '$lib/components/AppSidebar.svelte';
+
+	import { addFonts, hasFonts } from '$lib/database/FontDBService';
 	let { children } = $props();
 
 	let clubWorker: Worker = new ClubWorker();
@@ -34,6 +38,11 @@
 
 	onMount(async () => {
 		loading = true;
+
+		if (!(await hasFonts())) {
+			await addFonts();
+		}
+
 		const clubs = await getClubs();
 		const players = await getPlayers();
 
@@ -46,14 +55,6 @@
 		}
 
 		loading = false;
-
-		// if (navigator.storage && navigator.storage.estimate) {
-		// 	const estimation = await navigator.storage.estimate();
-		// 	console.log(`Quota: ${estimation.quota}`);
-		// 	console.log(`Usage: ${estimation.usage}`);
-		// } else {
-		// 	console.error('StorageManager not found');
-		// }
 	});
 
 	$effect(() => {

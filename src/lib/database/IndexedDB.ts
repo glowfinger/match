@@ -1,4 +1,4 @@
-import Dexie, { type EntityTable } from 'dexie';
+import Dexie, { type EntityTable, type Table } from 'dexie';
 
 export interface Match {
 	id: number;
@@ -8,6 +8,7 @@ export interface Match {
 	opponent?: MatchOpponent;
 	schedule?: MatchSchedule;
 	detail?: MatchDetail;
+	kit?: MatchKit;
 }
 
 export interface MatchTeam {
@@ -34,6 +35,53 @@ export interface MatchDetail {
 	address: string;
 	venue: string;
 	type: string;
+}
+
+export interface MatchKit {
+	type: string;
+}
+
+export interface MatchPosition {
+	id: number;
+	matchId: number;
+	playerKey: string;
+	position: string;
+	type: 'start' | 'replacement' | 'possible';
+}
+
+export interface MatchRole {
+	id: number;
+	matchId: number;
+	playerKey: string;
+	role: string;
+}
+
+export interface MatchTag {
+	id: number;
+	matchId: number;
+	playerKey: string;
+	type: string;
+}
+
+export interface MatchImage {
+	id: number;
+	matchId: number;
+	type: string;
+	page: number;
+	base64: string;
+}
+
+export interface Club {
+	key: string;
+	name: string;
+	badge: string;
+	image?: string;
+}
+
+export interface Font {
+	id: number;
+	type: string;
+	blob: ArrayBuffer;
 }
 
 export interface Player {
@@ -68,35 +116,6 @@ export interface Selection {
 	available: string;
 }
 
-export interface MatchPosition {
-	id: number;
-	matchId: number;
-	playerKey: string;
-	position: string;
-	type: 'start' | 'replacement' | 'possible';
-}
-
-export interface MatchRole {
-	id: number;
-	matchId: number;
-	playerKey: string;
-	role: string;
-}
-
-export interface MatchTag {
-	id: number;
-	matchId: number;
-	playerKey: string;
-	type: string;
-}
-
-export interface Club {
-	key: string;
-	name: string;
-	badge: string;
-	image?: string;
-}
-
 const db = new Dexie('MatchDatabase') as Dexie & {
 	matches: EntityTable<Match, 'id'>;
 	players: EntityTable<Player, 'key'>;
@@ -105,6 +124,8 @@ const db = new Dexie('MatchDatabase') as Dexie & {
 	matchRoles: EntityTable<MatchRole, 'id'>;
 	matchTags: EntityTable<MatchTag, 'id'>;
 	clubs: EntityTable<Club, 'key'>;
+	fonts: EntityTable<Font, 'id'>;
+	matchImages: EntityTable<MatchImage, 'id'>;
 };
 
 db.version(1).stores({
@@ -115,7 +136,9 @@ db.version(1).stores({
 		'++id, [matchId+playerKey+position+type], [matchId+position+type], [matchId+playerKey+type]',
 	matchRoles: '++id, [matchId+playerKey+role],  [matchId+role]',
 	matchTags: '++id, [matchId+playerKey+type], [matchId+type]',
+	matchImages: '++id, [matchId], [matchId+type+page],[matchId+type]',
 	clubs: 'key',
+	fonts: '++id',
 });
 
 export { db };

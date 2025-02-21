@@ -2,6 +2,7 @@ import {
 	db,
 	type Match,
 	type MatchDetail,
+	type MatchKit,
 	type MatchOpponent,
 	type MatchSchedule,
 	type MatchTeam,
@@ -54,6 +55,11 @@ export async function getMatch(id: number): Promise<Match> {
 		return match;
 	}
 	throw new Error('Match not found');
+}
+
+export async function updateMatchKit(id: number, kit: MatchKit) {
+	await db.matches.update(id, { kit });
+	return await db.matches.get(id);
 }
 
 export async function isMatch(match: Match) {

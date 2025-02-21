@@ -17,6 +17,8 @@
 	onMount(async () => {
 		matches = await getMatches();
 		emptyMatches = matches.filter(isNewMatch);
+
+		console.log(await window.navigator.storage.estimate());
 	});
 
 	function isNewMatch(match: Match) {
@@ -37,6 +39,14 @@
 		{ name: 'Home', href: '/' },
 		{ name: 'Admin', href: '/admin' },
 	];
+
+	// if (navigator.storage && navigator.storage.estimate) {
+	// 	const estimation = await navigator.storage.estimate();
+	// 	console.log(`Quota: ${estimation.quota}`);
+	// 	console.log(`Usage: ${estimation.usage}`);
+	// } else {
+	// 	console.error('StorageManager not found');
+	// }
 </script>
 
 <Breadcrumb {breadcrumbs} />
