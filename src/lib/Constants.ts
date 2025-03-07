@@ -37,3 +37,30 @@ export const MediaImageTypes: MediaImageType[] = [
 		label: 'Lineup',
 	},
 ];
+
+export const SPONSORS = [
+	{
+		name: 'Furniture Village',
+		logo: 'https://glowfinger.blob.core.windows.net/chipstead/sponsors/furniture-village.png',
+		handle: '@furniturevillage',
+		sections: ['SENIOR'],
+	},
+	{
+		name: 'Murphy Digital',
+		logo: 'https://glowfinger.blob.core.windows.net/chipstead/sponsors/murphy-digital.png',
+		handle: '@murphy_digital',
+		sections: ['SENIOR'],
+	},
+	{
+		name: 'Sandy Trees',
+		logo: 'https://glowfinger.blob.core.windows.net/chipstead/sponsors/sandy-trees.png',
+		handle: ' @sandy_trees',
+		sections: ['SENIOR'],
+	},
+	{
+		name: 'Aspire Commerncial',
+		logo: 'https://glowfinger.blob.core.windows.net/chipstead/sponsors/aspire-commercial.png',
+		handle: '',
+		sections: ['SENIOR'],
+	},
+];

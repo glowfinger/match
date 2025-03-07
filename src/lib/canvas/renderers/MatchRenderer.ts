@@ -1,15 +1,23 @@
-import { Colours } from '$lib/Constants';
-import type { Match, MatchImage } from '$lib/database/IndexedDB';
+import { Colours, SPONSORS } from '$lib/Constants';
+import type { MatchImage } from '$lib/database/IndexedDB';
+import { getMatch } from '$lib/database/MatchService';
+import canvasSplitter from './CanvasSplitter';
 
 export default async function matchRenderer(
-	match: Match,
+	matchId: number,
 	type: string,
 ): Promise<Omit<MatchImage, 'id'>[]> {
-	const canvas = new OffscreenCanvas(1080 + 1080, 1080);
+	const PAGES = 2;
+	const WIDTH = 1080;
+	const HEIGHT = 1080;
+
+	const canvas = new OffscreenCanvas(PAGES * WIDTH, HEIGHT);
 	const ctx = canvas.getContext('2d', { willReadFrequently: true });
 	if (!ctx) {
 		throw new Error('Failed to get 2D context');
 	}
+
+	const match = await getMatch(matchId);
 
 	ctx.fillStyle = Colours.NAVY;
 	ctx.fillRect(0, 0, canvas.width, canvas.height);
@@ -30,6 +38,8 @@ export default async function matchRenderer(
 		.then(async (blob) => await createImageBitmap(blob));
 
 	ctx.drawImage(img, 500, 280, 1000, 800);
+
+	await drawSponsors(ctx);
 
 	// Team name
 	ctx.font = `80px black`;
@@ -58,39 +68,31 @@ export default async function matchRenderer(
 	ctx.strokeText(match.opponent?.club ?? '', 120, 360);
 	ctx.fillText(match.opponent?.club ?? '', 120, 360);
 
-	const tempCanvas = new OffscreenCanvas(1080, 1080);
-	const tempCtx = tempCanvas.getContext('2d');
-	if (!tempCtx) {
-		throw new Error('Failed to get 2D context for temp canvas');
-	}
-
-	const images: Omit<MatchImage, 'id'>[] = [];
-
-	let xPostion = 0;
-	while (xPostion < canvas.width) {
-		const imageData = ctx.getImageData(xPostion, 0, 1080, 1080);
-		tempCtx.putImageData(imageData, 0, 0);
-
-		const blob = await tempCanvas.convertToBlob({ type: 'image/png' });
-		const base64 = await blobToData(blob);
-
-		images.push({
-			matchId: match.id,
-			type: type,
-			page: 1 + xPostion / 1080,
-			base64: base64 as string,
-		});
-
-		xPostion += 1080;
-	}
-
-	return images;
+	return (await canvasSplitter(canvas)).map(({ page, base64 }) => ({
+		matchId,
+		type,
+		page,
+		base64,
+	}));
 }
 
-async function blobToData(blob: Blob) {
-	return new Promise((resolve) => {
-		const reader = new FileReader();
-		reader.onloadend = () => resolve(reader.result);
-		reader.readAsDataURL(blob);
+async function drawSponsors(ctx: OffscreenCanvasRenderingContext2D) {
+	const images = await Promise.all(
+		SPONSORS.map(async (sponsor) => {
+			return await fetch(sponsor.logo)
+				.then((response) => response.blob())
+				.then(async (blob) => await createImageBitmap(blob));
+		}),
+	);
+	images.forEach((img, i) => {
+		const x = 60 + i * 180;
+		const y = 900;
+		ctx.lineWidth = 2;
+		ctx.strokeStyle = Colours.BLACK;
+		ctx.fillStyle = Colours.WHITE;
+		ctx.fillRect(x, y, 120, 120);
+		ctx.strokeRect(x, y, 120, 120);
+
+		ctx.drawImage(img, x + 10, y + 10);
 	});
 }

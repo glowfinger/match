@@ -13,7 +13,7 @@
 	const breadcrumbs = [
 		{ name: 'Home', href: '/' },
 		{ name: 'Match', href: `/match/${matchId}` },
-		{ name: 'Images', href: `/match/${matchId}/images` },
+		{ name: 'Media', href: `/match/${matchId}/media` },
 	];
 
 	let match: Match | undefined = $state();
@@ -44,7 +44,9 @@
 	{#if getImages(type.type).length > 0}
 		<div class="grid grid-cols-2">
 			{#each getImages(type.type) as image}
-				<img src={image.base64} alt={type.label} />
+				<a href={`/match/${matchId}/media/${type.type}`}>
+					<img src={image.base64} alt={type.label} />
+				</a>
 			{/each}
 		</div>
 	{/if}

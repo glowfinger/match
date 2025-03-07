@@ -19,3 +19,7 @@ export async function setSelection(playerKey: string, matchId: number, available
 export async function getSelections(matchId: number): Promise<Selection[]> {
 	return await db.selections.where({ matchId }).toArray();
 }
+
+export async function getStartingSelections(matchId: number): Promise<Selection[]> {
+	return await db.selections.where({ matchId, available: 'yes' }).toArray();
+}

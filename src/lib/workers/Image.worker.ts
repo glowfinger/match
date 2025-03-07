@@ -1,10 +1,10 @@
 import cancelledRender from '$lib/canvas/renderers/CancelledRenderer';
+import LineupRederer from '$lib/canvas/renderers/LineupRenderer';
 import matchRenderer from '$lib/canvas/renderers/MatchRenderer';
 import resultRender from '$lib/canvas/renderers/ResultRenderer';
 import { getFonts } from '$lib/database/FontDBService';
 import type { MatchImage } from '$lib/database/IndexedDB';
 import { setMatchImage } from '$lib/database/match/MatchImageDBService';
-import { getMatch } from '$lib/database/MatchService';
 
 onmessage = async ({ data }: MessageEvent) => {
 	await preloadFonts();
@@ -14,8 +14,7 @@ onmessage = async ({ data }: MessageEvent) => {
 	let images: Omit<MatchImage, 'id'>[] = [];
 
 	if (data.type === 'MATCH') {
-		const match = await getMatch(data.matchId);
-		images = await matchRenderer(match, data.type);
+		images = await matchRenderer(data.matchId, data.type);
 	}
 
 	if (data.type === 'CANCELLED') {
@@ -24,6 +23,10 @@ onmessage = async ({ data }: MessageEvent) => {
 
 	if (data.type === 'RESULT') {
 		images = await resultRender(data.matchId, data.type);
+	}
+
+	if (data.type === 'LINEUP') {
+		images = await LineupRederer(data.matchId, data.type);
 	}
 
 	if (!images.length) {

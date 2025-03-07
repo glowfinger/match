@@ -71,26 +71,24 @@ async function load() {
 					};
 				});
 			return player;
+		})
+
+		.map((player) => {
+			const playerTags = tagResponse.find((tag) => {
+				return tag.playerKey === player.key;
+			});
+
+			if (playerTags) {
+				player.tags = {
+					homegrown: playerTags.homegrown,
+				};
+			} else {
+				player.tags = {
+					homegrown: false,
+				};
+			}
+			return player;
 		});
-
-	// 	return player;
-	// });
-	// .map((player) => {
-	// 	const playerTags = tags.find((tag) => {
-	// 		return tag.playerKey === player.key;
-	// 	});
-
-	// 	if (playerTags) {
-	// 		player.tags = {
-	// 			homegrown: playerTags.homegraph,
-	// 		};
-	// 	} else {
-	// 		player.tags = {
-	// 			homegrown: false,
-	// 		};
-	// 	}
-	// 	return player;
-	// });
 	return { players };
 }
 

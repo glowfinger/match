@@ -38,6 +38,8 @@
 			getImagesByMatchAndType(matchId, matchImageType),
 		]);
 
+		generateImage(matchImageType);
+
 		const [matchData, imagesData] = await promise;
 
 		match = matchData;
@@ -72,11 +74,17 @@
 	type="button"
 	onclick={() => generateImage(matchImageType)}
 	class="rounded-md bg-indigo-600 px-2.5 py-1.5 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-	>Button text</button
+	>Redraw image</button
 >
-<HeadingMd>Images</HeadingMd>
-{#if images.length > 0}
-	<div class="grid grid-cols-4">
+<HeadingMd>Post</HeadingMd>
+{#if images.length === 2}
+	<div class="gap-y- grid grid-cols-2">
+		{#each images as image}
+			<img src={image.base64} alt={image.type} />
+		{/each}
+	</div>
+{:else if images.length === 4}
+	<div class="gap-y- grid grid-cols-4">
 		{#each images as image}
 			<img src={image.base64} alt={image.type} />
 		{/each}
@@ -84,4 +92,4 @@
 {:else if images.length === 0}
 	<p>No images</p>
 {/if}
-<pre>{JSON.stringify(images, null, 2)}</pre>
+<pre>{JSON.stringify(match, null, 2)}</pre>

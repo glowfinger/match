@@ -26,11 +26,20 @@
 
 	<div class="flex w-full items-center justify-between space-x-2 bg-slate-200 p-2">
 		<div class="flex-1 truncate">
-			<div class="flex items-center space-x-3">
+			<div class="flex items-center space-x-1">
 				<h3 class="truncate text-sm font-medium text-slate-900">
 					{player.bio.first}
 					{player.bio.last}
 				</h3>
+
+				{#if player.tags.homegrown}
+					<span
+						title="Homegrown"
+						class="inline-flex shrink-0 items-center rounded-full bg-slate-50 px-1.5 py-0.5 text-xs font-medium text-slate-700 ring-1 ring-inset ring-slate-600/20"
+						>🍟</span
+					>
+				{/if}
+
 				{#if player.bio.age}
 					<span
 						class="inline-flex shrink-0 items-center rounded-full bg-slate-50 px-1.5 py-0.5 text-xs font-medium text-slate-700 ring-1 ring-inset ring-slate-600/20"

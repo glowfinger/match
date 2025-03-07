@@ -1,4 +1,5 @@
-import Dexie, { type EntityTable, type Table } from 'dexie';
+import exp from 'constants';
+import Dexie, { type EntityTable } from 'dexie';
 
 export interface Match {
 	id: number;
@@ -89,6 +90,7 @@ export interface Player {
 	bio: PlayerBio;
 	positions: PlayerPosition;
 	images: PlayerImage[];
+	tags: PlayerTag;
 }
 
 export interface PlayerBio {
@@ -109,6 +111,9 @@ export interface PlayerImage {
 	url: string;
 }
 
+export interface PlayerTag {
+	homegrown: boolean;
+}
 export interface Selection {
 	id: number;
 	matchId: number;
@@ -131,7 +136,7 @@ const db = new Dexie('MatchDatabase') as Dexie & {
 db.version(1).stores({
 	matches: '++id',
 	players: 'key',
-	selections: '++id, [matchId+playerKey]',
+	selections: '++id, [matchId+playerKey], [matchId+available]',
 	matchPositions:
 		'++id, [matchId+playerKey+position+type], [matchId+position+type], [matchId+playerKey+type]',
 	matchRoles: '++id, [matchId+playerKey+role],  [matchId+role]',

@@ -12,6 +12,10 @@ export async function getPlayers(): Promise<Player[]> {
 	return await db.players.toArray();
 }
 
+export async function getPlayersByKeys(keys: string[]): Promise<Player[]> {
+	return await db.players.where('key').anyOf(keys).toArray();
+}
+
 export async function addPlayers(data: Player[]): Promise<Player[]> {
 	await db.players.bulkAdd(data);
 	return await getPlayers();
