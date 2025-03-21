@@ -58,6 +58,8 @@
 	<HeadingMd>Media</HeadingMd>
 	<a href={`/match/${match.id}/media`} class="variant-filled-primary btn">Media (WIP)</a>
 	<Separator />
+	<HeadingMd>Analysis</HeadingMd>
+	<a href={`/match/${match.id}/analysis`} class="variant-filled-primary btn">Analysis dashboad</a>
 	<HeadingMd>Admin</HeadingMd>
 	<a href={`/match/${match.id}/remove`} class="variant-filled-primary btn">Remove match</a>
 {/if}

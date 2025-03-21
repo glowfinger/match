@@ -10,6 +10,24 @@ export interface Match {
 	schedule?: MatchSchedule;
 	detail?: MatchDetail;
 	kit?: MatchKit;
+	score?: MatchScore;
+	points?: MatchPoints[];
+}
+
+export interface MatchScore {
+	outcome: string;
+	scored: number;
+	conceded: number;
+}
+
+export interface MatchPoints {
+	playerKey: string | null;
+	for: 'player' | 'unknown' | 'team';
+	minute: string | null;
+	tries: number;
+	conversions: number;
+	penalties: number;
+	dropGoals: number;
 }
 
 export interface MatchTeam {
