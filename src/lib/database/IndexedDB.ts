@@ -1,4 +1,3 @@
-import exp from 'constants';
 import Dexie, { type EntityTable } from 'dexie';
 
 export interface Match {
@@ -139,6 +138,13 @@ export interface Selection {
 	available: string;
 }
 
+export interface BackgroundImage {
+	id: number;
+	type: string;
+	page: number;
+	base64: string;
+}
+
 const db = new Dexie('MatchDatabase') as Dexie & {
 	matches: EntityTable<Match, 'id'>;
 	players: EntityTable<Player, 'key'>;
@@ -149,6 +155,7 @@ const db = new Dexie('MatchDatabase') as Dexie & {
 	clubs: EntityTable<Club, 'key'>;
 	fonts: EntityTable<Font, 'id'>;
 	matchImages: EntityTable<MatchImage, 'id'>;
+	backgroundsImages: EntityTable<BackgroundImage, 'id'>;
 };
 
 db.version(1).stores({
@@ -162,6 +169,7 @@ db.version(1).stores({
 	matchImages: '++id, [matchId], [matchId+type+page],[matchId+type]',
 	clubs: 'key',
 	fonts: '++id',
+	backgroundsImages: '++id, [type], [type+page]',
 });
 
 export { db };

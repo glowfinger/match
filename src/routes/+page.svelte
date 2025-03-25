@@ -14,7 +14,8 @@
 	let matches: Match[] = $state([]);
 
 	onMount(async () => {
-		matches = await getMatches();
+		console.log('twice');
+		// matches = await getMatches();
 	});
 
 	async function handleNewMatch() {
