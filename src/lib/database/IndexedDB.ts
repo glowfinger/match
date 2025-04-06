@@ -108,6 +108,7 @@ export interface Player {
 	positions: PlayerPosition;
 	images: PlayerImage[];
 	tags: PlayerTag;
+	social: { instagram: string };
 }
 
 export interface PlayerBio {
@@ -126,6 +127,9 @@ export interface PlayerImage {
 	type: string;
 	kit: string;
 	url: string;
+	thumbnail: string;
+	headshot: string;
+	large: string;
 }
 
 export interface PlayerTag {
@@ -142,7 +146,7 @@ export interface BackgroundImage {
 	id: number;
 	type: string;
 	page: number;
-	base64: string;
+	blob: Blob;
 }
 
 const db = new Dexie('MatchDatabase') as Dexie & {

@@ -14,15 +14,21 @@
 	let matches: Match[] = $state([]);
 
 	onMount(async () => {
-		console.log('twice');
-		// matches = await getMatches();
+		const allMatches = await getMatches();
+
+		const teams = [
+			...new Set(allMatches.map((match) => [match.team?.club, match.team?.squad].join('-'))),
+		];
+
+		console.log('teams', teams);
+		matches = allMatches.toSorted(sortByDate).filter((match) => {
+			const team = [match.team?.club, match.team?.squad].join('-');
+			return teams.includes(team);
+		});
 	});
 
 	async function handleNewMatch() {
-		const data = {
-			createdAt: new Date().toISOString(),
-			userAgent: navigator.userAgent,
-		};
+		const data = { createdAt: new Date().toISOString(), userAgent: navigator.userAgent };
 
 		const { id } = await addMatch(data.createdAt, data.userAgent);
 		goto(`/match/${id}`);
@@ -34,7 +40,7 @@
 <Breadcrumb {breadcrumbs} />
 <HeadingLg>Match manager</HeadingLg>
 <Button onclick={handleNewMatch}>Add New match</Button>
-<HeadingMd>Matches</HeadingMd>
+<HeadingMd>Latest</HeadingMd>
 {#each matches.toSorted(sortByDate) as match}
 	<a href={`/match/${match.id}`} class="focus:outline-none">
 		<MatchCard {match} />

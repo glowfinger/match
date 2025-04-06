@@ -8,7 +8,7 @@ export async function getImagesByType(type: string): Promise<BackgroundImage[]> 
 	return db.backgroundsImages.where({ type }).toArray();
 }
 
-export async function saveImages(images: BackgroundImage[]): Promise<void> {
+export async function saveImages(images: Omit<BackgroundImage, 'id'>[]): Promise<void> {
 	await db.backgroundsImages.bulkPut(images);
 }
 

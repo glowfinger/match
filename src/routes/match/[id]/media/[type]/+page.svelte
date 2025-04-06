@@ -33,15 +33,17 @@
 	};
 
 	onMount(async () => {
-		// const promise = Promise.all([
-		// 	getMatch(matchId),
-		// 	getImagesByMatchAndType(matchId, matchImageType),
-		// ]);
-		// generateImage(matchImageType);
-		// const [matchData, imagesData] = await promise;
-		// match = matchData;
-		// images = imagesData;
-		console.log('twice');
+		const promise = Promise.all([
+			getMatch(matchId),
+			getImagesByMatchAndType(matchId, matchImageType),
+		]);
+		generateImage(matchImageType);
+		const [matchData, imagesData] = await promise;
+		match = matchData;
+		images = imagesData;
+
+		console.log('images', images);
+
 		// if (images.length === 0) {
 		// 	worker.postMessage({ matchId, type: matchImageType });
 		// }
@@ -92,6 +94,12 @@
 	</div>
 {:else if images.length === 0}
 	<p>No images</p>
+{:else}
+	<div class="gap-y- grid grid-cols-2">
+		{#each images as image}
+			<img src={image.base64} alt={image.type} />
+		{/each}
+	</div>
 {/if}
 
 <!-- {#if matchImageType === 'highlight'}
