@@ -82,7 +82,7 @@
 <HeadingLg>Manage Lineup</HeadingLg>
 
 {#each [...players, ...replacements] as player}
-	<div class="col-span-1 divide-y divide-gray-200 bg-white shadow">
+	<div class="col-span-1 divide-y divide-gray-200 bg-white shadow-sm">
 		<div class="flex w-full items-center justify-between space-x-2 p-2">
 			<div class="shrink-0">
 				<span

@@ -10,7 +10,7 @@
 </script>
 
 <div
-	class="relative flex items-center space-x-2 rounded-lg border border-slate-300 bg-white p-2 shadow-sm focus-within:ring-2 focus-within:ring-indigo-500 focus-within:ring-offset-2 hover:border-slate-400"
+	class="relative flex items-center space-x-2 rounded-lg border border-slate-300 bg-white p-2 shadow-xs focus-within:ring-2 focus-within:ring-indigo-500 focus-within:ring-offset-2 hover:border-slate-400"
 >
 	{#if player && player.images?.length > 0}
 		<div class="shrink-0">

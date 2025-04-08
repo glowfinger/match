@@ -23,7 +23,7 @@
 <Breadcrumb {breadcrumbs} />
 
 {#each matches.toSorted(sortByDate) as match}
-	<a href={`/match/${match.id}`} class="focus:outline-none">
+	<a href={`/match/${match.id}`} class="focus:outline-hidden">
 		<MatchCard {match} />
 	</a>
 {/each}

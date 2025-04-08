@@ -17,7 +17,7 @@
 </script>
 
 <div
-	class="relative flex items-center space-x-2 rounded-lg border border-slate-300 bg-white p-2 shadow-sm focus-within:ring-2 focus-within:ring-indigo-500 focus-within:ring-offset-2 hover:border-slate-400"
+	class="relative flex items-center space-x-2 rounded-lg border border-slate-300 bg-white p-2 shadow-xs focus-within:ring-2 focus-within:ring-indigo-500 focus-within:ring-offset-2 hover:border-slate-400"
 >
 	<div class="shrink-0">
 		<span class="inline-flex size-10 items-center justify-center rounded-full bg-slate-500">
@@ -45,7 +45,7 @@
 		</div>
 	{/if}
 	<div class="min-w-0 flex-1">
-		<a href={`/match/${matchId}/lineup/position/${positionNumber}`} class="focus:outline-none">
+		<a href={`/match/${matchId}/lineup/position/${positionNumber}`} class="focus:outline-hidden">
 			<span class="absolute inset-0" aria-hidden="true"></span>
 			{#if player}
 				<p class="text-sm font-medium text-slate-900">{player.bio.first} {player.bio.last}</p>
