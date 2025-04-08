@@ -2,9 +2,7 @@
 	import { SHIRT_NUMBERS } from '$lib/counts/PlayerCounts';
 	import type { Player } from '$lib/database/IndexedDB';
 
-	type Props = {
-		player: Player;
-	};
+	type Props = { player: Player };
 
 	let { player }: Props = $props();
 </script>

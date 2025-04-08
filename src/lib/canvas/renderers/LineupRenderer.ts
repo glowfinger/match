@@ -2,6 +2,7 @@ import { Colours } from '$lib/Constants';
 import type { MatchImage } from '$lib/database/IndexedDB';
 import { getMatchPositions } from '$lib/database/MatchPositionDBService';
 import { getMatch } from '$lib/database/MatchService';
+import { getMatchTags } from '$lib/database/MatchTagDBService';
 import { getPlayersByKeys } from '$lib/database/PlayerDBService';
 import { getSelections, getStartingSelections } from '$lib/database/SelectionDBService';
 import { convertTime, matchDate } from '$lib/helpers/dateTime/ConvertTime';
@@ -27,6 +28,7 @@ export default async function LineupRederer(
 	const selections = await getStartingSelections(matchId);
 	const positions = await getMatchPositions(matchId);
 	const players = await getPlayersByKeys(selections.map((s) => s.playerKey));
+	const debuts = (await getMatchTags(matchId, 'debut')).map((t) => t.playerKey);
 
 	ctx.fillStyle = Colours.NAVY;
 	ctx.fillRect(0, 0, canvas.width, canvas.height);
@@ -73,13 +75,13 @@ export default async function LineupRederer(
 
 		console.log(player);
 
-		// if (player.tags.homegrown) {
-		//   name = '🍟' + name;
-		// }
+		if (player.tags.homegrown) {
+			name = '🍟' + name;
+		}
 
-		// if (debutants.includes(player.key)) {
-		//   name = '📣' + name;
-		// }
+		if (debuts.includes(player.key)) {
+			name = '📣' + name;
+		}
 
 		if (name.length > 0) {
 			name = name + ' ' + player.bio.screen;

@@ -1,7 +1,5 @@
 <script lang="ts">
-	type Props = {
-		children?: any;
-	};
+	type Props = { children?: any };
 
 	let { children }: Props = $props();
 </script>

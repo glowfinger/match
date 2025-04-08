@@ -37,17 +37,16 @@
 			getMatch(matchId),
 			getImagesByMatchAndType(matchId, matchImageType),
 		]);
-
 		generateImage(matchImageType);
-
 		const [matchData, imagesData] = await promise;
-
 		match = matchData;
 		images = imagesData;
 
-		if (images.length === 0) {
-			worker.postMessage({ matchId, type: matchImageType });
-		}
+		console.log('images', images);
+
+		// if (images.length === 0) {
+		// 	worker.postMessage({ matchId, type: matchImageType });
+		// }
 	});
 
 	onDestroy(() => {
@@ -64,6 +63,10 @@
 	function generateImage(type: string) {
 		worker.postMessage({ matchId, type });
 		generating = [...generating, type];
+	}
+
+	async function handleHighlightSubmit(e: SubmitEvent) {
+		e.preventDefault();
 	}
 </script>
 
@@ -91,5 +94,27 @@
 	</div>
 {:else if images.length === 0}
 	<p>No images</p>
+{:else}
+	<div class="gap-y- grid grid-cols-2">
+		{#each images as image}
+			<img src={image.base64} alt={image.type} />
+		{/each}
+	</div>
 {/if}
-<pre>{JSON.stringify(match, null, 2)}</pre>
+
+<!-- {#if matchImageType === 'highlight'}
+	<form onsubmit={handleHighlightSubmit}>
+		<label for="title">Title</label>
+		<input type="text" id="title" name="title" />
+		<label for="description">Description</label>
+		<textarea id="description" name="description"></textarea>
+		<button
+			type="submit"
+			class="rounded-md bg-indigo-600 px-2.5 py-1.5 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+		>
+			Submit
+		</button>
+	</form>
+{/if} -->
+
+<pre class=" overflow-x-scroll">{JSON.stringify(match, null, 2)}</pre>

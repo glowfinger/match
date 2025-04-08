@@ -7,18 +7,18 @@
 	let { club }: Props = $props();
 </script>
 
-<div
-	class="relative flex items-center space-x-3 border border-slate-300 bg-white p-2 shadow-sm focus-within:ring-2 focus-within:ring-indigo-500 focus-within:ring-offset-2 hover:border-slate-400"
->
-	<div class="shrink-0">
-		{#if club.image}
-			<img class="size-10" src={club.badge} alt="" />
-		{/if}
+<div class="group relative aspect-[5/7] overflow-hidden border border-slate-600 bg-white">
+	<div class=" perspective-distant absolute inset-0 flex items-center justify-center">
+		<img
+			class="  group-hover:translate-z-8 group-hover:rotate-x-50 group-hover:rotate-z-45 h-full object-cover transition duration-300 ease-in-out group-hover:scale-150"
+			src={club.badge}
+			alt=""
+		/>
 	</div>
-	<div class="min-w-0 flex-1">
-		<a href="#" class="focus:outline-none">
-			<span class="absolute inset-0" aria-hidden="true"></span>
-			<p class="text-sm font-medium text-slate-900">{club.name}</p>
-		</a>
+
+	<div
+		class="duration-400 absolute inset-0 flex items-center justify-center transition ease-in-out group-hover:bg-slate-900/50 group-hover:backdrop-blur-sm"
+	>
+		<h2 class="w-full bg-slate-700/60 text-center text-lg font-bold text-white">{club.name}</h2>
 	</div>
 </div>

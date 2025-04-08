@@ -7,6 +7,10 @@ import {
 import type { MatchImage } from '$lib/database/IndexedDB';
 import { getMatch } from '$lib/database/MatchService';
 import Backgrounds from '../constants/lineup/Backgrounds';
+<<<<<<< HEAD
+=======
+import { drawTitle } from '../TextDrawer';
+>>>>>>> 8df9c91597c8025ceaf84f9411d6988b00693ad7
 import canvasSplitter from './CanvasSplitter';
 
 export default async function HighlightRenderer(
@@ -51,11 +55,48 @@ export default async function HighlightRenderer(
 		.then((response) => response.blob())
 		.then(async (blob) => await createImageBitmap(blob));
 
+<<<<<<< HEAD
 	console.log(img.width);
 
 	// make image fit in 500x500
 
 	ctx.drawImage(img, 500, 280);
+=======
+	// Scale image to fit within 500x500 while maintaining aspect ratio
+	const maxDimension = 700;
+	let imgWidth = img.width;
+	let imgHeight = img.height;
+
+	if (imgWidth > maxDimension || imgHeight > maxDimension) {
+		const scale = Math.min(maxDimension / imgWidth, maxDimension / imgHeight);
+		imgWidth *= scale;
+		imgHeight *= scale;
+	}
+
+	ctx.drawImage(img, -50, 1080 - imgHeight, imgWidth, imgHeight);
+
+	const img2 = await fetch(
+		'https://glowfinger.blob.core.windows.net/smg/background-removed/DSC02092.png',
+	)
+		.then((response) => response.blob())
+		.then(async (blob) => await createImageBitmap(blob));
+
+	// Scale image to fit within 500x500 while maintaining aspect ratio
+
+	let imgWidth2 = img2.width;
+	let imgHeight2 = img2.height;
+
+	if (imgWidth2 > maxDimension || imgHeight2 > maxDimension) {
+		const scale = Math.min(maxDimension / imgWidth2, maxDimension / imgHeight2);
+		imgWidth2 *= scale;
+		imgHeight2 *= scale;
+	}
+
+	ctx.drawImage(img2, 500, 1080 - imgHeight2, imgWidth2, imgHeight2);
+
+	drawTitle(ctx, 'TRY OF', 50, 120);
+	drawTitle(ctx, 'THE WEEK', 50, 260);
+>>>>>>> 8df9c91597c8025ceaf84f9411d6988b00693ad7
 
 	return (await canvasSplitter(canvas)).map(({ page, base64 }) => ({
 		matchId,

@@ -21,7 +21,6 @@
 
 	onMount(async () => {
 		const promise = Promise.all([getMatch(matchId), getImagesByMatch(matchId)]);
-
 		const [matchData, imagesData] = await promise;
 
 		match = matchData;
