@@ -1,4 +1,3 @@
-import exp from 'constants';
 import Dexie, { type EntityTable } from 'dexie';
 
 export interface Match {
@@ -10,6 +9,24 @@ export interface Match {
 	schedule?: MatchSchedule;
 	detail?: MatchDetail;
 	kit?: MatchKit;
+	score?: MatchScore;
+	points?: MatchPoints[];
+}
+
+export interface MatchScore {
+	outcome: string;
+	scored: number;
+	conceded: number;
+}
+
+export interface MatchPoints {
+	playerKey: string | null;
+	for: 'player' | 'unknown' | 'team';
+	minute: string | null;
+	tries: number;
+	conversions: number;
+	penalties: number;
+	dropGoals: number;
 }
 
 export interface MatchTeam {
@@ -91,6 +108,7 @@ export interface Player {
 	positions: PlayerPosition;
 	images: PlayerImage[];
 	tags: PlayerTag;
+	social: { instagram: string };
 }
 
 export interface PlayerBio {
@@ -109,6 +127,9 @@ export interface PlayerImage {
 	type: string;
 	kit: string;
 	url: string;
+	thumbnail: string;
+	headshot: string;
+	large: string;
 }
 
 export interface PlayerTag {
@@ -121,6 +142,13 @@ export interface Selection {
 	available: string;
 }
 
+export interface BackgroundImage {
+	id: number;
+	type: string;
+	page: number;
+	blob: Blob;
+}
+
 const db = new Dexie('MatchDatabase') as Dexie & {
 	matches: EntityTable<Match, 'id'>;
 	players: EntityTable<Player, 'key'>;
@@ -131,6 +159,7 @@ const db = new Dexie('MatchDatabase') as Dexie & {
 	clubs: EntityTable<Club, 'key'>;
 	fonts: EntityTable<Font, 'id'>;
 	matchImages: EntityTable<MatchImage, 'id'>;
+	backgroundsImages: EntityTable<BackgroundImage, 'id'>;
 };
 
 db.version(1).stores({
@@ -144,6 +173,7 @@ db.version(1).stores({
 	matchImages: '++id, [matchId], [matchId+type+page],[matchId+type]',
 	clubs: 'key',
 	fonts: '++id',
+	backgroundsImages: '++id, [type], [type+page]',
 });
 
 export { db };

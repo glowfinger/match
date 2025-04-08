@@ -1,16 +1,31 @@
 <script lang="ts">
 	import { POSITION_NAMES } from '$lib/counts/PlayerCounts';
-	import type { Player } from '$lib/database/IndexedDB';
+	import type { Player, PlayerImage } from '$lib/database/IndexedDB';
 	import PlayerAvatar from './avatars/PlayerAvatar.svelte';
 	import PlayerCardPositions from './PlayerCardPositions.svelte';
 
-	type Props = {
-		player: Player;
-		isSelected?: boolean;
-		children?: any;
-	};
+	type Props = { player: Player; isSelected?: boolean; children?: any };
 
 	let { player, children, isSelected = false }: Props = $props();
+
+	let profileImage: PlayerImage | undefined = $state();
+
+	$effect(() => {
+		// if (player?.images && player?.images.length > 0) {
+		// 	profileImage = player.images.find((image) => image.type === 'profile-front');
+		// }
+	});
+
+	function hasProfileImage(player: Player): boolean {
+		return player.images && player.images.length > 0;
+	}
+
+	function getProfileImage(player: Player): PlayerImage | undefined {
+		if (hasProfileImage(player)) {
+			return player.images.find((image) => image.type === 'profile-front');
+		}
+		return undefined;
+	}
 </script>
 
 <li
@@ -23,51 +38,21 @@
 			Already starting
 		</div>
 	{/if}
+	{#if player}
+		<div class="relative h-24 border border-slate-800 bg-slate-500 text-white">
+			{#if hasProfileImage(player)}
+				<div
+					class="absolute bottom-0 left-4 aspect-square h-20 bg-cover bg-center"
+					style="background-image: url('{getProfileImage(player)?.large}')"
+				></div>
+			{/if}
 
-	<div class="flex w-full items-center justify-between space-x-2 bg-slate-200 p-2">
-		<div class="flex-1 truncate">
-			<div class="flex items-center space-x-1">
-				<h3 class="truncate text-sm font-medium text-slate-900">
-					{player.bio.first}
-					{player.bio.last}
-				</h3>
-
-				{#if player.tags.homegrown}
-					<span
-						title="Homegrown"
-						class="inline-flex shrink-0 items-center rounded-full bg-slate-50 px-1.5 py-0.5 text-xs font-medium text-slate-700 ring-1 ring-inset ring-slate-600/20"
-						>🍟</span
-					>
-				{/if}
-
-				{#if player.bio.age}
-					<span
-						class="inline-flex shrink-0 items-center rounded-full bg-slate-50 px-1.5 py-0.5 text-xs font-medium text-slate-700 ring-1 ring-inset ring-slate-600/20"
-						>{player.bio.age}</span
-					>
-				{/if}
+			<div class="absolute bottom-2 right-2 bg-slate-900/40 p-2">
+				<h2 class="text-2xl font-bold">{player.bio.first} {player.bio.last}</h2>
+				<p class="text-md font-bold text-yellow-600">{player.positions.main}</p>
 			</div>
-			<p class="mt-1 truncate text-sm text-slate-500">
-				{POSITION_NAMES.get(player.positions.main)}
-			</p>
-
-			<p class="mt-1 truncate text-sm text-slate-500">
-				{player.key}
-			</p>
 		</div>
-
-		{#if player && player.images?.length > 0}
-			<div class="shrink-0">
-				<img
-					class="size-10 rounded-full"
-					src={`https://glowfinger.blob.core.windows.net/smg/thumbnails-260x260/${player.images[0].url}.png`}
-					alt=""
-				/>
-			</div>
-		{:else if player}
-			<PlayerAvatar {player} />
-		{/if}
-	</div>
+	{/if}
 
 	{#if children}
 		<div class="-mt-px flex divide-x divide-slate-200">
@@ -87,5 +72,5 @@
 			</div>
 		</div>
 	{/if}
-	<PlayerCardPositions {player} />
+	<!-- <PlayerCardPositions {player} /> -->
 </li>

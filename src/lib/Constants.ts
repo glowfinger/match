@@ -36,6 +36,10 @@ export const MediaImageTypes: MediaImageType[] = [
 		type: 'LINEUP',
 		label: 'Lineup',
 	},
+	{
+		type: 'highlight',
+		label: 'Highlight',
+	},
 ];
 
 export const SPONSORS = [

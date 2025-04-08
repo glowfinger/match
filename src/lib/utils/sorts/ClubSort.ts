@@ -25,5 +25,12 @@ export function sortByDate(a: Match, b: Match) {
 		return -1;
 	}
 
+	if (a.createdAt < b.createdAt) {
+		return -1;
+	}
+	if (a.createdAt > b.createdAt) {
+		return 1;
+	}
+
 	return 0;
 }

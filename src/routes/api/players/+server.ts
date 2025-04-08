@@ -15,10 +15,7 @@ export async function GET(match) {
 }
 
 async function load() {
-	const auth = new google.auth.GoogleAuth({
-		credentials: credentials,
-		scopes: SCOPES,
-	});
+	const auth = new google.auth.GoogleAuth({ credentials: credentials, scopes: SCOPES });
 
 	const client = await auth.getClient();
 
@@ -26,25 +23,16 @@ async function load() {
 
 	const [playerResponse, images, tagResponse] = await Promise.all([
 		sheets.spreadsheets.values
-			.get({
-				spreadsheetId: SPREADSHEET_ID,
-				range: 'Form responses 1',
-			})
+			.get({ spreadsheetId: SPREADSHEET_ID, range: 'Form responses 1' })
 			.then(handleResponse),
 		sheets.spreadsheets.values
-			.get({
-				spreadsheetId: SPREADSHEET_ID,
-				range: 'images',
-			})
+			.get({ spreadsheetId: SPREADSHEET_ID, range: 'images' })
 			.then(handleResponse)
 			.then((values) => {
 				return values.map(imageMapper);
 			}),
 		sheets.spreadsheets.values
-			.get({
-				spreadsheetId: SPREADSHEET_ID,
-				range: 'tags',
-			})
+			.get({ spreadsheetId: SPREADSHEET_ID, range: 'tags' })
 			.then(handleResponse)
 			.then((values) => {
 				return values.map(tagMapper);
@@ -61,15 +49,7 @@ async function load() {
 			return result !== 0 ? result : a.bio.last.localeCompare(b.bio.last);
 		})
 		.map((player) => {
-			player.images = images
-				.filter((image) => image.playerKey === player.key)
-				.map((image) => {
-					return {
-						type: image.imageType,
-						kit: image.kitType,
-						url: image.image,
-					};
-				});
+			player.images = images.filter((image) => image.playerKey === player.key);
 			return player;
 		})
 
@@ -79,13 +59,9 @@ async function load() {
 			});
 
 			if (playerTags) {
-				player.tags = {
-					homegrown: playerTags.homegrown,
-				};
+				player.tags = { homegrown: playerTags.homegrown };
 			} else {
-				player.tags = {
-					homegrown: false,
-				};
+				player.tags = { homegrown: false };
 			}
 			return player;
 		});
@@ -104,9 +80,7 @@ function rowToPlayer(data: string[]) {
 	return {
 		key: getPlayerKey(row),
 		bio: getPlayerBio(row),
-		social: {
-			instagram: row[3],
-		},
+		social: { instagram: row[3] },
 		positions: getPlayerPosition(row),
 	};
 }
@@ -137,7 +111,7 @@ function getPlayerKey(row: string[]) {
 }
 
 function getPlayerAge(row: string[]) {
-	var parts = row[DOB_COLUMN].split('/');
+	const parts = row[DOB_COLUMN].split('/');
 
 	const dob = new Date(parseInt(parts[2], 10), parseInt(parts[1], 10) - 1, parseInt(parts[0], 10));
 	const diff = Date.now() - dob.getTime();
@@ -146,11 +120,16 @@ function getPlayerAge(row: string[]) {
 }
 
 function imageMapper(row: string[]) {
+	const image = row[3] ? row[3].trim() : '';
+
 	return {
 		playerKey: row[0].trim(),
-		imageType: row[1].trim(),
-		kitType: row[2] ? row[2].trim() : '',
-		image: row[3] ? row[3].trim() : '',
+		type: row[1].trim(),
+		kit: row[2] ? row[2].trim() : '',
+		url: image,
+		thumbnail: `https://glowfinger.blob.core.windows.net/match/profile/thumbnails/${image}.png`,
+		headshot: `https://glowfinger.blob.core.windows.net/match/profile/headshot/${image}.png`,
+		large: `https://glowfinger.blob.core.windows.net/match/profile/large/${image}.png`,
 	};
 }
 

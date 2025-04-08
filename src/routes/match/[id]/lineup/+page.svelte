@@ -50,13 +50,17 @@
 		});
 		console.log(
 			JSON.stringify(
-				info.map((player) => {
-					return { key: player.key, position: parseInt(player.position) };
-				}),
+				info
+					.map((player) => {
+						return { key: player.key, position: parseInt(player.position) };
+					})
+					.toSorted((a, b) => a.position - b.position),
 			),
 		);
 
-		console.log(JSON.stringify(replacements.map((player) => player.key)));
+		console.log(
+			JSON.stringify(replacements.map((player) => ({ key: player.key, position: null }))),
+		);
 	});
 
 	const breadcrumbs = [

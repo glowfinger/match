@@ -12,11 +12,7 @@ export async function getImagesByMatchAndType(
 }
 
 export async function setMatchImage(image: MatchImage | Omit<MatchImage, 'id'>): Promise<void> {
-	const criteria = {
-		matchId: image.matchId,
-		type: image.type,
-		page: image.page,
-	};
+	const criteria = { matchId: image.matchId, type: image.type, page: image.page };
 
 	const existing = await db.matchImages.where(criteria).first();
 	if (existing) {

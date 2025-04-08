@@ -1,4 +1,5 @@
 import cancelledRender from '$lib/canvas/renderers/CancelledRenderer';
+import HighlightRenderer from '$lib/canvas/renderers/HighlightRenderer';
 import LineupRederer from '$lib/canvas/renderers/LineupRenderer';
 import matchRenderer from '$lib/canvas/renderers/MatchRenderer';
 import resultRender from '$lib/canvas/renderers/ResultRenderer';
@@ -27,6 +28,10 @@ onmessage = async ({ data }: MessageEvent) => {
 
 	if (data.type === 'LINEUP') {
 		images = await LineupRederer(data.matchId, data.type);
+	}
+
+	if (data.type === 'highlight') {
+		images = await HighlightRenderer(data.matchId, data.type);
 	}
 
 	if (!images.length) {

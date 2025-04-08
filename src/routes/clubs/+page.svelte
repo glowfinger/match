@@ -1,6 +1,7 @@
 <script lang="ts">
 	import Breadcrumb from '$lib/components/Breadcrumb.svelte';
 	import ClubCard from '$lib/components/cards/ClubCard.svelte';
+	import HeadingLg from '$lib/components/typography/HeadingLg.svelte';
 	import { addClubs, clearClubs, getClubs } from '$lib/database/ClubDbService';
 	import type { Club } from '$lib/database/IndexedDB';
 	import { getApiClubs } from '$lib/services/api/ClubApiService';
@@ -47,20 +48,21 @@
 	});
 </script>
 
-<div class="grid grid-cols-1 gap-2">
-	<h1 class="h1">Clubs</h1>
-	<Breadcrumb {breadcrumbs} />
-	<button onclick={handleLoadClubs} class="variant-filled-primary btn">Load clubs</button>
+<Breadcrumb {breadcrumbs} />
+<HeadingLg>Clubs</HeadingLg>
 
-	{#if loading}
-		<p>Loading...</p>
-	{:else if error}
-		<p>Error loading clubs</p>
-	{:else if clubs.length === 0}
-		<p>No clubs found</p>
-	{:else}
+<button onclick={handleLoadClubs} class="variant-filled-primary btn">Load clubs</button>
+
+{#if loading}
+	<p>Loading...</p>
+{:else if error}
+	<p>Error loading clubs</p>
+{:else if clubs.length === 0}
+	<p>No clubs found</p>
+{:else}
+	<div class="grid grid-cols-3 gap-4 lg:grid-cols-4">
 		{#each clubs as club}
 			<ClubCard {club} />
 		{/each}
-	{/if}
-</div>
+	</div>
+{/if}
