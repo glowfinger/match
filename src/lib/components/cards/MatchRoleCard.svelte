@@ -14,7 +14,7 @@
 	let { matchId, player, role, to }: Props = $props();
 </script>
 
-<div class="col-span-1 divide-y divide-gray-200 bg-white shadow">
+<div class="col-span-1 divide-y divide-gray-200 bg-white shadow-sm">
 	<a href={to} class="block hover:bg-gray-50">
 		<div class="flex w-full items-center justify-between space-x-4 p-2">
 			<div class="flex space-x-2">

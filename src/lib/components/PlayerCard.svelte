@@ -29,7 +29,7 @@
 </script>
 
 <li
-	class="rounded- col-span-1 divide-y divide-slate-200 border border-slate-400 bg-slate-50 shadow"
+	class="rounded- col-span-1 divide-y divide-slate-200 border border-slate-400 bg-slate-50 shadow-sm"
 >
 	{#if isSelected}
 		<div

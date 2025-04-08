@@ -12,7 +12,7 @@
 </script>
 
 <li
-	class="rounded- col-span-1 divide-y divide-slate-200 border border-slate-800 bg-slate-50 shadow"
+	class="rounded- col-span-1 divide-y divide-slate-200 border border-slate-800 bg-slate-50 shadow-sm"
 >
 	<div class="flex w-full items-center justify-between space-x-2 p-2">
 		<div class="flex-1 truncate">
