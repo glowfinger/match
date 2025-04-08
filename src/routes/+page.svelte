@@ -18,10 +18,7 @@
 	});
 
 	async function handleNewMatch() {
-		const data = {
-			createdAt: new Date().toISOString(),
-			userAgent: navigator.userAgent,
-		};
+		const data = { createdAt: new Date().toISOString(), userAgent: navigator.userAgent };
 
 		const { id } = await addMatch(data.createdAt, data.userAgent);
 		goto(`/match/${id}`);
