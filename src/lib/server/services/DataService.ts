@@ -1,6 +1,6 @@
-import { google } from 'googleapis';
 import { PRIVATE_GOOGLE_API_SHEET_ID } from '$env/static/private';
 import credentials from '$lib/server/Credentials';
+import { google } from 'googleapis';
 import { clubMapper } from '../mappers/ClubMapper';
 
 const SCOPES = ['https://www.googleapis.com/auth/spreadsheets.readonly'];

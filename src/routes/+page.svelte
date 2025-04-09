@@ -1,4 +1,4 @@
-<!-- <script lang="ts">
+<script lang="ts">
 	import Breadcrumb from '$lib/components/Breadcrumb.svelte';
 	import MatchCard from '$lib/components/cards/MatchCard.svelte';
 	import { addMatch, getMatches } from '$lib/database/MatchService';
@@ -51,4 +51,4 @@
 <a href={`/players`} class="variant-filled-primary btn">View player</a>
 <Separator />
 <HeadingMd>Admin</HeadingMd>
-<a href={`/admin`} class="variant-filled-primary btn">Admin</a> -->
+<a href={`/admin`} class="variant-filled-primary btn">Admin</a>

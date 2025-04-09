@@ -52,7 +52,7 @@
 			></div>
 		{/if}
 
-		<div class="absolute bottom-2 right-2 bg-slate-900/40 p-2">
+		<div class="absolute right-2 bottom-2 bg-slate-900/40 p-2">
 			<h2 class="text-4xl font-bold">{player.bio.first} {player.bio.last}</h2>
 			<p class="text-md font-bold text-yellow-600">{player.positions.main}</p>
 		</div>

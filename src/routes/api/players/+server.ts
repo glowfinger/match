@@ -1,14 +1,10 @@
 import { PRIVATE_GOOGLE_API_SHEET_ID } from '$env/static/private';
-import { google } from 'googleapis';
-import type { LayoutServerLoad } from '../../$types';
 import credentials from '$lib/server/Credentials';
-import { error } from '@sveltejs/kit';
 import { json } from '@sveltejs/kit';
+import { google } from 'googleapis';
 
 const SCOPES = ['https://www.googleapis.com/auth/spreadsheets.readonly'];
 const SPREADSHEET_ID = PRIVATE_GOOGLE_API_SHEET_ID;
-
-import { clubMapper } from '$lib/server/mappers/ClubMapper';
 
 export async function GET(match) {
 	return json(await load());

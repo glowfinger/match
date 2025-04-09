@@ -91,14 +91,14 @@
 		</div>
 	{/if}
 	{#if match.detail}
-		<div class="flex items-center gap-x-4 border-b border-t border-slate-900/5 bg-slate-300 p-2">
+		<div class="flex items-center gap-x-4 border-t border-b border-slate-900/5 bg-slate-300 p-2">
 			<div class="truncate text-sm/6 font-medium text-gray-900">
 				Details: {match.detail.type}, {match.detail.venue}, {match.detail.address}
 			</div>
 		</div>
 	{/if}
 	{#if match.schedule}
-		<div class="flex items-center gap-x-4 border-b border-t border-slate-900/5 bg-slate-100 p-2">
+		<div class="flex items-center gap-x-4 border-t border-b border-slate-900/5 bg-slate-100 p-2">
 			<div class="text-sm/6 font-medium text-gray-900">
 				Date: {match.schedule.matchOn}, Meet: {match.schedule.meetAt}, K/O: {match.schedule
 					.kickOffAt}
