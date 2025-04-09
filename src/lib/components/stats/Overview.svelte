@@ -1,6 +1,5 @@
 <script lang="ts">
 	import type { Note } from '$lib/database/Notes';
-	import { title } from 'process';
 
 	type Props = {
 		notes: Note[];

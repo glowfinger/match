@@ -7,10 +7,7 @@ import {
 import type { MatchImage } from '$lib/database/IndexedDB';
 import { getMatch } from '$lib/database/MatchService';
 import Backgrounds from '../constants/lineup/Backgrounds';
-<<<<<<< HEAD
-=======
 import { drawTitle } from '../TextDrawer';
->>>>>>> 8df9c91597c8025ceaf84f9411d6988b00693ad7
 import canvasSplitter from './CanvasSplitter';
 
 export default async function HighlightRenderer(
@@ -55,13 +52,6 @@ export default async function HighlightRenderer(
 		.then((response) => response.blob())
 		.then(async (blob) => await createImageBitmap(blob));
 
-<<<<<<< HEAD
-	console.log(img.width);
-
-	// make image fit in 500x500
-
-	ctx.drawImage(img, 500, 280);
-=======
 	// Scale image to fit within 500x500 while maintaining aspect ratio
 	const maxDimension = 700;
 	let imgWidth = img.width;
@@ -96,7 +86,6 @@ export default async function HighlightRenderer(
 
 	drawTitle(ctx, 'TRY OF', 50, 120);
 	drawTitle(ctx, 'THE WEEK', 50, 260);
->>>>>>> 8df9c91597c8025ceaf84f9411d6988b00693ad7
 
 	return (await canvasSplitter(canvas)).map(({ page, base64 }) => ({
 		matchId,
