@@ -1,5 +1,5 @@
 import * as THREE from 'three';
-import { BoxGeometry, CylinderGeometry, Color, Mesh, MeshBasicMaterial } from 'three';
+import { BoxGeometry, Color, CylinderGeometry, Mesh, MeshBasicMaterial } from 'three';
 
 const EXCESS = 3000;
 

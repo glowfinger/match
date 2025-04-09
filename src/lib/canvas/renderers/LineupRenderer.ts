@@ -4,8 +4,8 @@ import { getMatchPositions } from '$lib/database/MatchPositionDBService';
 import { getMatch } from '$lib/database/MatchService';
 import { getMatchTags } from '$lib/database/MatchTagDBService';
 import { getPlayersByKeys } from '$lib/database/PlayerDBService';
-import { getSelections, getStartingSelections } from '$lib/database/SelectionDBService';
-import { convertTime, matchDate } from '$lib/helpers/dateTime/ConvertTime';
+import { getStartingSelections } from '$lib/database/SelectionDBService';
+import { matchDate } from '$lib/helpers/dateTime/ConvertTime';
 
 import StarterPositons from '../constants/lineup/StarterPositons';
 import headshotLoader from '../images/HeadshotLoader';

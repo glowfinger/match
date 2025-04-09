@@ -1,8 +1,8 @@
+import * as Camera from '$lib/3d/geometry/Camera';
 import * as THREE from 'three';
+import { CSS2DObject, CSS2DRenderer, OrbitControls } from 'three/examples/jsm/Addons.js';
 import { goalPost, pitch } from './Pitch';
 import pitchMarkings from './PitchMarkings';
-import { CSS2DObject, CSS2DRenderer, OrbitControls } from 'three/examples/jsm/Addons.js';
-import * as Camera from '$lib/3d/geometry/Camera';
 
 import tailwindColors from 'tailwindcss/colors';
 
