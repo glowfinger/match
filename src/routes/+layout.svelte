@@ -15,8 +15,6 @@
 	import { addPlayers, getPlayers } from '$lib/database/PlayerDBService';
 	import { getApiPlayers } from '$lib/services/api/PlayerApiService';
 	import { toast } from 'svelte-sonner';
-	import * as Sidebar from '$lib/components/ui/sidebar/index.js';
-	import AppSidebar from '$lib/components/AppSidebar.svelte';
 
 	import { addFonts, hasFonts } from '$lib/database/FontDBService';
 	let { children } = $props();
