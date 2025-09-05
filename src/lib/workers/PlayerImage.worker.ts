@@ -2,7 +2,7 @@ import type { Player } from '$lib/database/IndexedDB';
 import { addPlayers, clearPlayers, getPlayers } from '$lib/database/PlayerDBService';
 import { getApiPlayers } from '$lib/services/api/PlayerApiService';
 
-onmessage = async (e: MessageEvent) => {
+onmessage = async () => {
 	let cleared: Player[] = [];
 	let added: Player[] = [];
 	let names: string[] = [];

@@ -1,3 +1,4 @@
+import type { Event, EventImage } from '$lib/types/Event';
 import Dexie, { type EntityTable } from 'dexie';
 
 export interface Match {
@@ -160,9 +161,11 @@ const db = new Dexie('MatchDatabase') as Dexie & {
 	fonts: EntityTable<Font, 'id'>;
 	matchImages: EntityTable<MatchImage, 'id'>;
 	backgroundsImages: EntityTable<BackgroundImage, 'id'>;
+	events: EntityTable<Event, 'uuid'>;
+	eventsImages: EntityTable<EventImage, 'id'>;
 };
 
-db.version(1).stores({
+db.version(1.0).stores({
 	matches: '++id',
 	players: 'key',
 	selections: '++id, [matchId+playerKey], [matchId+available]',
@@ -174,6 +177,8 @@ db.version(1).stores({
 	clubs: 'key',
 	fonts: '++id',
 	backgroundsImages: '++id, [type], [type+page]',
+	events: 'uuid, [createdAt], [template]',
+	eventsImages: '++id, [eventUuid+type]',
 });
 
 export { db };

@@ -40,6 +40,12 @@
 <Breadcrumb {breadcrumbs} />
 <HeadingLg>Match manager</HeadingLg>
 <Button onclick={handleNewMatch}>Add New match</Button>
+<a
+	href={`/events`}
+	class="border border-transparent bg-slate-800 px-4 py-2 text-center text-sm text-white shadow-md transition-all hover:bg-slate-700 hover:shadow-lg focus:bg-slate-700 focus:shadow-none active:bg-slate-700 active:shadow-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none"
+	>View events</a
+>
+
 <HeadingMd>Latest</HeadingMd>
 {#each matches.toSorted(sortByDate) as match}
 	<a href={`/match/${match.id}`} class="focus:outline-hidden">

@@ -1,7 +1,6 @@
 <script lang="ts">
 	import { ModeWatcher } from 'mode-watcher';
 	import Navbar from '$lib/components/layout/Navbar.svelte';
-	import { network } from '$lib/stores/NetworkStore.svelte';
 	import { onDestroy, onMount } from 'svelte';
 	// import PlayerImageWorker from '$lib/workers/PlayerImage.worker.ts?worker';
 	import ClubWorker from '$lib/workers/ClubImage.worker.ts?worker';
@@ -16,7 +15,7 @@
 	import { getApiPlayers } from '$lib/services/api/PlayerApiService';
 	import { toast } from 'svelte-sonner';
 
-	import { addFonts, hasFonts } from '$lib/database/FontDBService';
+	import { addFonts, clearFonts, hasFonts } from '$lib/database/FontDBService';
 	let { children } = $props();
 
 	let clubWorker: Worker = new ClubWorker();
@@ -25,20 +24,13 @@
 
 	let loading = $state(false);
 	let error = $state(false);
-
-	function handleOnline() {
-		network.online = true;
-	}
-
-	function handleOffline() {
-		network.online = false;
-	}
-
 	onMount(async () => {
 		loading = true;
 
 		if (!(await hasFonts())) {
+			await clearFonts();
 			await addFonts();
+			toast('Added fonts');
 		}
 
 		const clubs = await getClubs();
@@ -66,7 +58,6 @@
 	});
 </script>
 
-<svelte:window ononline={handleOnline} onoffline={handleOffline} />
 <ModeWatcher />
 <Toaster position="bottom-center" />
 
