@@ -28,3 +28,10 @@ export const matchOpponentSchema = z.object({
 	club: z.string().min(1),
 	squad: z.string().min(1),
 });
+
+const MAX_SCORE = 999;
+
+export const matchResultSchema = z.object({
+	homeScore: z.number().min(0).max(MAX_SCORE),
+	awayScore: z.number().min(0).max(MAX_SCORE),
+});

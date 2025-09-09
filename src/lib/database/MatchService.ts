@@ -4,6 +4,7 @@ import {
 	type MatchDetail,
 	type MatchKit,
 	type MatchOpponent,
+	type MatchResult,
 	type MatchSchedule,
 	type MatchTeam,
 } from '$lib/database/IndexedDB';
@@ -66,4 +67,9 @@ export async function isMatch(match: Match) {
 	const { matchOn, type, team, squad } = match;
 	const result = (await db.matches.where({ matchOn, type, team, squad }).count()) > 0;
 	return result;
+}
+
+export async function updateMatchResult(id: number, result: MatchResult) {
+	await db.matches.update(id, { result });
+	return await db.matches.get(id);
 }

@@ -10,14 +10,8 @@ export interface Match {
 	schedule?: MatchSchedule;
 	detail?: MatchDetail;
 	kit?: MatchKit;
-	score?: MatchScore;
+	result?: MatchResult;
 	points?: MatchPoints[];
-}
-
-export interface MatchScore {
-	outcome: string;
-	scored: number;
-	conceded: number;
 }
 
 export interface MatchPoints {
@@ -42,6 +36,11 @@ export interface MatchOpponent {
 	squad: string;
 	club: string;
 	badge: string;
+}
+
+export interface MatchResult {
+	homeScore: number;
+	awayScore: number;
 }
 
 export interface MatchSchedule {

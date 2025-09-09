@@ -73,8 +73,6 @@ export default async function LineupRederer(
 
 		let name = '';
 
-		console.log(player);
-
 		if (player.tags.homegrown) {
 			name = '🍟' + name;
 		}

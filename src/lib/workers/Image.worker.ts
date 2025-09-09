@@ -6,6 +6,7 @@ import resultRender from '$lib/canvas/renderers/ResultRenderer';
 import { getFonts } from '$lib/database/FontDBService';
 import type { MatchImage } from '$lib/database/IndexedDB';
 import { setMatchImage } from '$lib/database/match/MatchImageDBService';
+import LineupAlternative from '$lib/layouts/seniors/LineupAlternative';
 
 onmessage = async ({ data }: MessageEvent) => {
 	await preloadFonts();
@@ -27,6 +28,8 @@ onmessage = async ({ data }: MessageEvent) => {
 	}
 
 	if (data.type === 'LINEUP') {
+		await preloadImages(LineupAlternative);
+
 		images = await LineupRederer(data.matchId, data.type);
 	}
 
@@ -60,4 +63,16 @@ async function preloadFonts() {
 	for await (const font of fonts) {
 		await new FontFace(font.type, font.blob).load().then(addFont);
 	}
+}
+
+async function preloadImages(LineupAlternative: {
+	name: string;
+	pages: { background: { colour: string }; backgroundImage: { src: string } }[];
+}) {
+	console.log('preloading images', LineupAlternative.name);
+	const promises = LineupAlternative.pages.map((page) =>
+		fetch(page.backgroundImage.src).then((response) => response.blob()),
+	);
+	const images = await Promise.all(promises);
+	console.log('images', images.length);
 }

@@ -1,7 +1,7 @@
 export default async function canvasSplitter(
 	source: OffscreenCanvas,
 ): Promise<{ page: number; base64: string }[]> {
-	const canvas = new OffscreenCanvas(1080, 1080);
+	const canvas = new OffscreenCanvas(1080, 1350);
 
 	const ctx = canvas.getContext('2d');
 	if (!ctx) {
@@ -16,7 +16,7 @@ export default async function canvasSplitter(
 
 	let xPostion = 0;
 	while (xPostion < source.width) {
-		const imageData = sourceCtx.getImageData(xPostion, 0, 1080, 1080);
+		const imageData = sourceCtx.getImageData(xPostion, 0, 1080, 1350);
 		ctx.putImageData(imageData, 0, 0);
 
 		const blob = await canvas.convertToBlob({ type: 'image/png' });

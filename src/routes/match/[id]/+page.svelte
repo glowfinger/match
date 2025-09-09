@@ -53,6 +53,7 @@
 	<a href={`/match/${match.id}/lineup`} class="variant-filled-primary btn">Lineup</a>
 	<a href={`/match/${match.id}/roles`} class="variant-filled-primary btn">Roles</a>
 	<a href={`/match/${match.id}/debuts`} class="variant-filled-primary btn">Debuts</a>
+	<a href={`/match/${match.id}/result`} class="variant-filled-primary btn">Result</a>
 	<Separator />
 
 	<HeadingMd>Media</HeadingMd>
