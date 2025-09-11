@@ -1,4 +1,5 @@
 <script lang="ts">
+	import '../app.css';
 	import { ModeWatcher } from 'mode-watcher';
 	import Navbar from '$lib/components/layout/Navbar.svelte';
 	import { onDestroy, onMount } from 'svelte';
@@ -6,8 +7,7 @@
 	import ClubWorker from '$lib/workers/ClubImage.worker.ts?worker';
 	import { Toaster } from '$lib/components/ui/sonner/index.js';
 
-	import '../app.css';
-
+	import ImageWorker from '$lib/workers/Image.worker.ts?worker';
 	import { requiredClubImages } from '$lib/stores/BlobStore.svelte';
 	import { addClubs, getClubs } from '$lib/database/ClubDbService';
 	import { getApiClubs } from '$lib/services/api/ClubApiService';
@@ -16,11 +16,13 @@
 	import { toast } from 'svelte-sonner';
 
 	import { addFonts, clearFonts, hasFonts } from '$lib/database/FontDBService';
+	import { matchUpdates } from '$lib/stores/MatchUpdateStore.svelte';
 	let { children } = $props();
 
 	let clubWorker: Worker = new ClubWorker();
+	let imageWorker: Worker = new ImageWorker();
 
-	let playerImageWorker: Worker;
+	// let playerImageWorker: Worker;
 
 	let loading = $state(false);
 	let error = $state(false);
@@ -52,9 +54,11 @@
 			clubWorker.postMessage(JSON.parse(JSON.stringify(requiredClubImages)));
 		}
 	});
+	$effect(() => {});
 
 	onDestroy(() => {
 		clubWorker.terminate();
+		imageWorker.terminate();
 	});
 </script>
 

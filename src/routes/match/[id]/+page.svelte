@@ -51,9 +51,11 @@
 	<HeadingMd>Manage</HeadingMd>
 	<a href={`/match/${match.id}/squad`} class="variant-filled-primary btn">Squad</a>
 	<a href={`/match/${match.id}/lineup`} class="variant-filled-primary btn">Lineup</a>
-	<a href={`/match/${match.id}/roles`} class="variant-filled-primary btn">Roles</a>
+	<a href={`/match/${match.id}/roles/leadership`} class="variant-filled-primary btn">Leadership</a>
+	<a href={`/match/${match.id}/roles/awards`} class="variant-filled-primary btn">Awards</a>
 	<a href={`/match/${match.id}/debuts`} class="variant-filled-primary btn">Debuts</a>
 	<a href={`/match/${match.id}/result`} class="variant-filled-primary btn">Result</a>
+
 	<Separator />
 
 	<HeadingMd>Media</HeadingMd>

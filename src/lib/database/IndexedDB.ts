@@ -71,6 +71,7 @@ export interface MatchRole {
 	id: number;
 	matchId: number;
 	playerKey: string;
+	type: string;
 	role: string;
 }
 
@@ -170,7 +171,7 @@ db.version(1.0).stores({
 	selections: '++id, [matchId+playerKey], [matchId+available]',
 	matchPositions:
 		'++id, [matchId+playerKey+position+type], [matchId+position+type], [matchId+playerKey+type]',
-	matchRoles: '++id, [matchId+playerKey+role],  [matchId+role]',
+	matchRoles: '++id, [matchId+playerKey+role],  [matchId+role+type], [playerKey+matchId+role+type]',
 	matchTags: '++id, [matchId+playerKey+type], [matchId+type]',
 	matchImages: '++id, [matchId], [matchId+type+page],[matchId+type]',
 	clubs: 'key',

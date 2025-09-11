@@ -9,7 +9,7 @@
 	import { getImagesByMatch } from '$lib/database/match/MatchImageDBService';
 	import { MediaImageTypes } from '$lib/Constants';
 
-	const matchId = Number.parseInt(page.params.id);
+	const matchId = Number.parseInt(page.params.id as string);
 	const breadcrumbs = [
 		{ name: 'Home', href: '/' },
 		{ name: 'Match', href: `/match/${matchId}` },

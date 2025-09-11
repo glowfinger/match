@@ -1,49 +1,34 @@
-import cancelledRender from '$lib/canvas/renderers/CancelledRenderer';
-import HighlightRenderer from '$lib/canvas/renderers/HighlightRenderer';
-import LineupRederer from '$lib/canvas/renderers/LineupRenderer';
-import matchRenderer from '$lib/canvas/renderers/MatchRenderer';
-import resultRender from '$lib/canvas/renderers/ResultRenderer';
 import { getFonts } from '$lib/database/FontDBService';
 import type { MatchImage } from '$lib/database/IndexedDB';
 import { setMatchImage } from '$lib/database/match/MatchImageDBService';
-import LineupAlternative from '$lib/layouts/seniors/LineupAlternative';
 
 onmessage = async ({ data }: MessageEvent) => {
-	await preloadFonts();
-
-	postMessage({ task: 'FONTS_LOADED', type: data.type });
-
-	let images: Omit<MatchImage, 'id'>[] = [];
-
-	if (data.type === 'MATCH') {
-		images = await matchRenderer(data.matchId, data.type);
-	}
-
-	if (data.type === 'CANCELLED') {
-		images = await cancelledRender(data.matchId, data.type);
-	}
-
-	if (data.type === 'RESULT') {
-		images = await resultRender(data.matchId, data.type);
-	}
-
-	if (data.type === 'LINEUP') {
-		await preloadImages(LineupAlternative);
-
-		images = await LineupRederer(data.matchId, data.type);
-	}
-
-	if (data.type === 'highlight') {
-		images = await HighlightRenderer(data.matchId, data.type);
-	}
-
-	if (!images.length) {
-		postMessage({ task: 'NO_IMAGES_GENERATED', type: data.type });
-		return;
-	}
-
-	await saveImages(images);
-	postMessage({ task: 'IMAGES_GENERATED', type: data.type });
+	console.log('Image worker received message', data);
+	// await preloadFonts();
+	// postMessage({ task: 'FONTS_LOADED', type: data.type });
+	// let images: Omit<MatchImage, 'id'>[] = [];
+	// if (data.type === 'MATCH') {
+	// 	images = await matchRenderer(data.matchId, data.type);
+	// }
+	// if (data.type === 'CANCELLED') {
+	// 	images = await cancelledRender(data.matchId, data.type);
+	// }
+	// if (data.type === 'RESULT') {
+	// 	images = await resultRender(data.matchId, data.type);
+	// }
+	// if (data.type === 'LINEUP') {
+	// 	await preloadImages(LineupAlternative);
+	// 	images = await LineupRederer(data.matchId, data.type);
+	// }
+	// if (data.type === 'highlight') {
+	// 	images = await HighlightRenderer(data.matchId, data.type);
+	// }
+	// if (!images.length) {
+	// 	postMessage({ task: 'NO_IMAGES_GENERATED', type: data.type });
+	// 	return;
+	// }
+	// await saveImages(images);
+	// postMessage({ task: 'IMAGES_GENERATED', type: data.type });
 };
 
 async function saveImages(images: Omit<MatchImage, 'id'>[]) {

@@ -16,9 +16,10 @@
 	import { onMount } from 'svelte';
 	import { toast } from 'svelte-sonner';
 	import Breadcrumb from '$lib/components/Breadcrumb.svelte';
+	import { addMatchUpdate } from '$lib/stores/MatchUpdateStore.svelte';
 
 	let match: Match | undefined = $state();
-	const matchId = Number.parseInt(page.params.id);
+	const matchId = Number.parseInt(page.params.id as string);
 
 	let data: MatchDetail = $state({
 		venue: '',
@@ -48,6 +49,7 @@
 		}
 
 		updateMatchDetail(matchId, { ...data });
+		addMatchUpdate(matchId, 'details');
 		toast.success('Match details updated');
 		goto(`/match/${matchId}`);
 	}
