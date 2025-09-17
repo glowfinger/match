@@ -7,9 +7,9 @@ export default async function matchRenderer(
 	matchId: number,
 	type: string,
 ): Promise<Omit<MatchImage, 'id'>[]> {
-	const PAGES = 2;
+	const PAGES = 4;
 	const WIDTH = 1080;
-	const HEIGHT = 1080;
+	const HEIGHT = 1350;
 
 	const canvas = new OffscreenCanvas(PAGES * WIDTH, HEIGHT);
 	const ctx = canvas.getContext('2d', { willReadFrequently: true });
@@ -19,8 +19,8 @@ export default async function matchRenderer(
 
 	const match = await getMatch(matchId);
 
-	ctx.fillStyle = Colours.NAVY;
-	ctx.fillRect(0, 0, canvas.width, canvas.height);
+	// ctx.fillStyle = Colours.NAVY;
+	// ctx.fillRect(0, 0, canvas.width, canvas.height);
 
 	// Title
 	ctx.font = `140px black`;
@@ -28,27 +28,36 @@ export default async function matchRenderer(
 	ctx.fillStyle = Colours.WHITE;
 	ctx.lineWidth = 16;
 	ctx.strokeStyle = Colours.NAVY;
-	ctx.strokeText('NEXT MATCH', 60, 160);
-	ctx.fillText('NEXT MATCH', 60, 160);
+	// ctx.strokeText('NEXT MATCH', 60, 160);
+	// ctx.fillText('NEXT MATCH', 60, 160);
 
-	const img = await fetch(
-		'https://glowfinger.blob.core.windows.net/smg/background-removed/DSC03123.png',
-	)
-		.then((response) => response.blob())
-		.then(async (blob) => await createImageBitmap(blob));
+	// const back = await fetch('/img/backgrounds/seniors/senior-pink-3240-1080.png')
+	// 	.then((response) => response.blob())
+	// 	.then(async (blob) => await createImageBitmap(blob));
 
-	ctx.drawImage(img, 500, 280, 1000, 800);
+	// ctx.drawImage(back, 0, 0);
 
-	await drawSponsors(ctx);
+	// const img = await fetch(
+	// 	'https://glowfinger.blob.core.windows.net/smg/background-removed/DSC03123.png',
+	// )
+	// 	.then((response) => response.blob())
+	// 	.then(async (blob) => await createImageBitmap(blob));
+
+	// ctx.drawImage(img, 500, 280, 1000, 800);
+
+	// await drawSponsors(ctx);
 
 	// Team name
+
+	const team = `${match.team?.club ?? ''} ${match.team?.squad ?? ''}`;
+
 	ctx.font = `80px black`;
 	ctx.textAlign = 'left';
 	ctx.lineWidth = 12;
 	ctx.strokeStyle = Colours.NAVY;
 	ctx.fillStyle = Colours.GOLD;
-	ctx.strokeText(match.team?.club ?? '', 60, 280);
-	ctx.fillText(match.team?.club ?? '', 60, 280);
+	// ctx.strokeText(team, 60, 280);
+	// ctx.fillText(team, 60, 280);
 
 	// VS
 	ctx.font = `40px regular`;
@@ -56,17 +65,18 @@ export default async function matchRenderer(
 	ctx.lineWidth = 6;
 	ctx.fillStyle = Colours.WHITE;
 	ctx.strokeStyle = Colours.NAVY;
-	ctx.strokeText('vs', 60, 360);
-	ctx.fillText('vs', 60, 360);
+	// ctx.strokeText('vs', 60, 360);
+	// ctx.fillText('vs', 60, 360);
 
+	const opponent = `${match.opponent?.club ?? ''} ${match.opponent?.squad ?? ''}`;
 	// Opposition team
-	ctx.font = `48px regular`;
+	ctx.font = `80px regular`;
 	ctx.textAlign = 'left';
 	ctx.lineWidth = 6;
 	ctx.fillStyle = Colours.WHITE;
 	ctx.strokeStyle = Colours.NAVY;
-	ctx.strokeText(match.opponent?.club ?? '', 120, 360);
-	ctx.fillText(match.opponent?.club ?? '', 120, 360);
+	ctx.strokeText(opponent, 60, 360);
+	ctx.fillText(opponent, 60, 360);
 
 	return (await canvasSplitter(canvas)).map(({ page, base64 }) => ({
 		matchId,

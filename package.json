@@ -28,6 +28,7 @@
 		"@testing-library/jest-dom": "^6.6.3",
 		"@testing-library/svelte": "^5.2.4",
 		"@types/eslint": "^9.6.1",
+		"@types/luxon": "^3.7.1",
 		"@types/node": "^22.10.2",
 		"@types/three": "^0.174.0",
 		"bits-ui": "^1.2.1",

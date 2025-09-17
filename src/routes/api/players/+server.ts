@@ -6,7 +6,7 @@ import { google } from 'googleapis';
 const SCOPES = ['https://www.googleapis.com/auth/spreadsheets.readonly'];
 const SPREADSHEET_ID = PRIVATE_GOOGLE_API_SHEET_ID;
 
-export async function GET(match) {
+export async function GET() {
 	return json(await load());
 }
 
@@ -17,7 +17,7 @@ async function load() {
 
 	const sheets = google.sheets({ version: 'v4', auth: client as any });
 
-	const [playerResponse, images, tagResponse] = await Promise.all([
+	const [playerResponse, images, tagResponse, unavailableIds] = await Promise.all([
 		sheets.spreadsheets.values
 			.get({ spreadsheetId: SPREADSHEET_ID, range: 'Form responses 1' })
 			.then(handleResponse),
@@ -33,6 +33,9 @@ async function load() {
 			.then((values) => {
 				return values.map(tagMapper);
 			}),
+		sheets.spreadsheets.values
+			.get({ spreadsheetId: SPREADSHEET_ID, range: 'unavailable' })
+			.then(handleListResponse),
 	]);
 
 	// const images = getImages(imageResponse);
@@ -40,6 +43,10 @@ async function load() {
 
 	const players: any[] = playerResponse
 		.map(rowToPlayer)
+		.map((player) => {
+			return { ...player, unavailable: unavailableIds.includes(player.key) };
+		})
+		.filter((player) => !unavailableIds.includes(player.key))
 		.sort((a, b) => {
 			const result = a.bio.first.localeCompare(b.bio.first);
 			return result !== 0 ? result : a.bio.last.localeCompare(b.bio.last);
@@ -142,4 +149,13 @@ function handleResponse(response: any) {
 	}
 	response.data.values.shift();
 	return response.data.values;
+}
+
+function handleListResponse(response: { data: { values: string[][] } } | any) {
+	if (!response.data.values) {
+		return [];
+	}
+	const values = response.data.values;
+
+	return values.map((value: string[]) => value[0].trim());
 }

@@ -11,12 +11,11 @@
 	import { Textarea } from '$lib/components/ui/textarea';
 	import type { Match, MatchDetail } from '$lib/database/IndexedDB';
 	import { getMatch, updateMatchDetail } from '$lib/database/MatchService';
-	import { matchDetailSchema, matchScheduleSchema } from '$lib/validation/Schemas';
+	import { matchDetailSchema } from '$lib/validation/Schemas';
 	import { getErrors, isValid } from '$lib/validation/Validator';
 	import { onMount } from 'svelte';
 	import { toast } from 'svelte-sonner';
 	import Breadcrumb from '$lib/components/Breadcrumb.svelte';
-	import { addMatchUpdate } from '$lib/stores/MatchUpdateStore.svelte';
 
 	let match: Match | undefined = $state();
 	const matchId = Number.parseInt(page.params.id as string);
@@ -25,12 +24,14 @@
 		venue: '',
 		type: '',
 		address: '',
+		kit: '',
 	});
 
 	let errors = $state({
 		venue: '',
 		type: '',
 		address: '',
+		kit: '',
 	});
 
 	onMount(async () => {
@@ -49,7 +50,6 @@
 		}
 
 		updateMatchDetail(matchId, { ...data });
-		addMatchUpdate(matchId, 'details');
 		toast.success('Match details updated');
 		goto(`/match/${matchId}`);
 	}
@@ -59,6 +59,12 @@
 		{ value: 'AWAY', label: 'Away' },
 		{ value: 'NEUTRAL', label: 'Neutral' },
 	];
+
+	const kitOptions = [
+		{ value: 'MAIN', label: 'Main' },
+		{ value: 'SECONDARY', label: 'Secondary' },
+	];
+
 	const breadcrumbs = [
 		{ name: 'Home', href: '/' },
 		{ name: 'Match', href: `/match/${matchId}` },
@@ -101,6 +107,23 @@
 				<Label for="match-address">Address</Label>
 				<Textarea id="match-address" bind:value={data.address} />
 				<ErrorLabel>{errors.address}</ErrorLabel>
+			</div>
+
+			<div class="grid w-full max-w-sm items-center gap-1.5">
+				<Label for="match-kit">Kit</Label>
+
+				<Select.Root type="single" bind:value={data.kit}>
+					<Select.Trigger class="w-full">
+						{data.kit ? data.kit : 'Select a kit'}
+					</Select.Trigger>
+					<Select.Content>
+						{#each kitOptions as kit}
+							<Select.Item value={kit.value}>{kit.label}</Select.Item>
+						{/each}
+					</Select.Content>
+				</Select.Root>
+
+				<ErrorLabel>{errors.kit}</ErrorLabel>
 			</div>
 			<Separator />
 			<Button href={`/match/${matchId}`} variant="outline">Cancel</Button>

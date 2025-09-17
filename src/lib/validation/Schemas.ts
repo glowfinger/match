@@ -17,6 +17,7 @@ export const matchDetailSchema = z.object({
 	venue: z.string().min(1),
 	type: z.string().min(1),
 	address: z.string().min(1),
+	kit: z.string().min(1),
 });
 
 export const matchTeamSchema = z.object({

@@ -23,30 +23,19 @@
 	];
 </script>
 
-<!-- <Sheet.Root open={filtersOpen} onOpenChange={() => (filtersOpen = !filtersOpen)}>
-	<Sheet.Content side="right">
-		<Sheet.Header>
-			<Sheet.Title>Filters</Sheet.Title>
-		</Sheet.Header>
-		<TeamStats {players} />
-		<Sheet.Footer>
-			<Sheet.Close>Save changes</Sheet.Close>
-		</Sheet.Footer>
-	</Sheet.Content>
-</Sheet.Root> -->
 <Breadcrumb {breadcrumbs} />
 <HeadingLg>Match Schedule</HeadingLg>
+
+<a href="/players/load" class="variant-filled-primary btn">Load players</a>
+
+<ul class="mx-auto grid max-w-2xl auto-rows-fr grid-cols-2 gap-2 lg:max-w-none lg:grid-cols-2">
+	{#each players as player}
+		<PlayerCard {player} />
+	{/each}
+</ul>
 
 <div class="grid grid-cols-1 gap-2">
 	<!-- <button class="variant-filled-primary btn" onclick={() => (filtersOpen = true)}
 		>Open filters {filtersOpen}</button
 	> -->
-
-	<a href="/players/load" class="variant-filled-primary btn">Load players</a>
-
-	<CardList>
-		{#each players as player}
-			<PlayerCard {player} />
-		{/each}
-	</CardList>
 </div>

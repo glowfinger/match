@@ -14,3 +14,20 @@ export function drawTitle(
 	ctx.strokeText(title, x, y);
 	ctx.fillText(title, x, y);
 }
+
+export function drawVersusTitle(
+	ctx: OffscreenCanvasRenderingContext2D,
+	text: string,
+	x: number,
+	y: number,
+): void {
+	ctx.font = `40px regular`;
+	ctx.textAlign = 'left';
+
+	ctx.lineWidth = 6;
+	ctx.strokeStyle = Colours.NAVY;
+	ctx.strokeText(text, x, y);
+
+	ctx.fillStyle = Colours.WHITE;
+	ctx.fillText(text, x, y);
+}

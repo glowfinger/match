@@ -10,8 +10,8 @@
 	import ImageWorker from '$lib/workers/Image.worker.ts?worker';
 	import { onDestroy, onMount } from 'svelte';
 
-	const matchId = Number.parseInt(page.params.id);
-	const matchImageType = page.params.type;
+	const matchId = Number.parseInt(page.params.id as string);
+	const matchImageType = page.params.type as string;
 	const mediaType = MediaImageTypes.find((m) => m.type === matchImageType);
 	let match: Match | undefined = $state();
 	let images: MatchImage[] = $state([]);
@@ -21,14 +21,16 @@
 	worker.onmessage = async (event: MessageEvent) => {
 		const { type, task } = event.data;
 
-		if (task === 'FONTS_LOADED' && type === matchImageType) {
-			console.log('FONTS_LOADED');
-		}
+		console.log('worker.onmessage', event.data);
 
 		if (task === 'IMAGES_GENERATED' && type === matchImageType) {
 			generating = generating.filter((t) => t !== type);
 			images = await getImagesByMatchAndType(matchId, matchImageType);
-			console.log('IMAGES_GENERATED');
+		}
+
+		if (task === 'NO_IMAGES_GENERATED' && type === matchImageType) {
+			generating = generating.filter((t) => t !== type);
+			images = await getImagesByMatchAndType(matchId, matchImageType);
 		}
 	};
 
@@ -41,8 +43,6 @@
 		const [matchData, imagesData] = await promise;
 		match = matchData;
 		images = imagesData;
-
-		console.log('images', images);
 
 		// if (images.length === 0) {
 		// 	worker.postMessage({ matchId, type: matchImageType });
@@ -80,11 +80,18 @@
 	>Redraw image</button
 >
 <HeadingMd>Post</HeadingMd>
+
+{#if images.length > 0}
+	<img src={images[3].base64} alt={images[3].type} />
+{/if}
+
 {#if images.length === 2}
-	<div class="gap-y- grid grid-cols-2">
-		{#each images as image}
-			<img src={image.base64} alt={image.type} />
-		{/each}
+	<div>
+		<div class="grid grid-cols-3">
+			{#each images as image}
+				<img src={image.base64} alt={image.type} />
+			{/each}
+		</div>
 	</div>
 {:else if images.length === 4}
 	<div class="gap-y- grid grid-cols-4">
@@ -92,15 +99,15 @@
 			<img src={image.base64} alt={image.type} />
 		{/each}
 	</div>
-{:else if images.length === 0}
-	<p>No images</p>
-{:else}
-	<div class="gap-y- grid grid-cols-2">
+{:else if images.length === 1}
+	<div class="grid grid-cols-1">
 		{#each images as image}
 			<img src={image.base64} alt={image.type} />
 		{/each}
 	</div>
-{/if}
+{:else if images.length === 0}
+	<p>No images</p>
+{:else}{/if}
 
 <!-- {#if matchImageType === 'highlight'}
 	<form onsubmit={handleHighlightSubmit}>

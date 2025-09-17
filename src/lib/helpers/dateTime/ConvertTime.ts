@@ -18,41 +18,40 @@ export function matchDate(dateString: string) {
 
 	const date = DateTime.fromSQL(dateString);
 
-	if (date.invalid) {
-		return 'DATE: INVALID';
+	if (!date.isValid) {
+		return '';
 	}
-
-	return '-----';
+	return fullDate(date);
 }
 
-// function fullDate(date) {
-// 	return [date.toFormat('cccc'), dayOfTheWeek(date), date.toFormat('LLLL')].join(' ');
-// }
+function fullDate(date: DateTime) {
+	return [date.toFormat('cccc'), dayOfTheWeek(date), date.toFormat('LLLL')].join(' ');
+}
 
-// function dayOfTheWeek(date) {
-// 	return date.toFormat('d') + getNumberSuffix(date.toFormat('d'));
-// }
+function dayOfTheWeek(date: DateTime) {
+	return date.toFormat('d') + getNumberSuffix(date.toFormat('d'));
+}
 
-// function getNumberSuffix(num) {
-// 	const th = 'th';
-// 	const rd = 'rd';
-// 	const nd = 'nd';
-// 	const st = 'st';
+function getNumberSuffix(num: string) {
+	const th = 'th';
+	const rd = 'rd';
+	const nd = 'nd';
+	const st = 'st';
 
-// 	if (num === '11' || num === '12' || num === '13') {
-// 		return th;
-// 	}
+	if (num === '11' || num === '12' || num === '13') {
+		return th;
+	}
 
-// 	let lastDigit = num.toString().slice(-1);
+	const lastDigit = num.toString().slice(-1);
 
-// 	switch (lastDigit) {
-// 		case '1':
-// 			return st;
-// 		case '2':
-// 			return nd;
-// 		case '3':
-// 			return rd;
-// 		default:
-// 			return th;
-// 	}
-// }
+	switch (lastDigit) {
+		case '1':
+			return st;
+		case '2':
+			return nd;
+		case '3':
+			return rd;
+		default:
+			return th;
+	}
+}

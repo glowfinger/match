@@ -53,6 +53,7 @@ export interface MatchDetail {
 	address: string;
 	venue: string;
 	type: string;
+	kit: string;
 }
 
 export interface MatchKit {
@@ -107,6 +108,7 @@ export interface Player {
 	key: string;
 	bio: PlayerBio;
 	positions: PlayerPosition;
+
 	images: PlayerImage[];
 	tags: PlayerTag;
 	social: { instagram: string };
@@ -150,6 +152,12 @@ export interface BackgroundImage {
 	blob: Blob;
 }
 
+export interface ImageFile {
+	id: number;
+	url: string;
+	blob: Blob;
+}
+
 const db = new Dexie('MatchDatabase') as Dexie & {
 	matches: EntityTable<Match, 'id'>;
 	players: EntityTable<Player, 'key'>;
@@ -163,6 +171,7 @@ const db = new Dexie('MatchDatabase') as Dexie & {
 	backgroundsImages: EntityTable<BackgroundImage, 'id'>;
 	events: EntityTable<Event, 'uuid'>;
 	eventsImages: EntityTable<EventImage, 'id'>;
+	imageFiles: EntityTable<ImageFile, 'id'>;
 };
 
 db.version(1.0).stores({
@@ -179,6 +188,7 @@ db.version(1.0).stores({
 	backgroundsImages: '++id, [type], [type+page]',
 	events: 'uuid, [createdAt], [template]',
 	eventsImages: '++id, [eventUuid+type]',
+	imageFiles: '++id',
 });
 
 export { db };

@@ -20,6 +20,6 @@ export async function getSelections(matchId: number): Promise<Selection[]> {
 	return await db.selections.where({ matchId }).toArray();
 }
 
-export async function getStartingSelections(matchId: number): Promise<Selection[]> {
+export async function getYesSelectionsByMatchId(matchId: number): Promise<Selection[]> {
 	return await db.selections.where({ matchId, available: 'yes' }).toArray();
 }

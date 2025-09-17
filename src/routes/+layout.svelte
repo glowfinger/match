@@ -16,7 +16,6 @@
 	import { toast } from 'svelte-sonner';
 
 	import { addFonts, clearFonts, hasFonts } from '$lib/database/FontDBService';
-	import { matchUpdates } from '$lib/stores/MatchUpdateStore.svelte';
 	let { children } = $props();
 
 	let clubWorker: Worker = new ClubWorker();
@@ -54,7 +53,6 @@
 			clubWorker.postMessage(JSON.parse(JSON.stringify(requiredClubImages)));
 		}
 	});
-	$effect(() => {});
 
 	onDestroy(() => {
 		clubWorker.terminate();

@@ -4,12 +4,13 @@ import { getMatchPositions } from '$lib/database/MatchPositionDBService';
 import { getMatch } from '$lib/database/MatchService';
 import { getMatchTags } from '$lib/database/MatchTagDBService';
 import { getPlayersByKeys } from '$lib/database/PlayerDBService';
-import { getStartingSelections } from '$lib/database/SelectionDBService';
-import { matchDate } from '$lib/helpers/dateTime/ConvertTime';
+import { getYesSelectionsByMatchId } from '$lib/database/SelectionDBService';
 
 import StarterPositons from '../constants/lineup/StarterPositons';
 import headshotLoader from '../images/HeadshotLoader';
 import canvasSplitter from './CanvasSplitter';
+import FinishersPartialRenderer from './lineup/FinishersPartialRenderer';
+import InfoPartialRenderer from './lineup/InfoPartialRenderer';
 
 export default async function LineupRederer(
 	matchId: number,
@@ -17,15 +18,16 @@ export default async function LineupRederer(
 ): Promise<Omit<MatchImage, 'id'>[]> {
 	const PAGES = 4;
 	const WIDTH = 1080;
-	const HEIGHT = 1080;
+	const HEIGHT = 1350;
 	const canvas = new OffscreenCanvas(PAGES * WIDTH, HEIGHT);
 	const ctx = canvas.getContext('2d', { willReadFrequently: true });
 	if (!ctx) {
 		throw new Error('Failed to get 2D context');
 	}
 
+	console.log('LineupRenderer');
 	const match = await getMatch(matchId);
-	const selections = await getStartingSelections(matchId);
+	const selections = await getYesSelectionsByMatchId(matchId);
 	const positions = await getMatchPositions(matchId);
 	const players = await getPlayersByKeys(selections.map((s) => s.playerKey));
 	const debuts = (await getMatchTags(matchId, 'debut')).map((t) => t.playerKey);
@@ -33,9 +35,18 @@ export default async function LineupRederer(
 	ctx.fillStyle = Colours.NAVY;
 	ctx.fillRect(0, 0, canvas.width, canvas.height);
 
+	const back = await fetch('/img/backgrounds/seniors/senior-pink-4-panel.png')
+		.then((response) => response.blob())
+		.then(async (blob) => await createImageBitmap(blob));
+
+	ctx.drawImage(back, 0, 0);
+
+	await InfoPartialRenderer(ctx, matchId);
+	await FinishersPartialRenderer(ctx, matchId);
+
 	drawTitle(ctx, 'FORWARDS', 1080 + 60, 160);
 	drawTitle(ctx, 'BACKS', 1080 + 1080 + 60, 160);
-	drawTitle(ctx, 'FINISHERS', 1080 + 1080 + 1080 + 60, 160);
+	// drawTitle(ctx, 'FINISHERS', 1080 + 1080 + 1080 + 60, 160);
 
 	// aysnc loop
 	for (const i of StarterPositons) {
@@ -91,13 +102,13 @@ export default async function LineupRederer(
 	}
 
 	// Title
-	ctx.font = `140px black`;
-	ctx.textAlign = 'left';
-	ctx.fillStyle = Colours.WHITE;
-	ctx.lineWidth = 16;
-	ctx.strokeStyle = Colours.NAVY;
-	ctx.strokeText('LINEUP', 60, 160);
-	ctx.fillText('LINEUP', 60, 160);
+	// ctx.font = `140px black`;
+	// ctx.textAlign = 'left';
+	// ctx.fillStyle = Colours.WHITE;
+	// ctx.lineWidth = 16;
+	// ctx.strokeStyle = Colours.NAVY;
+	// ctx.strokeText('LINEUP', 60, 160);
+	// ctx.fillText('LINEUP', 60, 160);
 
 	// Team name
 	// ctx.font = `80px black`;
@@ -109,13 +120,13 @@ export default async function LineupRederer(
 	// ctx.fillText(teams.home.name, 60, 280);
 
 	// VS
-	ctx.font = `40px regular`;
-	ctx.textAlign = 'left';
-	ctx.lineWidth = 6;
-	ctx.fillStyle = Colours.WHITE;
-	ctx.strokeStyle = Colours.NAVY;
-	ctx.strokeText('vs', 60, 360);
-	ctx.fillText('vs', 60, 360);
+	// ctx.font = `40px regular`;
+	// ctx.textAlign = 'left';
+	// ctx.lineWidth = 6;
+	// ctx.fillStyle = Colours.WHITE;
+	// ctx.strokeStyle = Colours.NAVY;
+	// ctx.strokeText('vs', 60, 360);
+	// ctx.fillText('vs', 60, 360);
 
 	// Opposition team
 	// ctx.font = `48px regular`;
@@ -127,24 +138,24 @@ export default async function LineupRederer(
 	// ctx.fillText(teams.away.name, 120, 360);
 
 	// Match type
-	const MATCH_TYPE = match.detail?.type ?? '';
-	ctx.font = `60px black`;
-	ctx.textAlign = 'left';
-	ctx.lineWidth = 6;
-	ctx.fillStyle = Colours.WHITE;
-	ctx.strokeStyle = Colours.NAVY;
-	ctx.strokeText(MATCH_TYPE, 60, 440);
-	ctx.fillText(MATCH_TYPE, 60, 440);
+	// const MATCH_TYPE = match.detail?.type ?? '';
+	// ctx.font = `60px black`;
+	// ctx.textAlign = 'left';
+	// ctx.lineWidth = 6;
+	// ctx.fillStyle = Colours.WHITE;
+	// ctx.strokeStyle = Colours.NAVY;
+	// ctx.strokeText(MATCH_TYPE, 60, 440);
+	// ctx.fillText(MATCH_TYPE, 60, 440);
 
 	// Date
-	const date = matchDate(match.schedule?.matchOn ?? '');
-	ctx.font = `36px regular`;
-	ctx.textAlign = 'left';
-	ctx.lineWidth = 6;
-	ctx.fillStyle = Colours.WHITE;
-	ctx.strokeStyle = Colours.NAVY;
-	ctx.strokeText(date, 60, 540);
-	ctx.fillText(date, 60, 540);
+	// const date = matchDate(match.schedule?.matchOn ?? '');
+	// ctx.font = `36px regular`;
+	// ctx.textAlign = 'left';
+	// ctx.lineWidth = 6;
+	// ctx.fillStyle = Colours.WHITE;
+	// ctx.strokeStyle = Colours.NAVY;
+	// ctx.strokeText(date, 60, 540);
+	// ctx.fillText(date, 60, 540);
 
 	// // Timings
 	// const times = `Meet: ${convertTime(match.meetAt)} - KO: ${convertTime(match.kickOffAt)}`;
@@ -157,14 +168,14 @@ export default async function LineupRederer(
 	// ctx.fillText(times, 60, 620);
 
 	// Address
-	const ADDRESS = match.detail?.address ?? '';
-	ctx.font = `36px regular`;
-	ctx.textAlign = 'left';
-	ctx.lineWidth = 6;
-	ctx.fillStyle = Colours.WHITE;
-	ctx.strokeStyle = Colours.NAVY;
-	ctx.strokeText(ADDRESS, 60, 700);
-	ctx.fillText(ADDRESS, 60, 700);
+	// const ADDRESS = match.detail?.address ?? '';
+	// ctx.font = `36px regular`;
+	// ctx.textAlign = 'left';
+	// ctx.lineWidth = 6;
+	// ctx.fillStyle = Colours.WHITE;
+	// ctx.strokeStyle = Colours.NAVY;
+	// ctx.strokeText(ADDRESS, 60, 700);
+	// ctx.fillText(ADDRESS, 60, 700);
 
 	// Footnote
 	// ctx.font = `30px regular`;
