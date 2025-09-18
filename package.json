@@ -69,9 +69,5 @@
 		"postcss": "^8.5.3",
 		"svelte-radix": "^2.0.1",
 		"three": "^0.174.0"
-	},
-	"optionalDependencies": {
-		"@rollup/rollup-darwin-arm64": "^4.50.0",
-		"@rollup/rollup-linux-x64-gnu": "4.9.5"
 	}
 }

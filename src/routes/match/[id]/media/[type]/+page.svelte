@@ -81,33 +81,15 @@
 >
 <HeadingMd>Post</HeadingMd>
 
-{#if images.length > 0}
-	<img src={images[3].base64} alt={images[3].type} />
-{/if}
-
-{#if images.length === 2}
-	<div>
-		<div class="grid grid-cols-3">
-			{#each images as image}
-				<img src={image.base64} alt={image.type} />
-			{/each}
-		</div>
-	</div>
-{:else if images.length === 4}
-	<div class="gap-y- grid grid-cols-4">
-		{#each images as image}
-			<img src={image.base64} alt={image.type} />
-		{/each}
-	</div>
-{:else if images.length === 1}
-	<div class="grid grid-cols-1">
-		{#each images as image}
-			<img src={image.base64} alt={image.type} />
-		{/each}
-	</div>
-{:else if images.length === 0}
+{#if images.length === 0}
 	<p>No images</p>
-{:else}{/if}
+{:else}
+	<div class="grid grid-cols-4 gap-0">
+		{#each images as image}
+			<img class="block w-full shrink-0" src={image.base64} alt={image.type} />
+		{/each}
+	</div>
+{/if}
 
 <!-- {#if matchImageType === 'highlight'}
 	<form onsubmit={handleHighlightSubmit}>
