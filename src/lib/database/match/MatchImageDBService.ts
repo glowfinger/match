@@ -27,6 +27,5 @@ export async function deleteMatchImage(matchId: number): Promise<void> {
 }
 
 export async function deleteMatchImagesByType(matchId: number, type: string): Promise<void> {
-	console.log('deleteMatchImagesByType', matchId, type);
 	await db.matchImages.where({ matchId, type }).delete();
 }

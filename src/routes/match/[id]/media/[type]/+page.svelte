@@ -22,8 +22,6 @@
 	worker.onmessage = async (event: MessageEvent) => {
 		const { type, task } = event.data;
 
-		console.log('worker.onmessage', event.data);
-
 		if (task === 'IMAGES_GENERATED' && type === matchImageType) {
 			generating = generating.filter((t) => t !== type);
 			images = await getImagesByMatchAndType(matchId, matchImageType);
@@ -36,18 +34,14 @@
 	};
 
 	onMount(async () => {
-		const promise = Promise.all([
+		[match, images] = await Promise.all([
 			getMatch(matchId),
 			getImagesByMatchAndType(matchId, matchImageType),
 		]);
-		generateImage(matchImageType);
-		const [matchData, imagesData] = await promise;
-		match = matchData;
-		images = imagesData;
 
-		// if (images.length === 0) {
-		// 	worker.postMessage({ matchId, type: matchImageType });
-		// }
+		if (images.length === 0) {
+			generateImage(matchImageType);
+		}
 	});
 
 	onDestroy(() => {

@@ -16,7 +16,17 @@
 	import CalendarIcon from '$lib/components/icons/CalendarIcon.svelte';
 	import FortIcon from '$lib/components/icons/FortIcon.svelte';
 	import SwordIcon from '$lib/components/icons/SwordIcon.svelte';
-
+	import ArticlePersonIcon from '$lib/components/icons/ArticlePersonIcon.svelte';
+	import ArticleIcon from '$lib/components/icons/ArticleIcon.svelte';
+	import SocialLeaderboardIcon from '$lib/components/icons/SocialLeaderboardIcon.svelte';
+	import AwardStarIcon from '$lib/components/icons/AwardStarIcon.svelte';
+	import StarShineIcon from '$lib/components/icons/StarShineIcon.svelte';
+	import SportsScoreIcon from '$lib/components/icons/SportsScoreIcon.svelte';
+	import ErrorIcon from '$lib/components/icons/ErrorIcon.svelte';
+	import { getImagesByMatch } from '$lib/database/match/MatchImageDBService';
+	import type { MatchImage } from '$lib/database/IndexedDB';
+	import MediaCard from '$lib/components/cards/MediaCard.svelte';
+	import { MediaImageTypes, type MediaImageType } from '$lib/Constants';
 	if (!page.params.id) {
 		throw new Error('Match ID is required');
 	}
@@ -26,6 +36,7 @@
 	let match: Match | undefined = $state();
 	let players: Player[] = $state([]);
 	let selections: Selection[] = $state([]);
+	let images: MatchImage[] = $state([]);
 
 	onMount(async () => {
 		match = await getMatch(matchId);
@@ -34,6 +45,8 @@
 		players = (await getPlayers()).filter((player) =>
 			selections.some((selection) => selection.playerKey === player.key),
 		);
+
+		images = await getImagesByMatch(matchId);
 	});
 
 	const breadcrumbs = [
@@ -41,12 +54,35 @@
 		{ name: 'Match', href: `/match/${matchId}` },
 	];
 
-	const MANAGE_LINKS = [
+	const INFO_LINKS = [
 		{ label: 'Team', href: `/match/${matchId}/team`, icon: FortIcon },
 		{ label: 'Opposition', href: `/match/${matchId}/opposition`, icon: SwordIcon },
 		{ label: 'Details', href: `/match/${matchId}/details`, icon: StadiumIcon },
 		{ label: 'Schedule', href: `/match/${matchId}/schedule`, icon: CalendarIcon },
 	];
+
+	const MANAGE_LINKS = [
+		{ label: 'Squad', href: `/match/${matchId}/squad`, icon: ArticlePersonIcon },
+		{ label: 'Lineup', href: `/match/${matchId}/lineup`, icon: ArticleIcon },
+		{
+			label: 'Leadership',
+			href: `/match/${matchId}/roles/leadership`,
+			icon: SocialLeaderboardIcon,
+		},
+		{ label: 'Awards', href: `/match/${matchId}/roles/awards`, icon: AwardStarIcon },
+		{ label: 'Debuts', href: `/match/${matchId}/debuts`, icon: StarShineIcon },
+		{ label: 'Result', href: `/match/${matchId}/result`, icon: SportsScoreIcon },
+	];
+
+	const MEDIA_LINKS = MediaImageTypes.map((type) => mediaMapper(type));
+
+	function mediaMapper(type: MediaImageType) {
+		return {
+			label: type.label,
+			href: `/match/${matchId}/media/${type.type}`,
+			type: type.type,
+		};
+	}
 </script>
 
 <Breadcrumb {breadcrumbs} />
@@ -57,27 +93,29 @@
 	<MatchCard {match} />
 	<Separator />
 	<HeadingMd>Info</HeadingMd>
-
-	<a href={`/match/${match.id}/team`} class="variant-filled-primary btn">Team</a>
-	<a href={`/match/${match.id}/opposition`} class="variant-filled-primary btn">Opposition</a>
-	<a href={`/match/${match.id}/details`} class="variant-filled-primary btn">Details</a>
-	<a href={`/match/${match.id}/schedule`} class="variant-filled-primary btn">Schedule</a>
-
+	<ul role="list" class="grid grid-cols-4 gap-2">
+		{#each INFO_LINKS as link}
+			<LinkCard {link} />
+		{/each}
+	</ul>
 	<Separator />
 
 	<HeadingMd>Manage</HeadingMd>
-
 	<ul role="list" class="grid grid-cols-4 gap-2">
 		{#each MANAGE_LINKS as link}
 			<LinkCard {link} />
 		{/each}
 	</ul>
-
 	<Separator />
 
 	<HeadingMd>Media</HeadingMd>
-	<a href={`/match/${match.id}/media`} class="variant-filled-primary btn">Media (WIP)</a>
+	<ul role="list" class="grid grid-cols-4 gap-2">
+		{#each MEDIA_LINKS as link}
+			<MediaCard {link} image={images.find((image) => image.type === link.type)} />
+		{/each}
+	</ul>
 	<Separator />
+
 	<HeadingMd>Analysis</HeadingMd>
 	<a href={`/match/${match.id}/analysis`} class="variant-filled-primary btn">Analysis dashboad</a>
 	<HeadingMd>Admin</HeadingMd>

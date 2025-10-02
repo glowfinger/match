@@ -1,6 +1,7 @@
 import { Colours, SPONSORS } from '$lib/Constants';
 import type { MatchImage } from '$lib/database/IndexedDB';
 import { getMatch } from '$lib/database/MatchService';
+import { getImageBitmap } from '../ImageCache';
 import canvasSplitter from './CanvasSplitter';
 
 export default async function matchRenderer(
@@ -19,13 +20,13 @@ export default async function matchRenderer(
 
 	const match = await getMatch(matchId);
 
-	// ctx.fillStyle = Colours.NAVY;
-	// ctx.fillRect(0, 0, canvas.width, canvas.height);
+	ctx.fillStyle = Colours.NAVY;
+	ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-	// {
-	// 	const img = await getImageBitmap('/img/backgrounds/seniors/senior-pink-3240-1080.png');
-	// 	ctx.drawImage(img, 0, 0);
-	// }
+	{
+		const img = await getImageBitmap('/img/backgrounds/seniors/senior-pink-3240-1080.png');
+		ctx.drawImage(img, 0, 0);
+	}
 
 	// Team squad
 	if (match.team) {

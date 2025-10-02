@@ -9,7 +9,6 @@ import type { MatchImage } from '$lib/database/IndexedDB';
 import { deleteMatchImagesByType, setMatchImage } from '$lib/database/match/MatchImageDBService';
 
 onmessage = async ({ data }: MessageEvent) => {
-	console.log('Image worker received message', data);
 	await preloadFonts();
 	postMessage({ task: 'FONTS_LOADED', type: data.type });
 

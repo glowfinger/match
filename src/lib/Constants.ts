@@ -16,30 +16,30 @@ export const MediaImageTypes: MediaImageType[] = [
 		type: 'MATCH',
 		label: 'Match',
 	},
-	{
-		type: 'CANCELLED',
-		label: 'Cancelled',
-	},
-	{
-		type: 'RESCHEDULED',
-		label: 'Rescheduled',
-	},
-	{
-		type: 'RESULT',
-		label: 'Result',
-	},
-	{
-		type: 'TEAM',
-		label: 'Team',
-	},
-	{
-		type: 'LINEUP',
-		label: 'Lineup',
-	},
-	{
-		type: 'highlight',
-		label: 'Highlight',
-	},
+	// {
+	// 	type: 'CANCELLED',
+	// 	label: 'Cancelled',
+	// },
+	// {
+	// 	type: 'RESCHEDULED',
+	// 	label: 'Rescheduled',
+	// },
+	// {
+	// 	type: 'RESULT',
+	// 	label: 'Result',
+	// },
+	// {
+	// 	type: 'TEAM',
+	// 	label: 'Team',
+	// },
+	// {
+	// 	type: 'LINEUP',
+	// 	label: 'Lineup',
+	// },
+	// {
+	// 	type: 'highlight',
+	// 	label: 'Highlight',
+	// },
 ];
 
 export const SPONSORS = [
