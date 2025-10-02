@@ -4,6 +4,7 @@ import Dexie, { type EntityTable } from 'dexie';
 export interface Match {
 	id: number;
 	createdAt: string;
+	updatedAt: string;
 	userAgent: string;
 	team?: MatchTeam;
 	opponent?: MatchOpponent;
@@ -89,6 +90,7 @@ export interface MatchImage {
 	type: string;
 	page: number;
 	base64: string;
+	createdAt: string;
 }
 
 export interface Club {

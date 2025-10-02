@@ -130,3 +130,9 @@
 {/if} -->
 
 <pre class=" overflow-x-scroll">{JSON.stringify(match, null, 2)}</pre>
+
+<pre class="overflow-x-scroll">{JSON.stringify(
+		images.map((image) => ({ ...image, base64: image.base64.length })),
+		null,
+		2,
+	)}</pre>

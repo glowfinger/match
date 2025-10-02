@@ -24,7 +24,12 @@ export default async function matchRenderer(
 	ctx.fillRect(0, 0, canvas.width, canvas.height);
 
 	{
-		const img = await getImageBitmap('/img/backgrounds/seniors/senior-pink-3240-1080.png');
+		let url = '/img/backgrounds/seniors/senior-navy-3240-1080.png';
+		if (match.detail?.kit !== 'MAIN') {
+			url = '/img/backgrounds/seniors/senior-pink-3240-1080.png';
+		}
+
+		const img = await getImageBitmap(url);
 		ctx.drawImage(img, 0, 0);
 	}
 
@@ -178,6 +183,7 @@ export default async function matchRenderer(
 		type,
 		page,
 		base64,
+		createdAt: new Date().toISOString(),
 	}));
 }
 
