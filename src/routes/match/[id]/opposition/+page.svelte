@@ -23,7 +23,7 @@
 	import { cn } from '$lib/utils.js';
 	import { Separator } from '$lib/components/ui/separator';
 
-	const matchId = Number.parseInt(page.params.id);
+	const matchId = Number.parseInt(page.params.id as string);
 
 	let match: Match | undefined = $state();
 	let options: { value: string; label: string }[] = $state([]);
@@ -118,8 +118,7 @@
 {:else}
 	<form class="grid grid-cols-1 gap-2" onsubmit={handleSubmission}>
 		<div class="grid w-full max-w-sm gap-1.5">
-			<Label for="match-type">Club</Label>
-
+			<Label for="match-opposition-club">Club</Label>
 			<Popover.Root bind:open>
 				<Popover.Trigger bind:ref={triggerRef}>
 					{#snippet child({ props })}
@@ -161,8 +160,13 @@
 			<ErrorLabel>{errors.club}</ErrorLabel>
 		</div>
 		<div class="grid w-full max-w-sm items-center gap-1.5">
-			<Label for="match-type">squad</Label>
-			<Input type="text" name="opposition-team" id="match-type" bind:value={data.squad} />
+			<Label for="match-opposition-squad">squad</Label>
+			<Input
+				type="text"
+				name="opposition-team"
+				id="match-opposition-squad"
+				bind:value={data.squad}
+			/>
 			<ErrorLabel>{errors.squad}</ErrorLabel>
 		</div>
 

@@ -3,45 +3,6 @@ import type { MatchImage } from '$lib/database/IndexedDB';
 import { getMatch } from '$lib/database/MatchService';
 import canvasSplitter from './CanvasSplitter';
 
-type ContentBackground = {
-	type: 'BACKGROUND';
-	page: number;
-	color: string;
-};
-
-type ContentImage = {
-	type: 'image';
-	page: number;
-	src: string;
-	position: {
-		x: number;
-		y: number;
-		width: number;
-		height: number;
-	};
-};
-
-type ContentItem = ContentBackground | ContentImage | ContentTitle;
-
-type ContentTitle = {
-	type: 'TITLE';
-	page: number;
-	text: string;
-	x: number;
-	y: number;
-};
-
-const content: ContentItem[] = [
-	{ page: 1, type: 'BACKGROUND', color: Colours.PINK },
-	{
-		page: 1,
-		type: 'image',
-		src: '/img/backgrounds/seniors/pink-1080-1350-1-panel.png',
-		position: { x: 0, y: 0, width: 1080, height: 1350 },
-	},
-	{ page: 1, type: 'TITLE', text: 'NEXT MATCH', x: 60, y: 160 },
-];
-
 export default async function matchRenderer(
 	matchId: number,
 	type: string,
@@ -58,41 +19,123 @@ export default async function matchRenderer(
 
 	const match = await getMatch(matchId);
 
-	// const kit = match.detail?.kit ?? 'MAIN';
-
-	// if (kit === 'MAIN') {
-	// 	ctx.fillStyle = Colours.NAVY;
-	// } else {
-	// 	ctx.fillStyle = Colours.PINK;
-	// }
-	// // ctx.fillStyle = Colours.NAVY;
+	// ctx.fillStyle = Colours.NAVY;
 	// ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-	for (const item of content) {
-		console.log(item);
-		if (item.type === 'BACKGROUND') {
-			drawBackground(ctx, canvas.width, canvas.height, item.color);
-		}
+	// {
+	// 	const img = await getImageBitmap('/img/backgrounds/seniors/senior-pink-3240-1080.png');
+	// 	ctx.drawImage(img, 0, 0);
+	// }
 
-		if (item.type === 'TITLE') {
-			drawTitle(ctx, item.text, item.x, item.y);
-		}
+	// Team squad
+	if (match.team) {
+		const team = [match.team.club ?? '', match.team.squad ?? ''].join(' ');
+		ctx.font = `100px black`;
+		ctx.textAlign = 'center';
+		ctx.fillStyle = Colours.WHITE;
+		ctx.lineWidth = 16;
+		ctx.strokeStyle = Colours.NAVY;
+		ctx.strokeText(team, 540, 200);
+		ctx.fillText(team, 540, 200);
 	}
 
-	// ctx.strokeText('NEXT MATCH', 60, 160);
-	// ctx.fillText('NEXT MATCH', 60, 160);
+	// Match type
+	if (match.detail) {
+		ctx.font = `30px black`;
+		ctx.textAlign = 'left';
+		ctx.fillStyle = Colours.WHITE;
+		ctx.lineWidth = 4;
+		ctx.strokeStyle = Colours.NAVY;
+		ctx.strokeText(match.detail.type, 60, 360);
+		ctx.fillText(match.detail.type, 60, 360);
+	}
 
-	// const back = await fetch('/img/backgrounds/seniors/senior-pink-3240-1080.png')
-	// 	.then((response) => response.blob())
-	// 	.then(async (blob) => await createImageBitmap(blob));
+	if (match.team) {
+		const lines = [match.team.club, match.team.squad];
+		const lineHeight = 54;
+		const x = 440;
+		const y = 380;
 
-	// ctx.drawImage(back, 0, 0);
+		ctx.font = `${lineHeight}px regular`;
+		ctx.textAlign = 'right';
+		ctx.lineWidth = 6;
+		ctx.fillStyle = Colours.WHITE;
+		ctx.strokeStyle = Colours.NAVY;
+		lines.forEach((line, index) => {
+			ctx.strokeText(line, x, y + index * lineHeight);
+			ctx.fillText(line, x, y + index * lineHeight);
+		});
+	}
 
-	// const img = await fetch(
-	// 	'https://glowfinger.blob.core.windows.net/smg/background-removed/DSC03123.png',
-	// )
-	// 	.then((response) => response.blob())
-	// 	.then(async (blob) => await createImageBitmap(blob));
+	if (match.team && match.opponent) {
+		const text = 'vs';
+		const lineHeight = 48;
+		const x = 540;
+		const y = 400;
+		ctx.font = `${lineHeight}px regular`;
+		ctx.textAlign = 'center';
+		ctx.lineWidth = 6;
+		ctx.fillStyle = Colours.WHITE;
+		ctx.strokeStyle = Colours.NAVY;
+		ctx.strokeText(text, x, y);
+		ctx.fillText(text, x, y);
+	}
+
+	if (match.opponent) {
+		const lines = [match.opponent.club, match.opponent.squad];
+		const lineHeight = 54;
+		const x = 640;
+		const y = 380;
+		ctx.font = `${lineHeight}px regular`;
+		ctx.textAlign = 'left';
+		ctx.lineWidth = 6;
+		ctx.fillStyle = Colours.WHITE;
+		ctx.strokeStyle = Colours.NAVY;
+		lines.forEach((line, index) => {
+			ctx.strokeText(line, x, y + index * lineHeight);
+			ctx.fillText(line, x, y + index * lineHeight);
+		});
+	}
+
+	// if (match.team) {
+	// 	const img = await getImageBitmap(match.team.badge);
+	// 	ctx.drawImage(img, 500, 280, 150, 150);
+	// }
+
+	// if (match.opponent) {
+	// 	const img = await getImageBitmap(match.opponent.badge);
+	// 	ctx.drawImage(img, 500, 480, 150, 150);
+	// }
+
+	// if (match.schedule) {
+	// 	const date = matchDate(match.schedule.matchOn);
+	// 	ctx.font = `36px regular`;
+	// 	ctx.textAlign = 'left';
+	// 	ctx.lineWidth = 6;
+	// 	ctx.fillStyle = Colours.WHITE;
+	// 	ctx.strokeStyle = Colours.NAVY;
+	// 	ctx.strokeText(date, 60, 540);
+	// 	ctx.fillText(date, 60, 540);
+
+	// 	const times = `Meet: ${convertTime(match.schedule.meetAt ?? '')} - KO: ${convertTime(match.schedule.kickOffAt ?? '')}`;
+	// 	ctx.font = `36px regular`;
+	// 	ctx.textAlign = 'left';
+	// 	ctx.lineWidth = 6;
+	// 	ctx.fillStyle = Colours.WHITE;
+	// 	ctx.strokeStyle = Colours.NAVY;
+	// 	ctx.strokeText(times, 60, 640);
+	// 	ctx.fillText(times, 60, 640);
+	// }
+
+	// if (match.detail) {
+	// 	ctx.font = `36px regular`;
+	// 	ctx.textAlign = 'left';
+	// 	ctx.lineWidth = 6;
+	// 	ctx.fillStyle = Colours.WHITE;
+	// 	ctx.strokeStyle = Colours.NAVY;
+	// 	ctx.strokeText(match.detail.address, 60, 740);
+	// 	ctx.fillText(match.detail.address, 60, 740);
+	// }
 
 	// ctx.drawImage(img, 500, 280, 1000, 800);
 
@@ -158,22 +201,14 @@ async function drawSponsors(ctx: OffscreenCanvasRenderingContext2D) {
 	});
 }
 
-function drawBackground(
-	ctx: OffscreenCanvasRenderingContext2D,
-	width: number,
-	height: number,
-	color: string,
-) {
-	ctx.fillStyle = color;
-	ctx.fillRect(0, 0, width, height);
-}
+export function splitIntoLines(text: string): string[] {
+	if (!text) {
+		return [];
+	}
 
-function drawTitle(ctx: OffscreenCanvasRenderingContext2D, text: string, x: number, y: number) {
-	ctx.font = `140px black`;
-	ctx.textAlign = 'left';
-	ctx.fillStyle = Colours.WHITE;
-	ctx.lineWidth = 16;
-	ctx.strokeStyle = Colours.NAVY;
-	ctx.strokeText(text, x, y);
-	ctx.fillText(text, x, y);
+	return text
+		.trim()
+		.replace(/ +(?= )/g, '')
+		.split('\n')
+		.filter((n) => n);
 }

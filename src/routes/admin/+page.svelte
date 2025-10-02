@@ -10,15 +10,25 @@
 	import { goto } from '$app/navigation';
 	import Sonner from '$lib/components/ui/sonner/sonner.svelte';
 	import { toast } from 'svelte-sonner';
-
+	import {
+		deleteImageFiles,
+		getImageFileCount,
+		getImageFiles,
+		getImageFileSize,
+	} from '$lib/database/services/ImageFileDbService';
+	import type { ImageFile } from '$lib/database/IndexedDB';
 	let matches: Match[] = $state([]);
 	let emptyMatches: Match[] = $state([]);
+	let imageFiles: ImageFile[] = $state([]);
+
+	let imageFileInfo: { count: number; size: number } = $state({ count: 0, size: 0 });
 
 	onMount(async () => {
 		matches = await getMatches();
 		emptyMatches = matches.filter(isNewMatch);
+		imageFiles = await getImageFiles();
 
-		console.log(await window.navigator.storage.estimate());
+		imageFileInfo = { count: await getImageFileCount(), size: await getImageFileSize() };
 	});
 
 	function isNewMatch(match: Match) {
@@ -33,6 +43,12 @@
 		toast.success('Empty matches removed');
 		matches = await getMatches();
 		emptyMatches = matches.filter(isNewMatch);
+	}
+
+	async function handleClearEmptyImages() {
+		await deleteImageFiles();
+		imageFileInfo = { count: await getImageFileCount(), size: await getImageFileSize() };
+		toast.success('Image cache cleared');
 	}
 
 	const breadcrumbs = [
@@ -57,5 +73,12 @@
 <Button variant="destructive" onclick={handleClearEmptyMatches}
 	>Delete empty matches ({emptyMatches.length})</Button
 >
+
+<HeadingMd>Images cache ({imageFileInfo.count}) {imageFileInfo.size}</HeadingMd>
+
+<Button variant="destructive" disabled={imageFileInfo.count === 0} onclick={handleClearEmptyImages}
+	>Clear image cache</Button
+>
+
 <a href="/players" class="variant-filled-primary btn">View players</a>
 <a href="/clubs" class="variant-filled-primary btn">View Clubs</a>

@@ -8,10 +8,18 @@
 	import { onMount } from 'svelte';
 	import HeadingLg from '$lib/components/typography/HeadingLg.svelte';
 	import HeadingMd from '$lib/components/typography/HeadingMd.svelte';
-
 	import { page } from '$app/state';
 	import MatchCard from '$lib/components/cards/MatchCard.svelte';
 	import { Separator } from '$lib/components/ui/separator/index.js';
+	import LinkCard from '$lib/components/cards/LinkCard.svelte';
+	import StadiumIcon from '$lib/components/icons/StadiumIcon.svelte';
+	import CalendarIcon from '$lib/components/icons/CalendarIcon.svelte';
+	import FortIcon from '$lib/components/icons/FortIcon.svelte';
+	import SwordIcon from '$lib/components/icons/SwordIcon.svelte';
+
+	if (!page.params.id) {
+		throw new Error('Match ID is required');
+	}
 
 	const matchId = Number.parseInt(page.params.id);
 
@@ -32,6 +40,13 @@
 		{ name: 'Home', href: '/' },
 		{ name: 'Match', href: `/match/${matchId}` },
 	];
+
+	const MANAGE_LINKS = [
+		{ label: 'Team', href: `/match/${matchId}/team`, icon: FortIcon },
+		{ label: 'Opposition', href: `/match/${matchId}/opposition`, icon: SwordIcon },
+		{ label: 'Details', href: `/match/${matchId}/details`, icon: StadiumIcon },
+		{ label: 'Schedule', href: `/match/${matchId}/schedule`, icon: CalendarIcon },
+	];
 </script>
 
 <Breadcrumb {breadcrumbs} />
@@ -42,19 +57,21 @@
 	<MatchCard {match} />
 	<Separator />
 	<HeadingMd>Info</HeadingMd>
+
 	<a href={`/match/${match.id}/team`} class="variant-filled-primary btn">Team</a>
 	<a href={`/match/${match.id}/opposition`} class="variant-filled-primary btn">Opposition</a>
 	<a href={`/match/${match.id}/details`} class="variant-filled-primary btn">Details</a>
 	<a href={`/match/${match.id}/schedule`} class="variant-filled-primary btn">Schedule</a>
+
 	<Separator />
 
 	<HeadingMd>Manage</HeadingMd>
-	<a href={`/match/${match.id}/squad`} class="variant-filled-primary btn">Squad</a>
-	<a href={`/match/${match.id}/lineup`} class="variant-filled-primary btn">Lineup</a>
-	<a href={`/match/${match.id}/roles/leadership`} class="variant-filled-primary btn">Leadership</a>
-	<a href={`/match/${match.id}/roles/awards`} class="variant-filled-primary btn">Awards</a>
-	<a href={`/match/${match.id}/debuts`} class="variant-filled-primary btn">Debuts</a>
-	<a href={`/match/${match.id}/result`} class="variant-filled-primary btn">Result</a>
+
+	<ul role="list" class="grid grid-cols-4 gap-2">
+		{#each MANAGE_LINKS as link}
+			<LinkCard {link} />
+		{/each}
+	</ul>
 
 	<Separator />
 

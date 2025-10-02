@@ -153,7 +153,6 @@ export interface BackgroundImage {
 }
 
 export interface ImageFile {
-	id: number;
 	url: string;
 	blob: Blob;
 }
@@ -171,7 +170,7 @@ const db = new Dexie('MatchDatabase') as Dexie & {
 	backgroundsImages: EntityTable<BackgroundImage, 'id'>;
 	events: EntityTable<Event, 'uuid'>;
 	eventsImages: EntityTable<EventImage, 'id'>;
-	imageFiles: EntityTable<ImageFile, 'id'>;
+	imageFiles: EntityTable<ImageFile, 'url'>;
 };
 
 db.version(1.0).stores({
@@ -188,7 +187,7 @@ db.version(1.0).stores({
 	backgroundsImages: '++id, [type], [type+page]',
 	events: 'uuid, [createdAt], [template]',
 	eventsImages: '++id, [eventUuid+type]',
-	imageFiles: '++id',
+	imageFiles: 'url',
 });
 
 export { db };

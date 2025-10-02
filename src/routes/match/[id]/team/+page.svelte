@@ -16,7 +16,7 @@
 	import { toast } from 'svelte-sonner';
 	import { goto } from '$app/navigation';
 
-	const matchId = Number.parseInt(page.params.id);
+	const matchId = Number.parseInt(page.params.id as string);
 	let match: Match | undefined = $state();
 
 	// TODO: This should be from constants or ENV
@@ -64,16 +64,14 @@
 			<p>Match not found</p>
 		{:else}
 			<div class="grid w-full max-w-sm items-center gap-1.5">
-				<Label for="match-type">Club</Label>
-
-				<Input type="text" id="match-type" bind:value={data.club} disabled />
+				<Label for="match-team-type">Club</Label>
+				<Input type="text" id="match-team-type" bind:value={data.club} disabled />
 				<ErrorLabel>{errors.club}</ErrorLabel>
 			</div>
 
 			<div class="grid w-full max-w-sm items-center gap-1.5">
-				<Label for="match-type">Squad</Label>
-
-				<Input type="text" id="match-type" bind:value={data.squad} />
+				<Label for="match-team-squad">Squad</Label>
+				<Input type="text" id="match-team-squad" bind:value={data.squad} />
 				<ErrorLabel>{errors.squad}</ErrorLabel>
 			</div>
 

@@ -16,6 +16,7 @@
 	let match: Match | undefined = $state();
 	let images: MatchImage[] = $state([]);
 	let generating: string[] = $state([]);
+	let viewing = $state(0);
 
 	let worker: Worker = new ImageWorker();
 	worker.onmessage = async (event: MessageEvent) => {
@@ -81,13 +82,41 @@
 >
 <HeadingMd>Post</HeadingMd>
 
-{#if images.length === 0}
-	<p>No images</p>
+{#if images.length > 0 && viewing >= 0 && generating.includes(matchImageType) === false}
+	<div class="border border-slate-900">
+		<img class="block w-full shrink-0" src={images[viewing].base64} alt={images[viewing].type} />
+	</div>
 {:else}
-	<div class="grid grid-cols-4 gap-0">
-		{#each images as image}
-			<img class="block w-full shrink-0" src={image.base64} alt={image.type} />
-		{/each}
+	<div
+		class="relative block aspect-4/5 w-full rounded-lg border-2 border-dashed border-gray-300 p-12 text-center dark:border-white/15"
+	>
+		<svg
+			viewBox="0 0 48 48"
+			fill="none"
+			stroke="currentColor"
+			aria-hidden="true"
+			class="mx-auto size-12 text-gray-400 dark:text-gray-500"
+		>
+			<path
+				d="M8 14v20c0 4.418 7.163 8 16 8 1.381 0 2.721-.087 4-.252M8 14c0 4.418 7.163 8 16 8s16-3.582 16-8M8 14c0-4.418 7.163-8 16-8s16 3.582 16 8m0 0v14m0-4c0 4.418-7.163 8-16 8S8 28.418 8 24m32 10v6m0 0v6m0-6h6m-6 0h-6"
+				stroke-width="2"
+				stroke-linecap="round"
+				stroke-linejoin="round"
+			/>
+		</svg>
+		<span class="mt-2 block text-sm font-semibold text-gray-900 dark:text-white">Rendering...</span>
+	</div>
+{/if}
+
+{#if images.length > 1 && generating.includes(matchImageType) === false}
+	<div class="grid grid-cols-4 gap-0 border border-slate-900">
+		{#if generating.includes(matchImageType) === false}
+			{#each images as image, index}
+				<button onclick={() => (viewing = index)}>
+					<img class="block w-full shrink-0" src={image.base64} alt={image.type} />
+				</button>
+			{/each}
+		{/if}
 	</div>
 {/if}
 

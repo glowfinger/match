@@ -10,6 +10,7 @@
 	import { goto } from '$app/navigation';
 	import { Separator } from '$lib/components/ui/separator/index.js';
 	import { sortByDate } from '$lib/utils/sorts/ClubSort';
+	import CONFIG from '$lib/constants/FeatureConfig';
 
 	let matches: Match[] = $state([]);
 
@@ -20,7 +21,6 @@
 			...new Set(allMatches.map((match) => [match.team?.club, match.team?.squad].join('-'))),
 		];
 
-		console.log('teams', teams);
 		matches = allMatches.toSorted(sortByDate).filter((match) => {
 			const team = [match.team?.club, match.team?.squad].join('-');
 			return teams.includes(team);
@@ -40,11 +40,14 @@
 <Breadcrumb {breadcrumbs} />
 <HeadingLg>Match manager</HeadingLg>
 <Button onclick={handleNewMatch}>Add New match</Button>
-<a
-	href={`/events`}
-	class="border border-transparent bg-slate-800 px-4 py-2 text-center text-sm text-white shadow-md transition-all hover:bg-slate-700 hover:shadow-lg focus:bg-slate-700 focus:shadow-none active:bg-slate-700 active:shadow-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none"
-	>View events</a
->
+
+{#if CONFIG.EVENT_ENABLED}
+	<a
+		href={`/events`}
+		class="border border-transparent bg-slate-800 px-4 py-2 text-center text-sm text-white shadow-md transition-all hover:bg-slate-700 hover:shadow-lg focus:bg-slate-700 focus:shadow-none active:bg-slate-700 active:shadow-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none"
+		>View events</a
+	>
+{/if}
 
 <HeadingMd>Latest</HeadingMd>
 {#each matches.toSorted(sortByDate) as match}

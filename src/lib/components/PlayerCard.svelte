@@ -71,11 +71,7 @@
 			</div>
 		</div>
 	</div>
-</li>
-<!-- 
-<li
-	class="rounded- col-span-1 divide-y divide-slate-200 border border-slate-400 bg-slate-50 shadow-sm"
->
+
 	{#if isSelected}
 		<div
 			class="flex w-full items-center justify-between space-x-2 bg-slate-600 px-2 text-slate-100"
@@ -83,24 +79,9 @@
 			Already starting
 		</div>
 	{/if}
-	{#if player}
-		<div class="relative h-24 border border-slate-800 bg-slate-500 text-white">
-			{#if hasProfileImage(player)}
-				<div
-					class="absolute bottom-0 left-4 aspect-square h-20 bg-cover bg-center"
-					style="background-image: url('{getProfileImage(player)?.large}')"
-				></div>
-			{/if}
-
-			<div class="absolute right-2 bottom-2 bg-slate-900/40 p-2">
-				<h2 class="text-2xl font-bold">{player.bio.first} {player.bio.last}</h2>
-				<p class="text-md font-bold text-yellow-600">{player.positions.main}</p>
-			</div>
-		</div>
-	{/if}
 
 	{#if children}
-		<div class="-mt-px flex divide-x divide-slate-200">
+		<div class="-mt-px flex divide-x divide-slate-200 bg-slate-100">
 			{@render children()}
 		</div>
 	{:else}
@@ -117,4 +98,5 @@
 			</div>
 		</div>
 	{/if}
-	<!-- <PlayerCardPositions {player} /> -->
+	<PlayerCardPositions {player} />
+</li>

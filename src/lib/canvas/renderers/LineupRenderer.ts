@@ -5,12 +5,17 @@ import { getMatch } from '$lib/database/MatchService';
 import { getMatchTags } from '$lib/database/MatchTagDBService';
 import { getPlayersByKeys } from '$lib/database/PlayerDBService';
 import { getYesSelectionsByMatchId } from '$lib/database/SelectionDBService';
+import { KIT_BACKGROUND, KIT_VALUES } from '../constants/Colours';
+import { getImageBitmap } from '../ImageCache';
 
-import StarterPositons from '../constants/lineup/StarterPositons';
-import headshotLoader from '../images/HeadshotLoader';
 import canvasSplitter from './CanvasSplitter';
 import FinishersPartialRenderer from './lineup/FinishersPartialRenderer';
 import InfoPartialRenderer from './lineup/InfoPartialRenderer';
+
+const KIT_BACKGROUND_IMAGE = {
+	[KIT_VALUES.MAIN]: '/img/backgrounds/seniors/senior-gold-3240-1080.png',
+	[KIT_VALUES.SECONDARY]: '/img/backgrounds/seniors/senior-pink-3240-1080.png',
+};
 
 export default async function LineupRederer(
 	matchId: number,
@@ -25,81 +30,84 @@ export default async function LineupRederer(
 		throw new Error('Failed to get 2D context');
 	}
 
-	console.log('LineupRenderer');
 	const match = await getMatch(matchId);
 	const selections = await getYesSelectionsByMatchId(matchId);
 	const positions = await getMatchPositions(matchId);
 	const players = await getPlayersByKeys(selections.map((s) => s.playerKey));
 	const debuts = (await getMatchTags(matchId, 'debut')).map((t) => t.playerKey);
 
-	ctx.fillStyle = Colours.NAVY;
-	ctx.fillRect(0, 0, canvas.width, canvas.height);
+	if (match.detail) {
+		ctx.fillStyle = KIT_BACKGROUND[match.detail?.kit ?? KIT_VALUES.MAIN];
+		ctx.fillRect(0, 0, canvas.width, canvas.height);
+	} else {
+		ctx.fillStyle = Colours.WHITE;
+		ctx.fillRect(0, 0, canvas.width, canvas.height);
+	}
 
-	const back = await fetch('/img/backgrounds/seniors/senior-pink-4-panel.png')
-		.then((response) => response.blob())
-		.then(async (blob) => await createImageBitmap(blob));
-
-	ctx.drawImage(back, 0, 0);
+	if (match.detail) {
+		// todo better error handling for fetching images
+		const img = await getImageBitmap(KIT_BACKGROUND_IMAGE[match.detail.kit]);
+		ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+	}
 
 	await InfoPartialRenderer(ctx, matchId);
 	await FinishersPartialRenderer(ctx, matchId);
 
-	drawTitle(ctx, 'FORWARDS', 1080 + 60, 160);
-	drawTitle(ctx, 'BACKS', 1080 + 1080 + 60, 160);
-	// drawTitle(ctx, 'FINISHERS', 1080 + 1080 + 1080 + 60, 160);
+	// drawTitle(ctx, 'FORWARDS', 1080 + 60, 160);
+	// drawTitle(ctx, 'BACKS', 1080 + 1080 + 60, 160);
+	// // drawTitle(ctx, 'FINISHERS', 1080 + 1080 + 1080 + 60, 160);
 
-	// aysnc loop
-	for (const i of StarterPositons) {
-		const position = positions.find((s) => s.position === i.number);
+	// // aysnc loop
+	// for (const i of StarterPositons) {
+	// 	const position = positions.find((s) => s.position === i.number);
 
-		if (!position) {
-			continue;
-		}
+	// 	if (!position) {
+	// 		continue;
+	// 	}
 
-		const player = players.find((p) => p.key === position?.playerKey);
+	// 	const player = players.find((p) => p.key === position?.playerKey);
 
-		if (!player) {
-			continue;
-		}
+	// 	if (!player) {
+	// 		continue;
+	// 	}
 
-		const { x, y } = i;
+	// 	const { x, y } = i;
 
-		drawPlayerNumber(ctx, i.number, x + 100, y + 100);
+	// 	drawPlayerNumber(ctx, i.number, x + 100, y + 100);
 
-		const image = await headshotLoader('away', player);
-		if (image) {
-			ctx.drawImage(image, x + 10, y, 240, 240);
-		}
+	// 	const image = await headshotLoader('away', player);
+	// 	if (image) {
+	// 		ctx.drawImage(image, x + 10, y, 240, 240);
+	// 	}
 
-		ctx.fillStyle = 'white';
-		ctx.fillRect(x, y + 260 - 40, 260, 40);
+	// 	ctx.fillStyle = 'white';
+	// 	ctx.fillRect(x, y + 260 - 40, 260, 40);
 
-		ctx.strokeStyle = Colours.NAVY;
-		ctx.lineWidth = 3;
-		ctx.strokeRect(x, y + 260 - 40, 260, 40);
+	// 	ctx.strokeStyle = Colours.NAVY;
+	// 	ctx.lineWidth = 3;
+	// 	ctx.strokeRect(x, y + 260 - 40, 260, 40);
 
-		ctx.font = `24px semiBold`;
-		ctx.textAlign = 'center';
-		ctx.fillStyle = 'black';
+	// 	ctx.font = `24px semiBold`;
+	// 	ctx.textAlign = 'center';
+	// 	ctx.fillStyle = 'black';
 
-		let name = '';
+	// 	let name = '';
 
-		if (player.tags.homegrown) {
-			name = '🍟' + name;
-		}
+	// 	if (player.tags.homegrown) {
+	// 		name = '🍟' + name;
+	// 	}
 
-		if (debuts.includes(player.key)) {
-			name = '📣' + name;
-		}
+	// 	if (debuts.includes(player.key)) {
+	// 		name = '📣' + name;
+	// 	}
 
-		if (name.length > 0) {
-			name = name + ' ' + player.bio.screen;
-		} else {
-			name = player.bio.screen;
-		}
+	// 	if (name.length > 0) {
+	// 		name = name + ' ' + player.bio.screen;
+	// 	} else {
+	// 		name = player.bio.screen;
+	// 	}
 
-		ctx.fillText(name, x + 130, y + 260 - 10);
-	}
+	// 	ctx.fillText(name, x + 130, y + 260 - 10);
 
 	// Title
 	// ctx.font = `140px black`;
@@ -194,15 +202,15 @@ export default async function LineupRederer(
 	}));
 }
 
-function drawTitle(ctx: OffscreenCanvasRenderingContext2D, title: string, x: number, y: number) {
-	ctx.font = `140px black`;
-	ctx.textAlign = 'left';
-	ctx.fillStyle = Colours.WHITE;
-	ctx.lineWidth = 16;
-	ctx.strokeStyle = Colours.NAVY;
-	ctx.strokeText(title, x, y);
-	ctx.fillText(title, x, y);
-}
+// function drawTitle(ctx: OffscreenCanvasRenderingContext2D, title: string, x: number, y: number) {
+// 	ctx.font = `140px black`;
+// 	ctx.textAlign = 'left';
+// 	ctx.fillStyle = Colours.WHITE;
+// 	ctx.lineWidth = 16;
+// 	ctx.strokeStyle = Colours.NAVY;
+// 	ctx.strokeText(title, x, y);
+// 	ctx.fillText(title, x, y);
+// }
 
 export function drawPlayerNumber(
 	ctx: OffscreenCanvasRenderingContext2D,

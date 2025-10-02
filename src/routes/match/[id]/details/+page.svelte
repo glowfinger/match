@@ -16,6 +16,7 @@
 	import { onMount } from 'svelte';
 	import { toast } from 'svelte-sonner';
 	import Breadcrumb from '$lib/components/Breadcrumb.svelte';
+	import { KIT_VALUES } from '$lib/canvas/constants/Colours';
 
 	let match: Match | undefined = $state();
 	const matchId = Number.parseInt(page.params.id as string);
@@ -61,8 +62,8 @@
 	];
 
 	const kitOptions = [
-		{ value: 'MAIN', label: 'Main' },
-		{ value: 'SECONDARY', label: 'Secondary' },
+		{ value: KIT_VALUES.MAIN, label: 'Main' },
+		{ value: KIT_VALUES.SECONDARY, label: 'Secondary' },
 	];
 
 	const breadcrumbs = [
@@ -73,15 +74,14 @@
 </script>
 
 <Breadcrumb {breadcrumbs} />
-<HeadingLg>Opposition</HeadingLg>
+<HeadingLg>Details</HeadingLg>
 {#if !match}
 	<p>Match not found</p>
 {:else}
 	<form onsubmit={handleSubmit} novalidate>
 		<div class="mt-2 grid grid-cols-1 gap-4">
 			<div class="grid w-full max-w-sm items-center gap-1.5">
-				<Label for="match-venue">Venue</Label>
-
+				<Label for="match-details-venue">Venue</Label>
 				<Select.Root type="single" bind:value={data.venue}>
 					<Select.Trigger class="w-full">
 						{data.venue ? data.venue : 'Select a venue'}
@@ -97,20 +97,20 @@
 			</div>
 
 			<div class="grid w-full max-w-sm items-center gap-1.5">
-				<Label for="match-type">Type</Label>
+				<Label for="match-details-type">Type</Label>
 
-				<Input type="text" id="match-type" bind:value={data.type} />
+				<Textarea id="match-details-type" bind:value={data.type} />
 				<ErrorLabel>{errors.type}</ErrorLabel>
 			</div>
 
 			<div class="grid w-full gap-1.5">
-				<Label for="match-address">Address</Label>
-				<Textarea id="match-address" bind:value={data.address} />
+				<Label for="match-details-address">Address</Label>
+				<Textarea id="match-details-address" bind:value={data.address} />
 				<ErrorLabel>{errors.address}</ErrorLabel>
 			</div>
 
 			<div class="grid w-full max-w-sm items-center gap-1.5">
-				<Label for="match-kit">Kit</Label>
+				<Label for="match-details-kit">Kit</Label>
 
 				<Select.Root type="single" bind:value={data.kit}>
 					<Select.Trigger class="w-full">
