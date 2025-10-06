@@ -1,23 +1,29 @@
-const ROW_Y1 = 180;
-const ROW_Y2 = 560;
-const ROW_Y3 = 940;
+const ROW_Y1 = 280;
+const ROW_Y2 = ROW_Y1 + 300;
+const ROW_Y3 = ROW_Y2 + 300;
 
+const PAGE_WIDTH = 0;
 
+const COLUMN_X1 = PAGE_WIDTH + 60;
+const COLUMN_X2 = PAGE_WIDTH + 150 + 60;
+const COLUMN_X3 = PAGE_WIDTH + 300 + 60;
+const COLUMN_X4 = PAGE_WIDTH + 450 + 60;
+const COLUMN_X5 = PAGE_WIDTH + 600 + 60;
 
 export default [
-	{ x: 1120, y: ROW_Y1, number: '1' },
-	{ x: 1420, y: ROW_Y1, number: '2' },
-	{ x: 1720, y: ROW_Y1, number: '3' },
-	{ x: 1270, y: ROW_Y2, number: '4' },
-	{ x: 1570, y: ROW_Y2, number: '5' },
-	{ x: 1120, y: ROW_Y3, number: '6' },
-	{ x: 1720, y: ROW_Y3, number: '7' },
-	{ x: 1420, y: ROW_Y3, number: '8' },
-	{ x: 2350, y: ROW_Y1, number: '9' },
-	{ x: 2650, y: ROW_Y1, number: '10' },
-	{ x: 2200, y: ROW_Y3, number: '11' },
-	{ x: 2350, y: ROW_Y2, number: '12' },
-	{ x: 2650, y: ROW_Y2, number: '13' },
-	{ x: 2800, y: ROW_Y3, number: '14' },
-	{ x: 2500, y: ROW_Y3, number: '15' },
+	{ x: COLUMN_X1, y: ROW_Y1, number: '1' },
+	{ x: COLUMN_X3, y: ROW_Y1, number: '2' },
+	{ x: COLUMN_X5, y: ROW_Y1, number: '3' },
+	{ x: COLUMN_X2, y: ROW_Y2, number: '4' },
+	{ x: COLUMN_X4, y: ROW_Y2, number: '5' },
+	{ x: COLUMN_X1, y: ROW_Y3, number: '6' },
+	{ x: COLUMN_X3, y: ROW_Y3, number: '7' },
+	{ x: COLUMN_X5, y: ROW_Y3, number: '8' },
+	{ x: COLUMN_X2, y: ROW_Y1, number: '9' },
+	{ x: COLUMN_X4, y: ROW_Y1, number: '10' },
+	{ x: COLUMN_X1, y: ROW_Y3, number: '11' },
+	{ x: COLUMN_X2, y: ROW_Y2, number: '12' },
+	{ x: COLUMN_X4, y: ROW_Y2, number: '13' },
+	{ x: COLUMN_X5, y: ROW_Y3, number: '14' },
+	{ x: COLUMN_X3, y: ROW_Y3, number: '15' },
 ];

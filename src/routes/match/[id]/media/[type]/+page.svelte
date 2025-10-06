@@ -39,9 +39,9 @@
 			getImagesByMatchAndType(matchId, matchImageType),
 		]);
 
-		if (images.length === 0) {
-			generateImage(matchImageType);
-		}
+		// if (images.length === 0) {
+		generateImage(matchImageType);
+		// }
 	});
 
 	onDestroy(() => {

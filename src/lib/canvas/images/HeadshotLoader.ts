@@ -1,19 +1,36 @@
 import type { Player } from '$lib/database/IndexedDB';
+import { getImageBitmap } from '../ImageCache';
 
-const IMAGE_KIT_HOME = 'home';
-const IMAGE_KIT_AWAY = 'away';
+const IMAGE_KIT_SECONDARY = 'SECONDARY';
 
-// TODO bring this from config
 const base_url = 'https://glowfinger.blob.core.windows.net/smg/thumbnails-260x260/';
-export default async function headshotLoader(kit: string, player: Player) {
-	const DEFAULT_IMAGE_NAME = kit === IMAGE_KIT_AWAY ? 'default-away.png' : 'default-home.png';
 
-	const headshot = player.images.find((img) => img.type === 'profile-front' && img.kit === kit);
+export default async function headshotLoader(kit: string, player: Player) {
+	const DEFAULT_IMAGE_NAME = getDefaultImageName(kit);
+	const headshot = findHeadshot(kit, player);
 	const URI = headshot ? `${base_url}${headshot.url}.png` : `${base_url}${DEFAULT_IMAGE_NAME}`;
 
-	const img = await fetch(URI)
-		.then((response) => response.blob())
-		.then(async (blob) => await createImageBitmap(blob));
+	return await getImageBitmap(URI);
+}
 
-	return img;
+function getDefaultImageName(kit: string) {
+	return kit === IMAGE_KIT_SECONDARY ? 'default-away.png' : 'default-home.png';
+}
+
+function findHeadshot(kit: string, player: Player) {
+	const kitType = kit === IMAGE_KIT_SECONDARY ? 'away' : 'home';
+
+	return player.images.find((img) => img.type === 'profile-front' && img.kit === kitType);
+}
+
+export function findFinisherImage(player: Player, kit: string, type: string) {
+	const kitType = kit === IMAGE_KIT_SECONDARY ? 'away' : 'home';
+
+	let image = player.images.find((img) => img.type === type && img.kit === kitType);
+
+	if (!image) {
+		image = player.images.find((img) => img.type === type && img.kit === 'default');
+	}
+
+	return image;
 }

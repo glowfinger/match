@@ -24,18 +24,18 @@ export const MediaImageTypes: MediaImageType[] = [
 	// 	type: 'RESCHEDULED',
 	// 	label: 'Rescheduled',
 	// },
-	// {
-	// 	type: 'RESULT',
-	// 	label: 'Result',
-	// },
+	{
+		type: 'RESULT',
+		label: 'Result',
+	},
 	// {
 	// 	type: 'TEAM',
 	// 	label: 'Team',
 	// },
-	// {
-	// 	type: 'LINEUP',
-	// 	label: 'Lineup',
-	// },
+	{
+		type: 'LINEUP',
+		label: 'Lineup',
+	},
 	// {
 	// 	type: 'highlight',
 	// 	label: 'Highlight',

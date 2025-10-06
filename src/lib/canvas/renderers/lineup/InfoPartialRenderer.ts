@@ -12,7 +12,7 @@ export default async function InfoPartialRenderer(
 	let y = 160;
 
 	if (match.team) {
-		const title = ['LINEUP', match.team.squad].join(' ').trim();
+		const title = ['LINEUP'].join(' ').trim();
 		const size = 140;
 		ctx.font = `${size}px black`;
 		ctx.textAlign = 'left';

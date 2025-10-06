@@ -1,12 +1,16 @@
 import { Colours } from '$lib/Constants';
 import type { MatchImage } from '$lib/database/IndexedDB';
 import { getMatchPositions } from '$lib/database/MatchPositionDBService';
+import { getMatchRolesByType } from '$lib/database/MatchRoleDBService';
 import { getMatch } from '$lib/database/MatchService';
 import { getMatchTags } from '$lib/database/MatchTagDBService';
 import { getPlayersByKeys } from '$lib/database/PlayerDBService';
 import { getYesSelectionsByMatchId } from '$lib/database/SelectionDBService';
 import { KIT_BACKGROUND, KIT_VALUES } from '../constants/Colours';
+import StarterPositons from '../constants/lineup/StarterPositons';
 import { getImageBitmap } from '../ImageCache';
+import headshotLoader from '../images/HeadshotLoader';
+import { drawTitle } from '../TextDrawer';
 
 import canvasSplitter from './CanvasSplitter';
 import FinishersPartialRenderer from './lineup/FinishersPartialRenderer';
@@ -35,6 +39,7 @@ export default async function LineupRederer(
 	const positions = await getMatchPositions(matchId);
 	const players = await getPlayersByKeys(selections.map((s) => s.playerKey));
 	const debuts = (await getMatchTags(matchId, 'debut')).map((t) => t.playerKey);
+	const leadershipRoles = await getMatchRolesByType(matchId, 'leadership');
 
 	if (match.detail) {
 		ctx.fillStyle = KIT_BACKGROUND[match.detail?.kit ?? KIT_VALUES.MAIN];
@@ -51,63 +56,86 @@ export default async function LineupRederer(
 	}
 
 	await InfoPartialRenderer(ctx, matchId);
-	await FinishersPartialRenderer(ctx, matchId);
 
-	// drawTitle(ctx, 'FORWARDS', 1080 + 60, 160);
-	// drawTitle(ctx, 'BACKS', 1080 + 1080 + 60, 160);
-	// // drawTitle(ctx, 'FINISHERS', 1080 + 1080 + 1080 + 60, 160);
+	drawTitle(ctx, 'FORWARDS', 1080 + 60, 160);
+	drawTitle(ctx, 'BACKS', 1080 + 1080 + 60, 160);
+	// drawTitle(ctx, 'FINISHERS', 1080 + 1080 + 1080 + 60, 160);
 
 	// // aysnc loop
-	// for (const i of StarterPositons) {
-	// 	const position = positions.find((s) => s.position === i.number);
+	for (const i of StarterPositons) {
+		const position = positions.find((s) => s.position === i.number);
+		if (!position) {
+			continue;
+		}
 
-	// 	if (!position) {
-	// 		continue;
-	// 	}
+		const player = players.find((p) => p.key === position?.playerKey);
 
-	// 	const player = players.find((p) => p.key === position?.playerKey);
+		if (!player) {
+			continue;
+		}
 
-	// 	if (!player) {
-	// 		continue;
-	// 	}
+		let x = i.x;
+		const y = i.y;
+		if (['1', '2', '3', '4', '5', '6', '7', '8'].includes(i.number)) {
+			x = x + 1080;
+		}
 
-	// 	const { x, y } = i;
+		if (['9', '10', '11', '12', '13', '14', '15'].includes(i.number)) {
+			x = x + 1080 + 1080;
+		}
 
-	// 	drawPlayerNumber(ctx, i.number, x + 100, y + 100);
+		drawPlayerNumber(ctx, i.number, x + 100, y + 100);
 
-	// 	const image = await headshotLoader('away', player);
-	// 	if (image) {
-	// 		ctx.drawImage(image, x + 10, y, 240, 240);
-	// 	}
+		const image = await headshotLoader(match.detail?.kit ?? 'MAIN', player);
+		if (image) {
+			ctx.drawImage(image, x + 10, y, 240, 240);
+		}
 
-	// 	ctx.fillStyle = 'white';
-	// 	ctx.fillRect(x, y + 260 - 40, 260, 40);
+		ctx.fillStyle = 'white';
+		ctx.fillRect(x, y + 260 - 40, 260, 40);
 
-	// 	ctx.strokeStyle = Colours.NAVY;
-	// 	ctx.lineWidth = 3;
-	// 	ctx.strokeRect(x, y + 260 - 40, 260, 40);
+		ctx.strokeStyle = Colours.NAVY;
+		ctx.lineWidth = 3;
+		ctx.strokeRect(x, y + 260 - 40, 260, 40);
 
-	// 	ctx.font = `24px semiBold`;
-	// 	ctx.textAlign = 'center';
-	// 	ctx.fillStyle = 'black';
+		ctx.font = `24px semiBold`;
+		ctx.textAlign = 'center';
+		ctx.fillStyle = 'black';
 
-	// 	let name = '';
+		let name = '';
 
-	// 	if (player.tags.homegrown) {
-	// 		name = '🍟' + name;
-	// 	}
+		if (player.tags.homegrown) {
+			name = '🍟' + name;
+		}
 
-	// 	if (debuts.includes(player.key)) {
-	// 		name = '📣' + name;
-	// 	}
+		if (debuts.includes(player.key)) {
+			name = '📣' + name;
+		}
 
-	// 	if (name.length > 0) {
-	// 		name = name + ' ' + player.bio.screen;
-	// 	} else {
-	// 		name = player.bio.screen;
-	// 	}
+		if (name.length > 0) {
+			name = name + ' ' + player.bio.screen;
+		} else {
+			name = player.bio.screen;
+		}
 
-	// 	ctx.fillText(name, x + 130, y + 260 - 10);
+		// TODO unnest the ifs
+
+		const leadershipRole = leadershipRoles.find((r) => r.playerKey === player.key);
+		if (leadershipRole?.role === 'captain') {
+			name += ` (C)`;
+		} else if (leadershipRole?.role === 'vice-captain') {
+			name += ` (VC)`;
+		} else if (leadershipRole?.role === 'pack-leader') {
+			name += ` (PL)`;
+		}
+
+		ctx.fillText(name, x + 130, y + 260 - 10);
+	}
+
+	// Finishers
+	await FinishersPartialRenderer(ctx, matchId);
+
+	// Badges
 
 	// Title
 	// ctx.font = `140px black`;
@@ -175,16 +203,6 @@ export default async function LineupRederer(
 	// ctx.strokeText(times, 60, 620);
 	// ctx.fillText(times, 60, 620);
 
-	// Address
-	// const ADDRESS = match.detail?.address ?? '';
-	// ctx.font = `36px regular`;
-	// ctx.textAlign = 'left';
-	// ctx.lineWidth = 6;
-	// ctx.fillStyle = Colours.WHITE;
-	// ctx.strokeStyle = Colours.NAVY;
-	// ctx.strokeText(ADDRESS, 60, 700);
-	// ctx.fillText(ADDRESS, 60, 700);
-
 	// Footnote
 	// ctx.font = `30px regular`;
 	// ctx.textAlign = 'left';
@@ -199,6 +217,7 @@ export default async function LineupRederer(
 		type,
 		page,
 		base64,
+		createdAt: new Date().toISOString(),
 	}));
 }
 
