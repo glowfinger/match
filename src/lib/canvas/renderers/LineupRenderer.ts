@@ -8,20 +8,27 @@ import { getPlayersByKeys } from '$lib/database/PlayerDBService';
 import { getYesSelectionsByMatchId } from '$lib/database/SelectionDBService';
 import { KIT_BACKGROUND, KIT_VALUES } from '../constants/Colours';
 import StarterPositons from '../constants/lineup/StarterPositons';
+import { drawBadge } from '../drawers/BadgeDrawer';
+import { drawSponsors } from '../drawers/SponsorsDrawer';
 import { getImageBitmap } from '../ImageCache';
 import headshotLoader from '../images/HeadshotLoader';
-import { drawTitle } from '../TextDrawer';
+import { drawSmallTitle, drawVersusTitle } from '../TextDrawer';
 
 import canvasSplitter from './CanvasSplitter';
 import FinishersPartialRenderer from './lineup/FinishersPartialRenderer';
 import InfoPartialRenderer from './lineup/InfoPartialRenderer';
 
 const KIT_BACKGROUND_IMAGE = {
-	[KIT_VALUES.MAIN]: '/img/backgrounds/seniors/senior-gold-3240-1080.png',
-	[KIT_VALUES.SECONDARY]: '/img/backgrounds/seniors/senior-pink-3240-1080.png',
+	[KIT_VALUES.MAIN]: '/img/backgrounds/seniors/senior-gold-4-panel-basic.png',
+	[KIT_VALUES.SECONDARY]: '/img/backgrounds/seniors/senior-pink-4-panel-basic.png',
 };
 
-export default async function LineupRederer(
+const KIT_BACKGROUND_IMAGE_CUTOUT = {
+	[KIT_VALUES.MAIN]: '/img/backgrounds/seniors/senior-gold-4-panel-cutout.png',
+	[KIT_VALUES.SECONDARY]: '/img/backgrounds/seniors/senior-pink-4-panel-cutout.png',
+};
+
+export default async function LineupRenderer(
 	matchId: number,
 	type: string,
 ): Promise<Omit<MatchImage, 'id'>[]> {
@@ -55,10 +62,23 @@ export default async function LineupRederer(
 		ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
 	}
 
+	{
+		const img = await getImageBitmap('/img/photos/gez.png');
+		ctx.drawImage(img, 0, 0);
+	}
+
+	if (match.detail) {
+		// todo better error handling for fetching images
+		const img = await getImageBitmap(KIT_BACKGROUND_IMAGE_CUTOUT[match.detail.kit]);
+		ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+	}
+
 	await InfoPartialRenderer(ctx, matchId);
 
-	drawTitle(ctx, 'FORWARDS', 1080 + 60, 160);
-	drawTitle(ctx, 'BACKS', 1080 + 1080 + 60, 160);
+	drawSmallTitle(ctx, 'FORWARDS', 1080 + 60, 120);
+	drawVersusTitle(ctx, `vs ${match.opponent?.club ?? ''}`, 1080 + 60, 180);
+	drawSmallTitle(ctx, 'BACKS', 1080 + 1080 + 60, 120);
+	drawVersusTitle(ctx, `vs ${match.opponent?.club ?? ''}`, 1080 + 1080 + 60, 180);
 	// drawTitle(ctx, 'FINISHERS', 1080 + 1080 + 1080 + 60, 160);
 
 	// // aysnc loop
@@ -131,6 +151,8 @@ export default async function LineupRederer(
 
 		ctx.fillText(name, x + 130, y + 260 - 10);
 	}
+
+	await drawBadge(ctx, match);
 
 	// Finishers
 	await FinishersPartialRenderer(ctx, matchId);
@@ -211,6 +233,15 @@ export default async function LineupRederer(
 	// ctx.strokeStyle = Colours.NAVY;
 	// ctx.strokeText(footnote, 60, 880);
 	// ctx.fillText(footnote, 60, 880);
+
+	// draw sponsors on each page
+	for (const page of [1, 2, 3]) {
+		await drawSponsors(ctx, 60 + (page - 1) * 1080, 1120);
+	}
+
+	for (const page of [4]) {
+		await drawSponsors(ctx, 60 + (page - 1) * 1080, 300);
+	}
 
 	return (await canvasSplitter(canvas)).map(({ page, base64 }) => ({
 		matchId,

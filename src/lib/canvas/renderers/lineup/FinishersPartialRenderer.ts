@@ -1,5 +1,6 @@
+import StarterPositons from '$lib/canvas/constants/lineup/StarterPositons';
 import { getImageBitmap } from '$lib/canvas/ImageCache';
-import { drawTitle, drawVersusTitle } from '$lib/canvas/TextDrawer';
+import { drawSmallTitle, drawVersusTitle } from '$lib/canvas/TextDrawer';
 import { Colours } from '$lib/Constants';
 import { getMatchPositions } from '$lib/database/MatchPositionDBService';
 import { getMatch } from '$lib/database/MatchService';
@@ -32,65 +33,69 @@ export default async function finishersPartialRenderer(
 	// console.log(finishers);
 
 	const x = 1080 + 1080 + 1080 + 60;
-	drawTitle(ctx, TITLE, x, 160);
-	drawVersusTitle(ctx, `vs ${match.opponent?.club ?? ''}`, x, 250);
+	drawSmallTitle(ctx, TITLE, x, 120);
+	drawVersusTitle(ctx, `vs ${match.opponent?.club ?? ''}`, x, 180);
 
 	// Sponsors
 
-	const coords = [
-		{ x: 1080 * 3 + 60, y: 1270 },
-		{ x: 1080 * 3 + 430, y: 1270 },
-		{ x: 1080 * 3 + 780, y: 1270 },
-	];
+	const coords = StarterPositons.filter(
+		(s) => s.number.includes('11') || s.number.includes('15') || s.number.includes('14'),
+	).map((s) => ({ x: s.x + 1080 * 3, y: s.y + 460 }));
 
 	const imagetypes = ['profile-left', 'profile-front', 'profile-right'];
 
+	if (match.detail) {
+		// todo better error handling for fetching images
+		const img = await getImageBitmap('/img/examples/finishers.png');
+		ctx.drawImage(img, 1080 * 3, 0);
+	}
+
 	// change to aysnc for loop
-	for (const [i, player] of players.entries()) {
-		const { x, y } = coords[i];
-		const imagetype = imagetypes[i];
+	// for (const [i, player] of players.entries()) {
+	// 	const { x, y } = coords[i];
+	// 	const imagetype = imagetypes[i];
 
-		if (!player) {
-			return;
-		}
+	// 	if (!player) {
+	// 		return;
+	// 	}
 
-		const kitType = match.detail?.kit === 'SECONDARY' ? 'away' : 'home';
+	// 	const kitType = match.detail?.kit === 'SECONDARY' ? 'away' : 'home';
 
-		const url = player.images.find((i) => i.type === imagetype && i.kit === kitType)?.large;
+	// 	const url = player.images.find((i) => i.type === imagetype && i.kit === kitType)?.large;
 
-		if (url) {
-			const img = await getImageBitmap(url);
+	// 	if (url) {
+	// 		const img = await getImageBitmap(url);
 
-			if (img && i === 1) {
-				const ratio = 600 / img.height;
-				const x_offset = (img.width * ratio) / 2;
-				ctx.drawImage(img, x - x_offset / 2, y - 500, img.width * ratio, img.height * ratio);
-			}
-		}
-	}
+	// 		if (img && i === 1) {
+	// 			const ratio = 600 / img.height;
+	// 			const x_offset = (img.width * ratio) / 2;
+	// 			ctx.drawImage(img, x - x_offset / 2, y - 500, img.width * ratio, img.height * ratio);
+	// 		}
+	// 	}
+	// }
 
-	for (const [i, player] of players.entries()) {
-		const { x, y } = coords[i];
-		const imagetype = imagetypes[i];
+	// for (const [i, player] of players.entries()) {
+	// 	const { x, y } = coords[i];
+	// 	const imagetype = imagetypes[i];
 
-		if (!player) {
-			return;
-		}
+	// 	if (!player) {
+	// 		return;
+	// 	}
 
-		const kitType = match.detail?.kit === 'SECONDARY' ? 'away' : 'home';
+	// 	const kitType = match.detail?.kit === 'SECONDARY' ? 'away' : 'home';
 
-		const url = player.images.find((i) => i.type === imagetype && i.kit === kitType)?.large;
+	// 	const url = player.images.find((i) => i.type === imagetype && i.kit === kitType)?.large;
 
-		if (url) {
-			const img = await getImageBitmap(url);
+	// 	if (url) {
+	// 		const img = await getImageBitmap(url);
 
-			if (img && i !== 1) {
-				const ratio = 600 / img.height;
-				const x_offset = (img.width * ratio) / 2;
-				ctx.drawImage(img, x - x_offset / 2, y - 500, img.width * ratio, img.height * ratio);
-			}
-		}
-	}
+	// 		if (img && i !== 1) {
+	// 			const ratio = 600 / img.height;
+	// 			const x_offset = (img.width * ratio) / 2;
+	// 			ctx.drawImage(img, x - x_offset / 2, y - 500, img.width * ratio, img.height * ratio);
+	// 		}
+	// 	}
+	// }
 	// 	const img = finisherImages.find((p) => p.key === player.key);
 
 	// 	});
@@ -142,8 +147,25 @@ export default async function finishersPartialRenderer(
 	// 		);
 	// 	}
 
+	coords.forEach((coord) => {
+		let { x, y } = coord;
+
+		y = y - 240;
+		ctx.fillStyle = 'white';
+		ctx.fillRect(x, y, 260, 40);
+		ctx.strokeStyle = Colours.NAVY;
+		ctx.lineWidth = 3;
+		ctx.strokeRect(x, y, 260, 40);
+		ctx.font = `24px semiBold`;
+		ctx.textAlign = 'center';
+		ctx.fillStyle = 'black';
+		ctx.fillText('TBC', x + 130, y + 30);
+	});
+
 	players.forEach((player, i) => {
-		const { x, y } = coords[i];
+		let { x, y } = coords[i];
+
+		y = y - 240;
 		if (!player) {
 			return;
 		}

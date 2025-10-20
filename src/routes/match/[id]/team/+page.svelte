@@ -15,6 +15,8 @@
 	import { matchTeamSchema } from '$lib/validation/Schemas';
 	import { toast } from 'svelte-sonner';
 	import { goto } from '$app/navigation';
+	import SubmitButton from '$lib/components/forms/SubmitButton.svelte';
+	import CancelLink from '$lib/components/forms/CancelLink.svelte';
 
 	const matchId = Number.parseInt(page.params.id as string);
 	let match: Match | undefined = $state();
@@ -51,7 +53,7 @@
 		}
 
 		await updateMatchTeam(matchId, { ...data });
-		toast.success('Opponent updated');
+		toast.success('Team updated');
 		goto(`/match/${matchId}`);
 	}
 </script>
@@ -63,13 +65,13 @@
 		{#if !match}
 			<p>Match not found</p>
 		{:else}
-			<div class="grid w-full max-w-sm items-center gap-1.5">
+			<div class="grid w-full items-center gap-1.5">
 				<Label for="match-team-type">Club</Label>
 				<Input type="text" id="match-team-type" bind:value={data.club} disabled />
 				<ErrorLabel>{errors.club}</ErrorLabel>
 			</div>
 
-			<div class="grid w-full max-w-sm items-center gap-1.5">
+			<div class="grid w-full items-center gap-1.5">
 				<Label for="match-team-squad">Squad</Label>
 				<Input type="text" id="match-team-squad" bind:value={data.squad} />
 				<ErrorLabel>{errors.squad}</ErrorLabel>
@@ -77,8 +79,8 @@
 
 			<Separator />
 
-			<Button href={`/match/${matchId}`} variant="outline">Cancel</Button>
-			<Button type="submit">Save</Button>
+			<CancelLink href={`/match/${matchId}`}>Cancel</CancelLink>
+			<SubmitButton>Save</SubmitButton>
 		{/if}
 	</div>
 </form>

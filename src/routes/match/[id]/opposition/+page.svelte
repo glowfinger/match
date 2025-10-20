@@ -2,7 +2,7 @@
 	import Breadcrumb from '$lib/components/Breadcrumb.svelte';
 	import { getMatch, updateOpponent } from '$lib/database/MatchService';
 
-	import type { Club, Match, MatchOpponent, MatchPosition } from '$lib/database/IndexedDB';
+	import type { Club, Match, MatchOpponent } from '$lib/database/IndexedDB';
 	import { onMount } from 'svelte';
 	import HeadingLg from '$lib/components/typography/HeadingLg.svelte';
 	import { page } from '$app/state';

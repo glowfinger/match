@@ -36,35 +36,37 @@ export const MediaImageTypes: MediaImageType[] = [
 		type: 'LINEUP',
 		label: 'Lineup',
 	},
+	{
+		type: 'LINEUP_LIST',
+		label: 'Lineup List',
+	},
 	// {
 	// 	type: 'highlight',
 	// 	label: 'Highlight',
 	// },
 ];
 
-export const SPONSORS = [
+export type Sponsor = {
+	name: string;
+	logo: string;
+	handle: string;
+	sections: string[];
+	level: string;
+};
+
+export const SPONSORS: Sponsor[] = [
 	{
 		name: 'Furniture Village',
-		logo: 'https://glowfinger.blob.core.windows.net/chipstead/sponsors/furniture-village.png',
+		logo: 'https://glowfinger.blob.core.windows.net/smg/sponsors/furniture-village.png',
 		handle: '@furniturevillage',
 		sections: ['SENIOR'],
+		level: '1',
 	},
 	{
-		name: 'Murphy Digital',
-		logo: 'https://glowfinger.blob.core.windows.net/chipstead/sponsors/murphy-digital.png',
-		handle: '@murphy_digital',
+		name: 'Formation Lighting',
+		logo: 'https://glowfinger.blob.core.windows.net/smg/sponsors/formation-lighting.png',
+		handle: ' @formation_lighting',
 		sections: ['SENIOR'],
-	},
-	{
-		name: 'Sandy Trees',
-		logo: 'https://glowfinger.blob.core.windows.net/chipstead/sponsors/sandy-trees.png',
-		handle: ' @sandy_trees',
-		sections: ['SENIOR'],
-	},
-	{
-		name: 'Aspire Commerncial',
-		logo: 'https://glowfinger.blob.core.windows.net/chipstead/sponsors/aspire-commercial.png',
-		handle: '',
-		sections: ['SENIOR'],
+		level: '2',
 	},
 ];

@@ -1,4 +1,3 @@
-import { getImageBitmap } from '$lib/canvas/ImageCache';
 import { Colours } from '$lib/Constants';
 import { getMatch } from '$lib/database/MatchService';
 import { convertTime, matchDate } from '$lib/helpers/dateTime/ConvertTime';
@@ -103,30 +102,6 @@ export default async function InfoPartialRenderer(
 		y += size + lines.length * size + margin;
 	}
 
-	if (match.team && match.opponent) {
-		const badge = match.detail?.venue === 'HOME' ? match.team.badge : match.opponent.badge;
-		const name = match.detail?.venue === 'HOME' ? match.team.squad : match.opponent.squad;
-		const x = 300;
-		const size = 80;
-		ctx.drawImage(await getImageBitmap(badge), x, y, 150, 150);
-		ctx.font = `${size}px black`;
-		ctx.textAlign = 'left';
-		ctx.strokeText(name, x + 150, y + 150);
-		ctx.fillText(name, x + 150, y + 150);
-	}
-
-	if (match.opponent && match.team) {
-		const badge = match.detail?.venue === 'HOME' ? match.team.badge : match.opponent.badge;
-		const name = match.detail?.venue === 'HOME' ? match.opponent.squad : match.team.squad;
-		const x = 640;
-		const size = 80;
-		ctx.drawImage(await getImageBitmap(badge), x, y, 150, 150);
-		ctx.font = `${size}px black`;
-		ctx.textAlign = 'left';
-		ctx.strokeText(name, x + 150, y + 150);
-		ctx.fillText(name, x + 150, y + 150);
-	}
-
 	// const home: string = config.teams.home.name.toUpperCase() || '';
 	// const away: string = config.teams.away.name.toUpperCase() || '';
 	// writeTeamBadge(ctx, { x: 300, y: 400 }, config.teams.home.badge);
@@ -137,6 +112,7 @@ export default async function InfoPartialRenderer(
 
 	// }
 
+	y += 620;
 	// Date
 	if (match.schedule) {
 		const size = 48;

@@ -17,11 +17,17 @@
 		getImageFileSize,
 	} from '$lib/database/services/ImageFileDbService';
 	import type { ImageFile } from '$lib/database/IndexedDB';
+	import {
+		deleteAllMatchImages,
+		getMatchImageFileCount,
+		getMatchImageFileSize,
+	} from '$lib/database/match/MatchImageDBService';
 	let matches: Match[] = $state([]);
 	let emptyMatches: Match[] = $state([]);
 	let imageFiles: ImageFile[] = $state([]);
 
 	let imageFileInfo: { count: number; size: number } = $state({ count: 0, size: 0 });
+	let matchImageFileInfo: { count: number; size: number } = $state({ count: 0, size: 0 });
 
 	onMount(async () => {
 		matches = await getMatches();
@@ -29,6 +35,10 @@
 		imageFiles = await getImageFiles();
 
 		imageFileInfo = { count: await getImageFileCount(), size: await getImageFileSize() };
+		matchImageFileInfo = {
+			count: await getMatchImageFileCount(),
+			size: await getMatchImageFileSize(),
+		};
 	});
 
 	function isNewMatch(match: Match) {
@@ -49,6 +59,12 @@
 		await deleteImageFiles();
 		imageFileInfo = { count: await getImageFileCount(), size: await getImageFileSize() };
 		toast.success('Image cache cleared');
+	}
+
+	async function handleClearMatchImages() {
+		await deleteAllMatchImages();
+		imageFileInfo = { count: await getImageFileCount(), size: await getImageFileSize() };
+		toast.success('Match images cleared');
 	}
 
 	const breadcrumbs = [
@@ -75,9 +91,15 @@
 >
 
 <HeadingMd>Images cache ({imageFileInfo.count}) {imageFileInfo.size}</HeadingMd>
-
 <Button variant="destructive" disabled={imageFileInfo.count === 0} onclick={handleClearEmptyImages}
 	>Clear image cache</Button
+>
+
+<HeadingMd>Match images ({matchImageFileInfo.count}) {matchImageFileInfo.size}</HeadingMd>
+<Button
+	variant="destructive"
+	disabled={matchImageFileInfo.count === 0}
+	onclick={handleClearMatchImages}>Clear match images</Button
 >
 
 <a href="/players" class="variant-filled-primary btn">View players</a>

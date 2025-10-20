@@ -16,6 +16,26 @@ export async function getImageFile(
 	return [undefined, image];
 }
 
+export async function hasAndFetchAndCacheImageFile(url: string): Promise<boolean> {
+	const response = await fetch(url)
+		.then((response) => response.blob())
+		.catch((error) => {
+			console.error(error);
+			return false;
+		});
+	if (response === false) {
+		return false;
+	}
+
+	await addImageFile({ url, blob: response as Blob });
+	return true;
+}
+
+export async function hasImageFile(url: string): Promise<boolean> {
+	const image = await db.imageFiles.where({ url }).first();
+	return image !== undefined;
+}
+
 export async function getImageFiles(): Promise<ImageFile[]> {
 	return await db.imageFiles.toArray();
 }

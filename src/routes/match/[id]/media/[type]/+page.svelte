@@ -41,6 +41,7 @@
 
 		// if (images.length === 0) {
 		generateImage(matchImageType);
+
 		// }
 	});
 

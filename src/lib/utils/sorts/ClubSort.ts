@@ -25,6 +25,26 @@ export function sortByDate(a: Match, b: Match) {
 		return -1;
 	}
 
+	if (!Object.hasOwn(a, 'team') && !Object.hasOwn(b, 'team')) {
+		return 0;
+	}
+
+	if (!Object.hasOwn(a, 'team')) {
+		return -1;
+	}
+
+	if (!Object.hasOwn(b, 'team')) {
+		return 1;
+	}
+
+	if ((a.team?.squad ?? 0) < (b.team?.squad ?? 0)) {
+		return -1;
+	}
+
+	if ((a.team?.squad ?? 0) > (b.team?.squad ?? 0)) {
+		return 1;
+	}
+
 	if (a.createdAt < b.createdAt) {
 		return -1;
 	}

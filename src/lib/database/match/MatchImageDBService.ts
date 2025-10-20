@@ -22,10 +22,24 @@ export async function setMatchImage(image: MatchImage | Omit<MatchImage, 'id'>):
 	}
 }
 
-export async function deleteMatchImage(matchId: number): Promise<void> {
+export async function deleteAllMatchImages(): Promise<void> {
+	await db.matchImages.clear();
+}
+
+export async function deleteMatchImages(matchId: number): Promise<void> {
 	await db.matchImages.where({ matchId }).delete();
 }
 
 export async function deleteMatchImagesByType(matchId: number, type: string): Promise<void> {
 	await db.matchImages.where({ matchId, type }).delete();
+}
+
+export async function getMatchImageFileCount(): Promise<number> {
+	return await db.matchImages.count();
+}
+
+export async function getMatchImageFileSize(): Promise<number> {
+	return await db.matchImages
+		.toArray()
+		.then((images) => images.reduce((acc, image) => acc + image.base64.length, 0));
 }

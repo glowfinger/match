@@ -1,8 +1,15 @@
-import { Colours, SPONSORS } from '$lib/Constants';
+import { Colours } from '$lib/Constants';
 import type { MatchImage } from '$lib/database/IndexedDB';
 import { getMatch } from '$lib/database/MatchService';
+import { KIT_VALUES } from '../constants/Colours';
+import { drawSponsors } from '../drawers/SponsorsDrawer';
 import { getImageBitmap } from '../ImageCache';
 import canvasSplitter from './CanvasSplitter';
+
+export const backgrounds = {
+	[KIT_VALUES.MAIN]: Colours.NAVY,
+	[KIT_VALUES.SECONDARY]: Colours.PINK,
+};
 
 export default async function matchRenderer(
 	matchId: number,
@@ -20,88 +27,83 @@ export default async function matchRenderer(
 
 	const match = await getMatch(matchId);
 
-	ctx.fillStyle = Colours.NAVY;
+	ctx.fillStyle = backgrounds[match.detail?.kit ?? KIT_VALUES.MAIN];
 	ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-	{
-		let url = '/img/backgrounds/seniors/senior-navy-3240-1080.png';
-		if (match.detail?.kit !== 'MAIN') {
-			url = '/img/backgrounds/seniors/senior-pink-3240-1080.png';
-		}
+	// {
+	// 	const url = '/img/examples/match-icon.png';
+	// 	const response = await fetch(url).then((response) => response.blob());
 
-		const img = await getImageBitmap(url);
-		ctx.drawImage(img, 0, 0);
+	// 	const img = await createImageBitmap(response);
+	// 	ctx.drawImage(img, 0, 0);
+	// }
+
+	const homeTeam = match.detail?.venue === 'HOME' ? match.team : match.opponent;
+	const awayTeam = match.detail?.venue === 'HOME' ? match.opponent : match.team;
+
+	if (homeTeam) {
+		const x = 60;
+		const y = 560;
+		const lineHeight = 54;
+		ctx.fillStyle = Colours.WHITE;
+		ctx.lineWidth = 1;
+		ctx.strokeStyle = Colours.BLACK;
+		ctx.fillRect(x, y, 170, 170);
+		ctx.strokeRect(x, y, 170, 170);
+
+		const img = await getImageBitmap(homeTeam.badge);
+		ctx.drawImage(img, x + 10, y + 10);
+
+		const lines = [homeTeam.club, homeTeam.squad];
+		ctx.font = `${lineHeight}px regular`;
+		ctx.textAlign = 'left';
+		ctx.lineWidth = 6;
+		ctx.fillStyle = Colours.WHITE;
+		ctx.strokeStyle = Colours.NAVY;
+		lines.forEach((line, index) => {
+			ctx.strokeText(line, x + 170 + 30, y + 75 + index * lineHeight + 10);
+			ctx.fillText(line, x + 170 + 30, y + 75 + index * lineHeight + 10);
+		});
 	}
+
+	// Away team
+	if (awayTeam) {
+		const x = 60;
+		const y = 760;
+		const lineHeight = 54;
+
+		ctx.fillStyle = Colours.WHITE;
+		ctx.lineWidth = 1;
+		ctx.strokeStyle = Colours.BLACK;
+		ctx.fillRect(x, y, 170, 170);
+		ctx.strokeRect(x, y, 170, 170);
+
+		const img = await getImageBitmap(awayTeam.badge);
+		ctx.drawImage(img, x + 10, y + 10);
+
+		const lines = [awayTeam.club, awayTeam.squad];
+		ctx.font = `${lineHeight}px regular`;
+		ctx.textAlign = 'left';
+		ctx.lineWidth = 6;
+		ctx.fillStyle = Colours.WHITE;
+		ctx.strokeStyle = Colours.NAVY;
+		lines.forEach((line, index) => {
+			ctx.strokeText(line, x + 170 + 30, y + 75 + index * 40);
+			ctx.fillText(line, x + 170 + 30, y + 75 + index * 40);
+		});
+	}
+
+	// {
+	// 	let url = '/img/backgrounds/seniors/senior-navy-3240-1080.png';
+	// 	if (match.detail?.kit !== 'MAIN') {
+	// 		url = '/img/backgrounds/seniors/senior-pink-3240-1080.png';
+	// 	}
+
+	// 	const img = await getImageBitmap(url);
+	// 	ctx.drawImage(img, 0, 0);
+	// }
 
 	// Team squad
-	if (match.team) {
-		const team = [match.team.club ?? '', match.team.squad ?? ''].join(' ');
-		ctx.font = `100px black`;
-		ctx.textAlign = 'center';
-		ctx.fillStyle = Colours.WHITE;
-		ctx.lineWidth = 16;
-		ctx.strokeStyle = Colours.NAVY;
-		ctx.strokeText(team, 540, 200);
-		ctx.fillText(team, 540, 200);
-	}
-
-	// Match type
-	if (match.detail) {
-		ctx.font = `30px black`;
-		ctx.textAlign = 'left';
-		ctx.fillStyle = Colours.WHITE;
-		ctx.lineWidth = 4;
-		ctx.strokeStyle = Colours.NAVY;
-		ctx.strokeText(match.detail.type, 60, 360);
-		ctx.fillText(match.detail.type, 60, 360);
-	}
-
-	if (match.team) {
-		const lines = [match.team.club, match.team.squad];
-		const lineHeight = 54;
-		const x = 440;
-		const y = 380;
-
-		ctx.font = `${lineHeight}px regular`;
-		ctx.textAlign = 'right';
-		ctx.lineWidth = 6;
-		ctx.fillStyle = Colours.WHITE;
-		ctx.strokeStyle = Colours.NAVY;
-		lines.forEach((line, index) => {
-			ctx.strokeText(line, x, y + index * lineHeight);
-			ctx.fillText(line, x, y + index * lineHeight);
-		});
-	}
-
-	if (match.team && match.opponent) {
-		const text = 'vs';
-		const lineHeight = 48;
-		const x = 540;
-		const y = 400;
-		ctx.font = `${lineHeight}px regular`;
-		ctx.textAlign = 'center';
-		ctx.lineWidth = 6;
-		ctx.fillStyle = Colours.WHITE;
-		ctx.strokeStyle = Colours.NAVY;
-		ctx.strokeText(text, x, y);
-		ctx.fillText(text, x, y);
-	}
-
-	if (match.opponent) {
-		const lines = [match.opponent.club, match.opponent.squad];
-		const lineHeight = 54;
-		const x = 640;
-		const y = 380;
-		ctx.font = `${lineHeight}px regular`;
-		ctx.textAlign = 'left';
-		ctx.lineWidth = 6;
-		ctx.fillStyle = Colours.WHITE;
-		ctx.strokeStyle = Colours.NAVY;
-		lines.forEach((line, index) => {
-			ctx.strokeText(line, x, y + index * lineHeight);
-			ctx.fillText(line, x, y + index * lineHeight);
-		});
-	}
 
 	// if (match.team) {
 	// 	const img = await getImageBitmap(match.team.badge);
@@ -149,7 +151,7 @@ export default async function matchRenderer(
 
 	// Team name
 
-	const team = `${match.team?.club ?? ''} ${match.team?.squad ?? ''}`;
+	// const team = `${match.team?.club ?? ''} ${match.team?.squad ?? ''}`;
 
 	// ctx.font = `80px black`;
 	// ctx.textAlign = 'left';
@@ -178,6 +180,8 @@ export default async function matchRenderer(
 	// ctx.strokeText(opponent, 60, 360);
 	// ctx.fillText(opponent, 60, 360);
 
+	await drawSponsors(ctx);
+
 	return (await canvasSplitter(canvas)).map(({ page, base64 }) => ({
 		matchId,
 		type,
@@ -185,27 +189,6 @@ export default async function matchRenderer(
 		base64,
 		createdAt: new Date().toISOString(),
 	}));
-}
-
-async function drawSponsors(ctx: OffscreenCanvasRenderingContext2D) {
-	const images = await Promise.all(
-		SPONSORS.map(async (sponsor) => {
-			return await fetch(sponsor.logo)
-				.then((response) => response.blob())
-				.then(async (blob) => await createImageBitmap(blob));
-		}),
-	);
-	images.forEach((img, i) => {
-		const x = 60 + i * 180;
-		const y = 900;
-		ctx.lineWidth = 2;
-		ctx.strokeStyle = Colours.BLACK;
-		ctx.fillStyle = Colours.WHITE;
-		ctx.fillRect(x, y, 120, 120);
-		ctx.strokeRect(x, y, 120, 120);
-
-		ctx.drawImage(img, x + 10, y + 10);
-	});
 }
 
 export function splitIntoLines(text: string): string[] {

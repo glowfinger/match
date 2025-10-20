@@ -15,16 +15,19 @@
 	let matches: Match[] = $state([]);
 
 	onMount(async () => {
-		const allMatches = await getMatches();
+		const allMatches = await getMatches().then((matches) => matches.toSorted(sortByDate));
 
 		const teams = [
 			...new Set(allMatches.map((match) => [match.team?.club, match.team?.squad].join('-'))),
 		];
 
-		matches = allMatches.toSorted(sortByDate).filter((match) => {
-			const team = [match.team?.club, match.team?.squad].join('-');
-			return teams.includes(team);
-		});
+		matches = allMatches
+			.toSorted(sortByDate)
+			.filter((match) => {
+				const team = [match.team?.club, match.team?.squad].join('-');
+				return teams.includes(team);
+			})
+			.slice(0, 4);
 	});
 
 	async function handleNewMatch() {
@@ -50,6 +53,7 @@
 {/if}
 
 <HeadingMd>Latest</HeadingMd>
+<Button href={`/matches`} class="variant-filled-primary btn">View matches</Button>
 {#each matches.toSorted(sortByDate) as match}
 	<a href={`/match/${match.id}`} class="focus:outline-hidden">
 		<MatchCard {match} />
