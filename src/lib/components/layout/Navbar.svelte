@@ -4,8 +4,8 @@
 	import OnlineIcon from '../icons/OnlineIcon.svelte';
 </script>
 
-<nav class="bg-slate-800">
-	<div class="mx-auto max-w-md">
+<nav class="bg-slate-900">
+	<div class="mx-auto max-w-md px-4">
 		<div class="relative flex h-16 items-center justify-between">
 			<div class="absolute inset-y-0 flex items-center gap-4 sm:static sm:inset-auto">
 				<a href="/">

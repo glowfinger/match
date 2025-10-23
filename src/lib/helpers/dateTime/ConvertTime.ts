@@ -11,6 +11,20 @@ export function convertTime(timeString: string) {
 	return h + timeString.substring(2, 5) + ampm;
 }
 
+export function socialDate(dateString: string) {
+	if (!dateString) {
+		return 'DATE: NOT SET';
+	}
+
+	const date = DateTime.fromSQL(dateString);
+
+	if (!date.isValid) {
+		return 'DATE: NOT SET';
+	}
+
+	return date.toFormat('ccc d LLL');
+}
+
 export function matchDate(dateString: string) {
 	if (!dateString) {
 		return 'DATE: NOT SET';

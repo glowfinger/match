@@ -1,7 +1,11 @@
 import { Colours } from '$lib/Constants';
 import type { MatchImage } from '$lib/database/IndexedDB';
+import { getMatchRolesByType } from '$lib/database/MatchRoleDBService';
 import { getMatch } from '$lib/database/MatchService';
+import { getPlayersByKeys } from '$lib/database/PlayerDBService';
 import { KIT_VALUES } from '../constants/Colours';
+import { drawSponsorsVertical } from '../drawers/SponsorsDrawer';
+import { getImageBitmap } from '../ImageCache';
 import canvasSplitter from './CanvasSplitter';
 
 const RESULT_BACKGROUND_IMAGE = {
@@ -31,23 +35,28 @@ export default async function resultRender(
 	}
 
 	const match = await getMatch(matchId);
+	const awards = await getMatchRolesByType(matchId, 'awards');
+	const players = await getPlayersByKeys(awards.map((s) => s.playerKey));
+
+	console.log(players);
+
 	// ctx.fillStyle = RESULT_BACKGROUND[match.detail?.kit ?? KIT_VALUES.MAIN];
 	// ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-	const mediaImageData = [
-		{
-			matchId,
-			imageType: 'RESULT',
-			type: 'PHOTO',
-			url: '/img/photos/DSC03236.png',
-			x: 0,
-			y: -200,
-		},
-	];
+	// const mediaImageData = [
+	// 	{
+	// 		matchId,
+	// 		imageType: 'RESULT',
+	// 		type: 'PHOTO',
+	// 		url: '/img/photos/DSC03236.png',
+	// 		x: 0,
+	// 		y: -200,
+	// 	},
+	// ];
 
-	const mediaImage = mediaImageData.find(
-		(image) => image.imageType === 'RESULT' && image.type === 'PHOTO',
-	);
+	// const mediaImage = mediaImageData.find(
+	// 	(image) => image.imageType === 'RESULT' && image.type === 'PHOTO',
+	// );
 
 	// if (mediaImage) {
 	// 	const photo = await getImageBitmap(mediaImage?.url ?? '');
@@ -55,58 +64,58 @@ export default async function resultRender(
 	// 		ctx.drawImage(photo, mediaImage?.x ?? 0, mediaImage?.y ?? 0);
 	// 	}
 
-	// 	const img = await getImageBitmap(RESULT_BACKGROUND_IMAGE[match.detail?.kit ?? KIT_VALUES.MAIN]);
-	// 	ctx.drawImage(img, 0, HEIGHT / 2, canvas.width, canvas.width);
+	const img = await getImageBitmap(RESULT_BACKGROUND_IMAGE[match.detail?.kit ?? KIT_VALUES.MAIN]);
+	ctx.drawImage(img, 0, HEIGHT / 2, canvas.width, canvas.width);
 	// }
 
-	// if (match.detail?.venue === 'HOME') {
-	// 	{
-	// 		const TITLE = [match.team?.club ?? '', match.team?.squad ?? ''].join(' ').trim();
-	// 		ctx.font = `80px black`;
-	// 		ctx.textAlign = 'left';
-	// 		ctx.fillStyle = Colours.GOLD;
-	// 		ctx.lineWidth = 8;
-	// 		ctx.strokeStyle = Colours.NAVY;
-	// 		ctx.strokeText(TITLE, 60, 100);
-	// 		ctx.fillText(TITLE, 60, 100);
-	// 	}
+	if (match.detail?.venue === 'HOME') {
+		{
+			const TITLE = [match.team?.club ?? '', match.team?.squad ?? ''].join(' ').trim();
+			ctx.font = `80px black`;
+			ctx.textAlign = 'left';
+			ctx.fillStyle = Colours.GOLD;
+			ctx.lineWidth = 8;
+			ctx.strokeStyle = Colours.NAVY;
+			ctx.strokeText(TITLE, 60, 100);
+			ctx.fillText(TITLE, 60, 100);
+		}
 
-	// 	{
-	// 		const TITLE = ['vs', match.opponent?.club ?? '', match.opponent?.squad ?? '']
-	// 			.join(' ')
-	// 			.trim();
-	// 		ctx.font = `60px regular`;
-	// 		ctx.textAlign = 'left';
-	// 		ctx.fillStyle = Colours.WHITE;
-	// 		ctx.lineWidth = 8;
-	// 		ctx.strokeStyle = Colours.NAVY;
-	// 		ctx.strokeText(TITLE, 60, 180);
-	// 		ctx.fillText(TITLE, 60, 180);
-	// 	}
-	// } else {
-	// 	{
-	// 		const TITLE = [match.opponent?.club ?? '', match.opponent?.squad ?? '', 'vs']
-	// 			.join(' ')
-	// 			.trim();
-	// 		ctx.font = `60px regular`;
-	// 		ctx.textAlign = 'left';
-	// 		ctx.fillStyle = Colours.WHITE;
-	// 		ctx.lineWidth = 8;
-	// 		ctx.strokeStyle = Colours.NAVY;
-	// 		ctx.strokeText(TITLE, 60, 100);
-	// 		ctx.fillText(TITLE, 60, 100);
-	// 	}
-	// 	{
-	// 		const TITLE = [match.team?.club ?? '', match.team?.squad ?? ''].join(' ').trim();
-	// 		ctx.font = `80px black`;
-	// 		ctx.textAlign = 'left';
-	// 		ctx.fillStyle = Colours.GOLD;
-	// 		ctx.lineWidth = 8;
-	// 		ctx.strokeStyle = Colours.NAVY;
-	// 		ctx.strokeText(TITLE, 60, 210);
-	// 		ctx.fillText(TITLE, 60, 210);
-	// 	}
-	// }
+		{
+			const TITLE = ['vs', match.opponent?.club ?? '', match.opponent?.squad ?? '']
+				.join(' ')
+				.trim();
+			ctx.font = `60px regular`;
+			ctx.textAlign = 'left';
+			ctx.fillStyle = Colours.WHITE;
+			ctx.lineWidth = 8;
+			ctx.strokeStyle = Colours.NAVY;
+			ctx.strokeText(TITLE, 60, 180);
+			ctx.fillText(TITLE, 60, 180);
+		}
+	} else {
+		{
+			const TITLE = [match.opponent?.club ?? '', match.opponent?.squad ?? '', 'vs']
+				.join(' ')
+				.trim();
+			ctx.font = `60px regular`;
+			ctx.textAlign = 'left';
+			ctx.fillStyle = Colours.WHITE;
+			ctx.lineWidth = 8;
+			ctx.strokeStyle = Colours.NAVY;
+			ctx.strokeText(TITLE, 60, 100);
+			ctx.fillText(TITLE, 60, 100);
+		}
+		{
+			const TITLE = [match.team?.club ?? '', match.team?.squad ?? ''].join(' ').trim();
+			ctx.font = `80px black`;
+			ctx.textAlign = 'left';
+			ctx.fillStyle = Colours.GOLD;
+			ctx.lineWidth = 8;
+			ctx.strokeStyle = Colours.NAVY;
+			ctx.strokeText(TITLE, 60, 210);
+			ctx.fillText(TITLE, 60, 210);
+		}
+	}
 
 	if (match.result !== undefined) {
 		const { homeScore, awayScore } = match.result;
@@ -118,7 +127,8 @@ export default async function resultRender(
 
 		ctx.font = `260px semiBold`;
 		ctx.textAlign = 'center';
-		ctx.fillStyle = Colours.WHITE;
+
+		ctx.fillStyle = Colours.GOLD;
 		ctx.lineWidth = 16;
 		ctx.strokeStyle = Colours.NAVY;
 
@@ -132,12 +142,12 @@ export default async function resultRender(
 
 		ctx.textAlign = 'left';
 
-		ctx.fillStyle = Colours.GOLD;
+		ctx.fillStyle = Colours.WHITE;
 		ctx.strokeText(awayString, 540 + 80, centerHeight);
 		ctx.fillText(awayString, 540 + 80, centerHeight);
 	}
 
-	// await drawSponsors(ctx, 60, 1120);
+	await drawSponsorsVertical(ctx, 1080 - 60 - 150, 60);
 
 	return (await canvasSplitter(canvas)).map(({ page, base64 }) => ({
 		matchId,

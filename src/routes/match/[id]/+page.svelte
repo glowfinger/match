@@ -90,7 +90,9 @@
 {#if !match}
 	<p>Match not found</p>
 {:else}
-	<MatchCard {match} />
+	<div class="grid grid-cols-2 gap-2">
+		<MatchCard {match} />
+	</div>
 	<Separator />
 	<HeadingMd>Info</HeadingMd>
 	<ul role="list" class="grid grid-cols-4 gap-2">
