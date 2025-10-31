@@ -10,7 +10,7 @@
 	import pitchRender from '$lib/3d/geometry/PitchRender';
 	import Overview from '$lib/components/stats/Overview.svelte';
 
-	const matchId = Number.parseInt(page.params.id);
+	const matchId = Number.parseInt(page.params.id as string);
 
 	let match: Match | undefined = $state();
 	let notes: Note[] = $state([]);

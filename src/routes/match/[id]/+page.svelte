@@ -27,6 +27,7 @@
 	import type { MatchImage } from '$lib/database/IndexedDB';
 	import MediaCard from '$lib/components/cards/MediaCard.svelte';
 	import { MediaImageTypes, type MediaImageType } from '$lib/Constants';
+
 	if (!page.params.id) {
 		throw new Error('Match ID is required');
 	}
@@ -90,16 +91,17 @@
 {#if !match}
 	<p>Match not found</p>
 {:else}
+	<HeadingMd>Info</HeadingMd>
 	<div class="grid grid-cols-2 gap-2">
+		<ul role="list" class="grid grid-cols-2 gap-2">
+			{#each INFO_LINKS as link}
+				<LinkCard {link} />
+			{/each}
+		</ul>
 		<MatchCard {match} />
 	</div>
 	<Separator />
-	<HeadingMd>Info</HeadingMd>
-	<ul role="list" class="grid grid-cols-4 gap-2">
-		{#each INFO_LINKS as link}
-			<LinkCard {link} />
-		{/each}
-	</ul>
+
 	<Separator />
 
 	<HeadingMd>Manage</HeadingMd>

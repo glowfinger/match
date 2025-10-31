@@ -10,12 +10,12 @@ import { getYesSelectionsByMatchId } from '$lib/database/SelectionDBService';
 const TITLE = 'FINISHERS';
 
 export default async function finishersPartialRenderer(
-	ctx: OffscreenCanvasRenderingContext2D,
+	ctx: OffscreenCanvasRenderingContext2D | CanvasRenderingContext2D,
 	matchId: number,
 ): Promise<void> {
 	// TODO bring this from config
 
-	const order = [0, 1, 2]; // TODO bring this from image config
+	// const order = [0, 1, 2]; // TODO bring this from image config
 
 	const match = await getMatch(matchId);
 

@@ -3,7 +3,7 @@ import { getMatch } from '$lib/database/MatchService';
 import { convertTime, matchDate } from '$lib/helpers/dateTime/ConvertTime';
 
 export default async function InfoPartialRenderer(
-	ctx: OffscreenCanvasRenderingContext2D,
+	ctx: OffscreenCanvasRenderingContext2D | CanvasRenderingContext2D,
 	matchId: number,
 ): Promise<void> {
 	const match = await getMatch(matchId);

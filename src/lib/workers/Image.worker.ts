@@ -29,7 +29,7 @@ onmessage = async ({ data }: MessageEvent) => {
 	if (data.type === 'MATCH') {
 		// const cachedImages = await preloadMatchImages(data.matchId);
 		// console.log(cachedImages);
-		images = await matchRenderer(data.matchId, data.type);
+		images = await matchRenderer(new OffscreenCanvas(1080, 1350), data.matchId, data.type);
 		console.timeLog('ImageWorker');
 	}
 	if (data.type === 'CANCELLED') {

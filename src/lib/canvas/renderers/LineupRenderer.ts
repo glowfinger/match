@@ -263,7 +263,7 @@ export default async function LineupRenderer(
 // }
 
 export function drawPlayerNumber(
-	ctx: OffscreenCanvasRenderingContext2D,
+	ctx: OffscreenCanvasRenderingContext2D | CanvasRenderingContext2D,
 	number: string,
 	x: number,
 	y: number,

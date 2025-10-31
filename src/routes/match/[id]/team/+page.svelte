@@ -17,6 +17,7 @@
 	import { goto } from '$app/navigation';
 	import SubmitButton from '$lib/components/forms/SubmitButton.svelte';
 	import CancelLink from '$lib/components/forms/CancelLink.svelte';
+	import TextInput from '$lib/components/forms/TextInput.svelte';
 
 	const matchId = Number.parseInt(page.params.id as string);
 	let match: Match | undefined = $state();
@@ -66,15 +67,17 @@
 			<p>Match not found</p>
 		{:else}
 			<div class="grid w-full items-center gap-1.5">
-				<Label for="match-team-type">Club</Label>
-				<Input type="text" id="match-team-type" bind:value={data.club} disabled />
-				<ErrorLabel>{errors.club}</ErrorLabel>
+				<TextInput
+					id="match-team-club"
+					value={data.club}
+					title="Club"
+					error={errors.club}
+					disabled
+				/>
 			</div>
 
 			<div class="grid w-full items-center gap-1.5">
-				<Label for="match-team-squad">Squad</Label>
-				<Input type="text" id="match-team-squad" bind:value={data.squad} />
-				<ErrorLabel>{errors.squad}</ErrorLabel>
+				<TextInput id="match-team-squad" value={data.squad} title="Squad" error={errors.squad} />
 			</div>
 
 			<Separator />

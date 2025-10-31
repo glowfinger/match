@@ -1,4 +1,8 @@
-export function splitText(ctx: OffscreenCanvasRenderingContext2D, text: string, maxWidth: number) {
+export function splitText(
+	ctx: OffscreenCanvasRenderingContext2D | CanvasRenderingContext2D,
+	text: string,
+	maxWidth: number,
+) {
 	const lines = text.split('\n');
 	const results = [];
 

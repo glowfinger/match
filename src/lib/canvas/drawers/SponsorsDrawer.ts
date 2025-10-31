@@ -2,12 +2,13 @@ import { Colours, SPONSORS, type Sponsor } from '$lib/Constants';
 import { getImageBitmap } from '../ImageCache';
 
 export async function drawSponsorsVertical(
-	ctx: OffscreenCanvasRenderingContext2D,
+	ctx: OffscreenCanvasRenderingContext2D | CanvasRenderingContext2D,
 	x: number = 60,
 	y: number = 60,
 ) {
-	const sponsors = SPONSORS.filter((sponsor) => sponsor.sections.includes('SENIOR')).toSorted(
-		(a) => (a.level === '1' ? -1 : 1),
+	// TODO team section should be passed in as a parameter
+	const sponsors = SPONSORS.filter((sponsor) => sponsor.sections.includes('1XV')).toSorted((a) =>
+		a.level === '1' ? -1 : 1,
 	);
 
 	let yOffset = 0 - 20;
@@ -47,12 +48,12 @@ export async function drawSponsorsVertical(
 }
 
 export async function drawSponsors(
-	ctx: OffscreenCanvasRenderingContext2D,
+	ctx: OffscreenCanvasRenderingContext2D | CanvasRenderingContext2D,
 	x: number = 60,
 	y: number = 1120,
 ) {
-	const sponsors = SPONSORS.filter((sponsor) => sponsor.sections.includes('SENIOR')).toSorted(
-		(a) => (a.level === '1' ? -1 : 1),
+	const sponsors = SPONSORS.filter((sponsor) => sponsor.sections.includes('1XV')).toSorted((a) =>
+		a.level === '1' ? -1 : 1,
 	);
 
 	for (const [index, sponsor] of sponsors.entries()) {
@@ -61,7 +62,7 @@ export async function drawSponsors(
 }
 
 export async function drawSponsor(
-	ctx: OffscreenCanvasRenderingContext2D,
+	ctx: OffscreenCanvasRenderingContext2D | CanvasRenderingContext2D,
 	sponsor: Sponsor,
 	index: number,
 	x: number,

@@ -1,6 +1,6 @@
 <script lang="ts">
 	import type { Match, MatchOpponent, MatchTeam } from '$lib/database/IndexedDB';
-	import { matchDate, socialDate } from '$lib/helpers/dateTime/ConvertTime';
+	import { convertTime, matchDate, socialDate } from '$lib/helpers/dateTime/ConvertTime';
 	import CalendarIcon from '../icons/CalendarIcon.svelte';
 	import FortIcon from '../icons/FortIcon.svelte';
 	import StadiumIcon from '../icons/StadiumIcon.svelte';
@@ -51,6 +51,7 @@
 	<div class=" bg-slate-200 p-2">
 		<div class="truncate text-sm text-gray-900">
 			{socialDate(match.schedule?.matchOn ?? 'TBC')}
+			- {convertTime(match.schedule?.kickOffAt ?? 'TBC')}
 
 			({venueLetter})
 		</div>
@@ -58,7 +59,7 @@
 {/snippet}
 
 <div
-	class="h-full max-w-64 items-baseline divide-y divide-slate-400 overflow-hidden rounded-lg border border-slate-400 shadow-sm"
+	class="h-full max-w-64 items-baseline divide-y divide-slate-500 overflow-hidden rounded-lg border border-slate-500 shadow-sm"
 >
 	<div class="flex h-28 items-center justify-center bg-white p-2">
 		<div class="grid grid-cols-7 gap-2 bg-white p-2">
@@ -67,7 +68,7 @@
 				{@render teamName(homeTeam)}
 			</div>
 			<div class="grid grid-cols-1 items-center justify-center">
-				<p class="text-center text-2xl font-medium text-slate-700">vs</p>
+				<p class="text-center text-2xl font-medium text-slate-500">vs</p>
 			</div>
 			<div class="col-span-3 grid grid-cols-1">
 				{@render teamBadge(awayTeam)}

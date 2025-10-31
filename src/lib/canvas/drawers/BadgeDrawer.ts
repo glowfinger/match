@@ -4,7 +4,7 @@ import type { Match } from '$lib/database/IndexedDB';
 import { getImageBitmap } from '../ImageCache';
 
 export async function drawBadge(
-	ctx: OffscreenCanvasRenderingContext2D,
+	ctx: OffscreenCanvasRenderingContext2D | CanvasRenderingContext2D,
 	match: Match,
 	x: number = 60,
 	y: number = 460,

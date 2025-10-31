@@ -6,6 +6,10 @@ export const Colours = {
 	BLACK: '#0a0a0a',
 };
 
+export const UploadImageTypes = {
+	MAIN: 'main',
+};
+
 export type MediaImageType = {
 	type: string;
 	label: string;
@@ -16,22 +20,22 @@ export const MediaImageTypes: MediaImageType[] = [
 		type: 'MATCH',
 		label: 'Match',
 	},
-	// {
-	// 	type: 'CANCELLED',
-	// 	label: 'Cancelled',
-	// },
-	// {
-	// 	type: 'RESCHEDULED',
-	// 	label: 'Rescheduled',
-	// },
+	{
+		type: 'CANCELLED',
+		label: 'Cancelled',
+	},
+	{
+		type: 'RESCHEDULED',
+		label: 'Rescheduled',
+	},
 	{
 		type: 'RESULT',
 		label: 'Result',
 	},
-	// {
-	// 	type: 'TEAM',
-	// 	label: 'Team',
-	// },
+	{
+		type: 'TEAM',
+		label: 'Team',
+	},
 	{
 		type: 'LINEUP',
 		label: 'Lineup',
@@ -40,10 +44,10 @@ export const MediaImageTypes: MediaImageType[] = [
 		type: 'LINEUP_LIST',
 		label: 'Lineup List',
 	},
-	// {
-	// 	type: 'highlight',
-	// 	label: 'Highlight',
-	// },
+	{
+		type: 'highlight',
+		label: 'Highlight',
+	},
 ];
 
 export type Sponsor = {
@@ -59,14 +63,16 @@ export const SPONSORS: Sponsor[] = [
 		name: 'Furniture Village',
 		logo: 'https://glowfinger.blob.core.windows.net/smg/sponsors/furniture-village.png',
 		handle: '@furniturevillage',
-		sections: ['SENIOR'],
+		sections: ['1XV', '2XV'],
 		level: '1',
 	},
 	{
 		name: 'Formation Lighting',
 		logo: 'https://glowfinger.blob.core.windows.net/smg/sponsors/formation-lighting.png',
 		handle: ' @formation_lighting',
-		sections: ['SENIOR'],
+		sections: ['1XV', '2XV'],
 		level: '2',
 	},
 ];
+
+export const SOCIAL_TAGS = ['#UTC'];

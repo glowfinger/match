@@ -1,5 +1,7 @@
 import { DateTime } from 'luxon';
 
+const ERROR_MESSAGE = '!!';
+
 export function convertTime(timeString: string) {
 	if (!timeString) {
 		return '';
@@ -13,13 +15,13 @@ export function convertTime(timeString: string) {
 
 export function socialDate(dateString: string) {
 	if (!dateString) {
-		return 'DATE: NOT SET';
+		return ERROR_MESSAGE;
 	}
 
 	const date = DateTime.fromSQL(dateString);
 
 	if (!date.isValid) {
-		return 'DATE: NOT SET';
+		return ERROR_MESSAGE;
 	}
 
 	return date.toFormat('ccc d LLL');
@@ -27,7 +29,7 @@ export function socialDate(dateString: string) {
 
 export function matchDate(dateString: string) {
 	if (!dateString) {
-		return 'DATE: NOT SET';
+		return ERROR_MESSAGE;
 	}
 
 	const date = DateTime.fromSQL(dateString);

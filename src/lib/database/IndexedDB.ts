@@ -159,6 +159,26 @@ export interface ImageFile {
 	blob: Blob;
 }
 
+export interface MatchImageUploads {
+	id: number;
+	matchId: number;
+	matchImageType: string;
+	uploadedImageType: string;
+	createdAt: string;
+	blob: Blob;
+	meta: {
+		filename: string;
+		filesize: number;
+		mimetype: string;
+	};
+	settings: {
+		x: number;
+		y: number;
+		zoom: number;
+		page: number;
+	};
+}
+
 const db = new Dexie('MatchDatabase') as Dexie & {
 	matches: EntityTable<Match, 'id'>;
 	players: EntityTable<Player, 'key'>;
@@ -173,9 +193,10 @@ const db = new Dexie('MatchDatabase') as Dexie & {
 	events: EntityTable<Event, 'uuid'>;
 	eventsImages: EntityTable<EventImage, 'id'>;
 	imageFiles: EntityTable<ImageFile, 'url'>;
+	matchImageUploads: EntityTable<MatchImageUploads, 'id'>;
 };
 
-db.version(1.0).stores({
+db.version(3.0).stores({
 	matches: '++id',
 	players: 'key',
 	selections: '++id, [matchId+playerKey], [matchId+available]',
@@ -187,10 +208,10 @@ db.version(1.0).stores({
 	matchImages: '++id, [matchId], [matchId+type+page],[matchId+type]',
 	clubs: 'key',
 	fonts: '++id',
-	backgroundsImages: '++id, [type], [type+page]',
 	events: 'uuid, [createdAt], [template]',
 	eventsImages: '++id, [eventUuid+type]',
 	imageFiles: 'url',
+	matchImageUploads: '++id, [matchId+matchImageType+uploadedImageType]',
 });
 
 export { db };
