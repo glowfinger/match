@@ -159,11 +159,11 @@ export interface ImageFile {
 	blob: Blob;
 }
 
-export interface MatchImageUploads {
+export interface ImageUpload {
 	id: number;
 	matchId: number;
-	matchImageType: string;
-	uploadedImageType: string;
+	mediaType: string;
+	uploadType: string;
 	createdAt: string;
 	blob: Blob;
 	meta: {
@@ -175,7 +175,6 @@ export interface MatchImageUploads {
 		x: number;
 		y: number;
 		zoom: number;
-		page: number;
 	};
 }
 
@@ -193,10 +192,10 @@ const db = new Dexie('MatchDatabase') as Dexie & {
 	events: EntityTable<Event, 'uuid'>;
 	eventsImages: EntityTable<EventImage, 'id'>;
 	imageFiles: EntityTable<ImageFile, 'url'>;
-	matchImageUploads: EntityTable<MatchImageUploads, 'id'>;
+	imageUploads: EntityTable<ImageUpload, 'id'>;
 };
 
-db.version(3.0).stores({
+db.version(3.4).stores({
 	matches: '++id',
 	players: 'key',
 	selections: '++id, [matchId+playerKey], [matchId+available]',
@@ -211,7 +210,7 @@ db.version(3.0).stores({
 	events: 'uuid, [createdAt], [template]',
 	eventsImages: '++id, [eventUuid+type]',
 	imageFiles: 'url',
-	matchImageUploads: '++id, [matchId+matchImageType+uploadedImageType]',
+	imageUploads: '++id, [matchId+mediaType+uploadType]',
 });
 
 export { db };

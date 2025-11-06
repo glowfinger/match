@@ -69,15 +69,22 @@
 			<div class="grid w-full items-center gap-1.5">
 				<TextInput
 					id="match-team-club"
-					value={data.club}
+					bind:value={data.club}
 					title="Club"
+					placeholder="Enter club name"
 					error={errors.club}
 					disabled
 				/>
 			</div>
 
 			<div class="grid w-full items-center gap-1.5">
-				<TextInput id="match-team-squad" value={data.squad} title="Squad" error={errors.squad} />
+				<TextInput
+					id="match-team-squad"
+					bind:value={data.squad}
+					title="Squad"
+					placeholder="Enter squad name"
+					error={errors.squad}
+				/>
 			</div>
 
 			<Separator />

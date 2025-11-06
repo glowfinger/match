@@ -1,3 +1,5 @@
+import { KIT_VALUES } from './canvas/constants/Colours';
+
 export const Colours = {
 	NAVY: '#111C4E',
 	GOLD: '#fcb437',
@@ -75,4 +77,48 @@ export const SPONSORS: Sponsor[] = [
 	},
 ];
 
+export type UploadType = {
+	type: string;
+	label: string;
+};
+
+export const UPLOAD_TYPES: UploadType[] = [
+	{
+		type: 'main',
+		label: 'Main',
+	},
+];
+
 export const SOCIAL_TAGS = ['#UTC'];
+
+// TODO can this can from a database table or alternive data source?
+export const MEDIA_IMAGES = [
+	{
+		mediaTypes: ['MATCH'],
+		imageType: 'background',
+		url: '/img/backgrounds/seniors/match-navy.png',
+		version: 'full',
+		kit: KIT_VALUES.MAIN,
+	},
+	{
+		mediaTypes: ['MATCH'],
+		imageType: 'background',
+		url: '/img/backgrounds/seniors/match-navy-cutout.png',
+		version: 'cutout',
+		kit: KIT_VALUES.MAIN,
+	},
+	{
+		mediaTypes: ['MATCH'],
+		imageType: 'background',
+		url: '/img/backgrounds/seniors/match-pink.png',
+		version: 'full',
+		kit: KIT_VALUES.SECONDARY,
+	},
+	{
+		mediaTypes: ['MATCH'],
+		imageType: 'background',
+		url: '/img/backgrounds/seniors/match-pink-cutout.png',
+		version: 'cutout',
+		kit: KIT_VALUES.SECONDARY,
+	},
+];

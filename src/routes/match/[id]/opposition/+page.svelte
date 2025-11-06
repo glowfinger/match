@@ -117,10 +117,10 @@
 	<p>Match not found</p>
 {:else}
 	<form class="grid grid-cols-1 gap-2" onsubmit={handleSubmission}>
-		<div class="grid w-full max-w-sm gap-1.5">
+		<div class="grid w-full gap-1.5">
 			<Label for="match-opposition-club">Club</Label>
 			<Popover.Root bind:open>
-				<Popover.Trigger bind:ref={triggerRef}>
+				<Popover.Trigger bind:ref={triggerRef} class="w-full bg-white">
 					{#snippet child({ props })}
 						<Button
 							variant="outline"
@@ -134,7 +134,7 @@
 						</Button>
 					{/snippet}
 				</Popover.Trigger>
-				<Popover.Content class="w-[200px] p-0">
+				<Popover.Content class="bg-white p-0">
 					<Command.Root>
 						<Command.Input placeholder="Search clubs..." />
 						<Command.List>
@@ -159,7 +159,7 @@
 			</Popover.Root>
 			<ErrorLabel>{errors.club}</ErrorLabel>
 		</div>
-		<div class="grid w-full max-w-sm items-center gap-1.5">
+		<div class="grid w-full items-center gap-1.5">
 			<Label for="match-opposition-squad">squad</Label>
 			<Input
 				type="text"

@@ -2,7 +2,6 @@ import cancelledRender from '$lib/canvas/renderers/CancelledRenderer';
 import HighlightRenderer from '$lib/canvas/renderers/HighlightRenderer';
 import LineupListRenderer from '$lib/canvas/renderers/LineupListRenderer';
 import LineupRederer from '$lib/canvas/renderers/LineupRenderer';
-import matchRenderer from '$lib/canvas/renderers/MatchRenderer';
 import resultRender from '$lib/canvas/renderers/ResultRenderer';
 // import LineupAlternative from '$lib/constants/lineup/LineupAlternative';
 import { getFonts } from '$lib/database/FontDBService';
@@ -29,7 +28,7 @@ onmessage = async ({ data }: MessageEvent) => {
 	if (data.type === 'MATCH') {
 		// const cachedImages = await preloadMatchImages(data.matchId);
 		// console.log(cachedImages);
-		images = await matchRenderer(new OffscreenCanvas(1080, 1350), data.matchId, data.type);
+		// images = await matchRenderer(new OffscreenCanvas(1080, 1350), data.matchId, data.type);
 		console.timeLog('ImageWorker');
 	}
 	if (data.type === 'CANCELLED') {

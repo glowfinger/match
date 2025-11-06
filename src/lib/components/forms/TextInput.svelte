@@ -3,11 +3,12 @@
 		id: string;
 		value: string;
 		title: string;
+		placeholder?: string;
 		error?: string;
 		disabled?: boolean;
 	};
 
-	let { id, value = $bindable(''), title, error, disabled }: Props = $props();
+	let { id, value = $bindable(''), title, placeholder, error, disabled }: Props = $props();
 </script>
 
 <label class="label">
@@ -17,7 +18,7 @@
 		{id}
 		{title}
 		type="text"
-		placeholder="input text"
+		{placeholder}
 		bind:value
 		{disabled}
 	/>

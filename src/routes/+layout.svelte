@@ -14,10 +14,9 @@
 	import { addPlayers, getPlayers } from '$lib/database/PlayerDBService';
 	import { getApiPlayers } from '$lib/services/api/PlayerApiService';
 	import { toast } from 'svelte-sonner';
+	import { addFonts, hasFonts } from '$lib/database/FontDBService';
 
-	import { addFonts, clearFonts, hasFonts } from '$lib/database/FontDBService';
 	let { children } = $props();
-
 	let clubWorker: Worker = new ClubWorker();
 	let imageWorker: Worker = new ImageWorker();
 
@@ -58,6 +57,10 @@
 		clubWorker.terminate();
 		imageWorker.terminate();
 	});
+
+	function clearFonts() {
+		throw new Error('Function not implemented.');
+	}
 </script>
 
 <ModeWatcher />

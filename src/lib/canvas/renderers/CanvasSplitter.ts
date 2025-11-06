@@ -33,7 +33,7 @@ export default async function canvasSplitter(
 	return images;
 }
 
-async function blobToData(blob: Blob) {
+export async function blobToData(blob: Blob) {
 	return new Promise((resolve) => {
 		const reader = new FileReader();
 		reader.onloadend = () => resolve(reader.result);

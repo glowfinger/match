@@ -68,7 +68,7 @@
 
 <button
 	tabindex="0"
-	class="dropzone aspect-video cursor-pointer overflow-hidden rounded-xl border-2 border-dashed text-center transition-colors duration-200"
+	class=" dropzone flex aspect-square cursor-pointer items-center justify-center overflow-hidden rounded-xl border-2 border-dashed text-center transition-colors duration-200"
 	class:bg-blue-100={dragActive}
 	ondragover={handleDragOver}
 	ondragleave={handleDragLeave}
@@ -76,7 +76,7 @@
 	onclick={handleClick}
 >
 	{#if imageUrl}
-		<img src={imageUrl} alt="Upload preview" class="max-w-full" />
+		<img src={imageUrl} alt="Upload preview" class="object-contain" />
 	{:else}
 		<p class="text-gray-600">Drag & drop files here or click to upload</p>
 	{/if}
