@@ -28,7 +28,6 @@
 		loading = true;
 
 		if (!(await hasFonts())) {
-			await clearFonts();
 			await addFonts();
 			toast('Added fonts');
 		}
@@ -59,7 +58,7 @@
 	});
 
 	function clearFonts() {
-		throw new Error('Function not implemented.');
+		// throw new Error('Function not implemented.');
 	}
 </script>
 
