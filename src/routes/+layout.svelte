@@ -14,7 +14,7 @@
 	import { addPlayers, getPlayers } from '$lib/database/PlayerDBService';
 	import { getApiPlayers } from '$lib/services/api/PlayerApiService';
 	import { toast } from 'svelte-sonner';
-	import { addFonts, hasFonts } from '$lib/database/FontDBService';
+	import { addFonts, getFonts, hasFonts } from '$lib/database/FontDBService';
 
 	let { children } = $props();
 	let clubWorker: Worker = new ClubWorker();
@@ -29,7 +29,16 @@
 
 		if (!(await hasFonts())) {
 			await addFonts();
+
 			toast('Added fonts');
+		}
+
+		const fonts = await getFonts();
+
+		for await (const font of fonts) {
+			await new FontFace(font.type, font.blob).load().then((font) => {
+				document.fonts.add(font);
+			});
 		}
 
 		const clubs = await getClubs();

@@ -6,6 +6,7 @@
 	import HeadingLg from '$lib/components/typography/HeadingLg.svelte';
 	import MatchCard from '$lib/components/cards/MatchCard.svelte';
 	import { sortByDate } from '$lib/utils/sorts/ClubSort';
+	import HeadingMd from '$lib/components/typography/HeadingMd.svelte';
 
 	let matches: Match[] = [];
 
@@ -19,11 +20,14 @@
 	];
 </script>
 
-<HeadingLg>Matches</HeadingLg>
 <Breadcrumb {breadcrumbs} />
+<HeadingLg>Matches</HeadingLg>
 
-{#each matches.toSorted(sortByDate) as match}
-	<a href={`/match/${match.id}`} class="focus:outline-hidden">
-		<MatchCard {match} />
-	</a>
-{/each}
+<HeadingMd>Info</HeadingMd>
+<div class="grid grid-cols-2 gap-2">
+	{#each matches.toSorted(sortByDate) as match}
+		<a href={`/match/${match.id}`} class="focus:outline-hidden">
+			<MatchCard {match} />
+		</a>
+	{/each}
+</div>

@@ -29,10 +29,10 @@ export async function drawBadge(
 		// }
 
 		const lines = [title];
-		ctx.font = `${lineHeight}px black`;
+		ctx.font = `${lineHeight}px semiBold`;
 		ctx.textAlign = 'left';
 		ctx.lineWidth = 8;
-		ctx.fillStyle = Colours.GOLD;
+		ctx.fillStyle = Colours.WHITE;
 		ctx.strokeStyle = Colours.NAVY;
 		lines.forEach((line, index) => {
 			ctx.strokeText(line, x + 170 + 30, y + 95 + index * lineHeight + 10);
@@ -56,7 +56,7 @@ export async function drawBadge(
 		ctx.drawImage(img, x1 + 10, y1 + 10);
 
 		const lines = [[awayTeam.club, awayTeam.squad].join(' ')];
-		ctx.font = `${lineHeight}px regular`;
+		ctx.font = `${lineHeight}px semiBold`;
 		ctx.textAlign = 'left';
 		ctx.lineWidth = 8;
 		ctx.fillStyle = Colours.WHITE;

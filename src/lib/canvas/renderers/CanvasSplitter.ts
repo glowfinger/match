@@ -1,5 +1,5 @@
 export default async function canvasSplitter(
-	source: OffscreenCanvas,
+	source: OffscreenCanvas | HTMLCanvasElement,
 ): Promise<{ page: number; base64: string }[]> {
 	const canvas = new OffscreenCanvas(1080, 1350);
 

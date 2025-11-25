@@ -1,10 +1,11 @@
+import type { MatchSchedule } from '$lib/database/IndexedDB';
 import { DateTime } from 'luxon';
 
 const ERROR_MESSAGE = '!!';
 
-export function convertTime(timeString: string) {
+export function convertTime(timeString: string | undefined | null) {
 	if (!timeString) {
-		return '';
+		return 'TBC';
 	}
 
 	const H = +timeString.substring(0, 2);
@@ -13,15 +14,15 @@ export function convertTime(timeString: string) {
 	return h + timeString.substring(2, 5) + ampm;
 }
 
-export function socialDate(dateString: string) {
+export function socialDate(dateString: string | undefined | null) {
 	if (!dateString) {
-		return ERROR_MESSAGE;
+		return;
 	}
 
 	const date = DateTime.fromSQL(dateString);
 
 	if (!date.isValid) {
-		return ERROR_MESSAGE;
+		return;
 	}
 
 	return date.toFormat('ccc d LLL');
@@ -70,4 +71,11 @@ function getNumberSuffix(num: string) {
 		default:
 			return th;
 	}
+}
+
+export function formatMatchSchedule(schedule: MatchSchedule | undefined | null) {
+	if (!schedule) {
+		return 'TBC';
+	}
+	return socialDate(schedule.matchOn) + ' - ' + convertTime(schedule.kickOffAt);
 }

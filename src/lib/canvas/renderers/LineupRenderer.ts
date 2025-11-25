@@ -9,13 +9,12 @@ import { getYesSelectionsByMatchId } from '$lib/database/SelectionDBService';
 import { KIT_BACKGROUND, KIT_VALUES } from '../constants/Colours';
 import StarterPositons from '../constants/lineup/StarterPositons';
 import { drawBadge } from '../drawers/BadgeDrawer';
-import { drawSponsors } from '../drawers/SponsorsDrawer';
+import { drawSponsors, drawSponsorsVertical } from '../drawers/SponsorsDrawer';
 import { getImageBitmap } from '../ImageCache';
 import headshotLoader from '../images/HeadshotLoader';
 import { drawSmallTitle, drawVersusTitle } from '../TextDrawer';
-
 import canvasSplitter from './CanvasSplitter';
-import FinishersPartialRenderer from './lineup/FinishersPartialRenderer';
+import finisherListPartialRenderer from './lineup/FinisherListPartialRenderer';
 import InfoPartialRenderer from './lineup/InfoPartialRenderer';
 
 const KIT_BACKGROUND_IMAGE = {
@@ -29,13 +28,13 @@ const KIT_BACKGROUND_IMAGE_CUTOUT = {
 };
 
 export default async function LineupRenderer(
+	canvas: HTMLCanvasElement | OffscreenCanvas,
 	matchId: number,
-	type: string,
 ): Promise<Omit<MatchImage, 'id'>[]> {
-	const PAGES = 4;
-	const WIDTH = 1080;
-	const HEIGHT = 1350;
-	const canvas = new OffscreenCanvas(PAGES * WIDTH, HEIGHT);
+	if (!canvas) {
+		return [];
+	}
+
 	const ctx = canvas.getContext('2d', { willReadFrequently: true });
 	if (!ctx) {
 		throw new Error('Failed to get 2D context');
@@ -63,8 +62,8 @@ export default async function LineupRenderer(
 	}
 
 	{
-		const img = await getImageBitmap('/img/photos/gez.png');
-		ctx.drawImage(img, 0, 0);
+		// const img = await getImageBitmap('/img/photos/alf.png');
+		// ctx.drawImage(img, 0, 0);
 	}
 
 	if (match.detail) {
@@ -79,9 +78,8 @@ export default async function LineupRenderer(
 	drawVersusTitle(ctx, `vs ${match.opponent?.club ?? ''}`, 1080 + 60, 180);
 	drawSmallTitle(ctx, 'BACKS', 1080 + 1080 + 60, 120);
 	drawVersusTitle(ctx, `vs ${match.opponent?.club ?? ''}`, 1080 + 1080 + 60, 180);
-	// drawTitle(ctx, 'FINISHERS', 1080 + 1080 + 1080 + 60, 160);
 
-	// // aysnc loop
+	// // // aysnc loop
 	for (const i of StarterPositons) {
 		const position = positions.find((s) => s.position === i.number);
 		if (!position) {
@@ -155,7 +153,9 @@ export default async function LineupRenderer(
 	await drawBadge(ctx, match);
 
 	// Finishers
-	await FinishersPartialRenderer(ctx, matchId);
+	// await FinishersPartialRenderer(ctx, matchId);
+
+	await finisherListPartialRenderer(ctx, matchId);
 
 	// Badges
 
@@ -239,13 +239,11 @@ export default async function LineupRenderer(
 		await drawSponsors(ctx, 60 + (page - 1) * 1080, 1120);
 	}
 
-	for (const page of [4]) {
-		await drawSponsors(ctx, 60 + (page - 1) * 1080, 300);
-	}
+	await drawSponsorsVertical(ctx, 1080 * 4 - 60 - 160, 60);
 
-	return (await canvasSplitter(canvas)).map(({ page, base64 }) => ({
+	return (await canvasSplitter(canvas as OffscreenCanvas)).map(({ page, base64 }) => ({
 		matchId,
-		type,
+		type: 'LINEUP',
 		page,
 		base64,
 		createdAt: new Date().toISOString(),

@@ -1,6 +1,7 @@
 import { Colours, UploadImageTypes } from '$lib/Constants';
-import type { Match } from '$lib/database/IndexedDB';
+import type { Match, MatchImage } from '$lib/database/IndexedDB';
 import { convertTime, matchDate } from '$lib/helpers/dateTime/ConvertTime';
+import type { CanvasImage } from '$lib/types/Images';
 import { KIT_VALUES } from '../constants/Colours';
 import photoDrawer from '../drawers/PhotoDrawer';
 import { drawSponsorsVertical } from '../drawers/SponsorsDrawer';
@@ -11,25 +12,18 @@ export const backgrounds = {
 	[KIT_VALUES.SECONDARY]: Colours.PINK,
 };
 
-export type CanvasImage = {
-	photo: ImageBitmap;
-	uploadType: string;
-	mediaType: string;
-	settings: {
-		x: number;
-		y: number;
-		zoom: number;
-	};
-};
-
 export default async function matchRenderer(
 	canvas: OffscreenCanvas | HTMLCanvasElement,
 	match: Match,
 	images: CanvasImage[] = [],
-): Promise<void> {
+): Promise<Omit<MatchImage, 'id'>[]> {
+	if (!canvas) {
+		return [];
+	}
+
 	const ctx = canvas.getContext('2d') as CanvasRenderingContext2D;
 	if (!ctx) {
-		throw new Error('Failed to get 2D context');
+		return [];
 	}
 
 	ctx.fillStyle = backgrounds[match.detail?.kit ?? KIT_VALUES.MAIN];
@@ -217,6 +211,7 @@ export default async function matchRenderer(
 	}
 
 	await drawSponsorsVertical(ctx, 1080 - 150 - 60, 1000);
+	return [];
 }
 
 export function splitIntoLines(text: string): string[] {

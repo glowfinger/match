@@ -72,3 +72,11 @@ export async function hasUploadByMatchAndTypes(
 	const upload = await getUploadByMatchAndTypes(matchId, mediaType, uploadType);
 	return upload !== undefined;
 }
+
+export async function hasUploadByMatchIdAndMediaType(
+	matchId: number,
+	mediaType: string,
+): Promise<boolean> {
+	const uploads = await getUploadsByMatchAndMedia(matchId, mediaType);
+	return uploads.length > 0;
+}

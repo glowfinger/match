@@ -3,30 +3,19 @@ import type { MatchImage } from '$lib/database/IndexedDB';
 import { getMatchRolesByType } from '$lib/database/MatchRoleDBService';
 import { getMatch } from '$lib/database/MatchService';
 import { getPlayersByKeys } from '$lib/database/PlayerDBService';
-import { KIT_VALUES } from '../constants/Colours';
+import type { CanvasImage } from '$lib/types/Images';
 import { drawSponsorsVertical } from '../drawers/SponsorsDrawer';
 import { getImageBitmap } from '../ImageCache';
 import canvasSplitter from './CanvasSplitter';
 
-const RESULT_BACKGROUND_IMAGE = {
-	[KIT_VALUES.MAIN]: '/img/backgrounds/seniors/optist-ngw.png',
-	[KIT_VALUES.SECONDARY]: '/img/backgrounds/seniors/optist-png.png',
-};
-
-const RESULT_BACKGROUND = {
-	[KIT_VALUES.MAIN]: Colours.GOLD,
-	[KIT_VALUES.SECONDARY]: Colours.PINK,
-};
-
 export default async function resultRender(
+	canvas: HTMLCanvasElement | OffscreenCanvas,
 	matchId: number,
-	type: string,
+	images: CanvasImage[] = [],
 ): Promise<Omit<MatchImage, 'id'>[]> {
-	const PAGES = 1;
-	const WIDTH = 1080;
-	const HEIGHT = 1350;
-
-	const canvas = new OffscreenCanvas(PAGES * WIDTH, HEIGHT);
+	if (!canvas) {
+		return [];
+	}
 
 	const ctx = canvas.getContext('2d', { willReadFrequently: true });
 
@@ -35,13 +24,24 @@ export default async function resultRender(
 	}
 
 	const match = await getMatch(matchId);
-	const awards = await getMatchRolesByType(matchId, 'awards');
-	const players = await getPlayersByKeys(awards.map((s) => s.playerKey));
+	if (!match) {
+		return [];
+	}
 
-	console.log(players);
+	ctx.fillStyle = Colours.NAVY;
+	ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-	// ctx.fillStyle = RESULT_BACKGROUND[match.detail?.kit ?? KIT_VALUES.MAIN];
-	// ctx.fillRect(0, 0, canvas.width, canvas.height);
+	const backgroundImage = images.find((image) => image.uploadType === 'BACKGROUND');
+	if (backgroundImage) {
+		ctx.drawImage(backgroundImage.photo, 0, 0, canvas.width, canvas.height);
+	}
+
+	// const mainImage = images.find((image) => image.uploadType === UploadImageTypes.MAIN);
+
+	// if (!mainImage) {
+	// 	const img = await getImageBitmap(RESULT_BACKGROUND_IMAGE[match.detail?.kit ?? KIT_VALUES.MAIN]);
+	// 	ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+	// }
 
 	// const mediaImageData = [
 	// 	{
@@ -50,7 +50,7 @@ export default async function resultRender(
 	// 		type: 'PHOTO',
 	// 		url: '/img/photos/DSC03236.png',
 	// 		x: 0,
-	// 		y: -200,
+	// 		y: 300,
 	// 	},
 	// ];
 
@@ -63,9 +63,6 @@ export default async function resultRender(
 	// 	if (photo) {
 	// 		ctx.drawImage(photo, mediaImage?.x ?? 0, mediaImage?.y ?? 0);
 	// 	}
-
-	const img = await getImageBitmap(RESULT_BACKGROUND_IMAGE[match.detail?.kit ?? KIT_VALUES.MAIN]);
-	ctx.drawImage(img, 0, HEIGHT / 2, canvas.width, canvas.width);
 	// }
 
 	if (match.detail?.venue === 'HOME') {
@@ -117,41 +114,130 @@ export default async function resultRender(
 		}
 	}
 
+	const badgeY = 610;
+
+	const homeTeamImage = images.find((image) => image.uploadType === 'HOME');
+	if (homeTeamImage) {
+		const x = 350;
+		const y = badgeY;
+		ctx.fillStyle = Colours.WHITE;
+		ctx.lineWidth = 4;
+		ctx.strokeStyle = Colours.NAVY;
+		ctx.fillRect(x, y, 170, 170);
+		ctx.strokeRect(x, y, 170, 170);
+		ctx.drawImage(homeTeamImage.photo, x + 10, y + 10);
+	}
+
+	const awayTeamImage = images.find((image) => image.uploadType === 'AWAY');
+	if (awayTeamImage) {
+		const x = 560;
+		const y = badgeY;
+		ctx.fillStyle = Colours.WHITE;
+		ctx.lineWidth = 4;
+		ctx.strokeStyle = Colours.NAVY;
+		ctx.fillRect(x, y, 170, 170);
+		ctx.strokeRect(x, y, 170, 170);
+		ctx.drawImage(awayTeamImage.photo, x + 10, y + 10);
+	}
+
 	if (match.result !== undefined) {
 		const { homeScore, awayScore } = match.result;
 
-		const centerHeight = HEIGHT / 2 + 95;
+		const centerHeight = badgeY + 150;
+
+		console.log(badgeY, centerHeight);
 
 		const homeString = homeScore.toString();
 		const awayString = awayScore.toString();
+		const title = 'Final Score';
+		ctx.font = `60px semiBold`;
+		ctx.textAlign = 'center';
+		ctx.fillStyle = Colours.WHITE;
+		ctx.strokeStyle = Colours.NAVY;
+		ctx.lineWidth = 10;
 
-		ctx.font = `260px semiBold`;
+		ctx.strokeText(title, 540, centerHeight - 170);
+		ctx.fillText(title, 540, centerHeight - 170);
+
+		ctx.font = `160px semiBold`;
 		ctx.textAlign = 'center';
 
-		ctx.fillStyle = Colours.GOLD;
-		ctx.lineWidth = 16;
+		ctx.fillStyle = Colours.WHITE;
+		ctx.lineWidth = 10;
 		ctx.strokeStyle = Colours.NAVY;
-
-		ctx.strokeText('-', 540, centerHeight);
-		ctx.fillText('-', 540, centerHeight);
 
 		ctx.textAlign = 'right';
 
-		ctx.strokeText(homeString, 540 - 80, centerHeight);
-		ctx.fillText(homeString, 540 - 80, centerHeight);
+		ctx.strokeText(homeString, 540 - 220, centerHeight);
+		ctx.fillText(homeString, 540 - 220, centerHeight);
 
 		ctx.textAlign = 'left';
 
-		ctx.fillStyle = Colours.WHITE;
-		ctx.strokeText(awayString, 540 + 80, centerHeight);
-		ctx.fillText(awayString, 540 + 80, centerHeight);
+		ctx.strokeText(awayString, 540 + 220, centerHeight);
+		ctx.fillText(awayString, 540 + 220, centerHeight);
+	}
+
+	{
+		const img = await getImageBitmap('/img/photos/2xvas2.png');
+		ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+	}
+
+	const awards = await getMatchRolesByType(matchId, 'awards');
+	const players = await getPlayersByKeys(awards.map((s) => s.playerKey));
+
+	const forwardsAwards = awards.find((s) => s.role === 'forwards-motm');
+	const backsAwards = awards.find((s) => s.role === 'backs-motm');
+
+	if (forwardsAwards && backsAwards) {
+		const forwardsPlayer = players.find((s) => s.key === forwardsAwards.playerKey);
+
+		const nameY = 1220;
+
+		if (forwardsPlayer) {
+			ctx.textAlign = 'left';
+			ctx.font = `70px semiBold`;
+			ctx.fillStyle = Colours.WHITE;
+			ctx.strokeStyle = Colours.NAVY;
+			ctx.lineWidth = 10;
+			ctx.strokeText(forwardsPlayer.bio.screen, 60, nameY);
+			ctx.fillText(forwardsPlayer.bio.screen, 60, nameY);
+
+			const awardText = 'Forwards MOTM';
+			ctx.textAlign = 'left';
+			ctx.font = `50px black`;
+			ctx.fillStyle = Colours.GOLD;
+			ctx.strokeStyle = Colours.NAVY;
+			ctx.lineWidth = 8;
+			ctx.strokeText(awardText, 60, nameY + 60);
+			ctx.fillText(awardText, 60, nameY + 60);
+		}
+
+		const backsPlayer = players.find((s) => s.key === backsAwards.playerKey);
+		if (backsPlayer) {
+			ctx.textAlign = 'right';
+			ctx.font = `70px semiBold`;
+			ctx.fillStyle = Colours.WHITE;
+			ctx.strokeStyle = Colours.NAVY;
+			ctx.lineWidth = 10;
+			ctx.strokeText(backsPlayer.bio.screen, 1080 - 60, nameY);
+			ctx.fillText(backsPlayer.bio.screen, 1080 - 60, nameY);
+
+			const awardText = 'Backs MOTM';
+			ctx.textAlign = 'right';
+			ctx.font = `50px black`;
+			ctx.fillStyle = Colours.GOLD;
+			ctx.strokeStyle = Colours.NAVY;
+			ctx.lineWidth = 8;
+			ctx.strokeText(awardText, 1080 - 60, nameY + 60);
+			ctx.fillText(awardText, 1080 - 60, nameY + 60);
+		}
 	}
 
 	await drawSponsorsVertical(ctx, 1080 - 60 - 150, 60);
 
-	return (await canvasSplitter(canvas)).map(({ page, base64 }) => ({
+	return (await canvasSplitter(canvas as OffscreenCanvas)).map(({ page, base64 }) => ({
 		matchId,
-		type,
+		type: 'RESULT',
 		page,
 		base64,
 		createdAt: new Date().toISOString(),

@@ -2,7 +2,6 @@ import cancelledRender from '$lib/canvas/renderers/CancelledRenderer';
 import HighlightRenderer from '$lib/canvas/renderers/HighlightRenderer';
 import LineupListRenderer from '$lib/canvas/renderers/LineupListRenderer';
 import LineupRederer from '$lib/canvas/renderers/LineupRenderer';
-import resultRender from '$lib/canvas/renderers/ResultRenderer';
 // import LineupAlternative from '$lib/constants/lineup/LineupAlternative';
 import { getFonts } from '$lib/database/FontDBService';
 import type { MatchImage } from '$lib/database/IndexedDB';
@@ -35,7 +34,7 @@ onmessage = async ({ data }: MessageEvent) => {
 		images = await cancelledRender(data.matchId, data.type);
 	}
 	if (data.type === 'RESULT') {
-		images = await resultRender(data.matchId, data.type);
+		// images = await resultRender(data.matchId, data.type);
 	}
 	if (data.type === 'LINEUP') {
 		// await preloadImages(LineupAlternative);
