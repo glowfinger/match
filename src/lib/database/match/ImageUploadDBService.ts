@@ -17,6 +17,14 @@ export async function getUploadsByMatchAndMedia(
 	return uploads;
 }
 
+export async function getUploadsByMatchIdAndMediaType(
+	matchId: number,
+	mediaType: string,
+): Promise<ImageUpload[]> {
+	const uploads = await db.imageUploads.where({ matchId, mediaType }).toArray();
+	return uploads;
+}
+
 export async function updateUpload(upload: ImageUpload): Promise<ImageUpload | undefined> {
 	await db.imageUploads.put(upload);
 	return getUploadByMatchAndTypes(upload.matchId, upload.mediaType, upload.uploadType);

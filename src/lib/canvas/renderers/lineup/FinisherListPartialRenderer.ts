@@ -1,4 +1,4 @@
-import headshotLoader from '$lib/canvas/images/HeadshotLoader';
+import { getImageBitmap } from '$lib/canvas/ImageCache';
 import { drawSmallTitle, drawVersusTitle } from '$lib/canvas/TextDrawer';
 import { Colours } from '$lib/Constants';
 import { getMatchPositions } from '$lib/database/MatchPositionDBService';
@@ -47,10 +47,10 @@ export default async function finisherListPartialRenderer(
 	const debuts = (await getMatchTags(matchId, 'debut')).map((t) => t.playerKey);
 	const leadershipRoles = await getMatchRolesByType(matchId, 'leadership');
 
-	// {
-	// 	const img = await getImageBitmap('/img/photos/finishers1121.png');
-	// 	ctx.drawImage(img, 1080 * 3, 0);
-	// }
+	{
+		const img = await getImageBitmap('/img/photos/stollery-hickson.png');
+		ctx.drawImage(img, 1080 * 3, 0);
+	}
 
 	const x = 1080 + 1080 + 1080 + 60;
 	drawSmallTitle(ctx, TITLE, x, 120);
@@ -65,12 +65,12 @@ export default async function finisherListPartialRenderer(
 
 		const x = coord.x + 1080 * 3;
 
-		const y = coord.y + 300;
+		const y = coord.y + 700;
 
-		const image = await headshotLoader(match.detail?.kit ?? 'MAIN', player);
-		if (image) {
-			ctx.drawImage(image, x + 10, y, 240, 240);
-		}
+		// const image = await headshotLoader(match.detail?.kit ?? 'MAIN', player);
+		// if (image) {
+		// 	ctx.drawImage(image, x + 10, y, 240, 240);
+		// }
 
 		ctx.fillStyle = 'white';
 		ctx.fillRect(x, y + 260 - 40, 260, 40);

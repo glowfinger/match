@@ -27,21 +27,16 @@
 	import type { MatchImage } from '$lib/database/IndexedDB';
 	import MediaCard from '$lib/components/cards/MediaCard.svelte';
 	import { MediaImageTypes, type MediaImageType } from '$lib/Constants';
+	import type { LayoutProps, PageData } from './$types';
 
-	if (!page.params.id) {
-		throw new Error('Match ID is required');
-	}
+	let { data }: LayoutProps = $props();
+	const { matchId, match, matchTile } = data;
 
-	const matchId = Number.parseInt(page.params.id);
-
-	let match: Match | undefined = $state();
 	let players: Player[] = $state([]);
 	let selections: Selection[] = $state([]);
 	let images: MatchImage[] = $state([]);
 
 	onMount(async () => {
-		match = await getMatch(matchId);
-
 		selections = (await getSelections(matchId)).filter(isAvailable);
 		players = (await getPlayers()).filter((player) =>
 			selections.some((selection) => selection.playerKey === player.key),
@@ -52,7 +47,7 @@
 
 	const breadcrumbs = [
 		{ name: 'Home', href: '/' },
-		{ name: 'Match', href: `/match/${matchId}` },
+		{ name: matchTile, href: `/match/${matchId}` },
 	];
 
 	const INFO_LINKS = [

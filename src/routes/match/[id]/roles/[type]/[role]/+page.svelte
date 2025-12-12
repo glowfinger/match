@@ -17,12 +17,12 @@
 	import { isAvailable } from '$lib/filters/SelectionFilter';
 	import { onMount } from 'svelte';
 	import { toast } from 'svelte-sonner';
+	import type { LayoutProps } from '../../../$types';
 
-	const matchId = Number.parseInt(page.params.id as string);
+	let { data }: LayoutProps = $props();
+	const { matchId, match, matchTile } = data;
 	const typeKey = page.params.type as string;
 	const roleKey = page.params.role as string;
-
-	let match: Match | undefined = $state();
 	let players: Player[] = $state([]);
 	let matchPositions: MatchPosition[] = $state([]);
 	let selections: Selection[] = $state([]);
@@ -32,13 +32,12 @@
 	const award = awards.find((award) => award.value === roleKey && award.type === typeKey);
 	const breadcrumbs = [
 		{ name: 'Home', href: '/' },
-		{ name: 'Match', href: `/match/${matchId}` },
+		{ name: matchTile, href: `/match/${matchId}` },
 		{ name: 'Awards', href: `/match/${matchId}/roles/${typeKey}` },
 		{ name: award?.label, href: `/match/${matchId}/roles/${typeKey}/${roleKey}` },
 	];
 
 	onMount(async () => {
-		match = await getMatch(matchId);
 		selections = (await getSelections(matchId)).filter(isAvailable);
 		players = (await getPlayers())
 			.filter((player) => selections.some((selection) => selection.playerKey === player.key))

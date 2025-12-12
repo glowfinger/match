@@ -3,30 +3,32 @@
 	import { page } from '$app/state';
 	import { KIT_VALUES } from '$lib/canvas/constants/Colours';
 	import { getImageBitmap } from '$lib/canvas/ImageCache';
+	import canvasImageLoader from '$lib/canvas/images/CanvasImageLoader';
 	import { blobToData } from '$lib/canvas/renderers/CanvasSplitter';
-	import matchRenderer, { type CanvasImage } from '$lib/canvas/renderers/MatchRenderer';
+	import matchRenderer from '$lib/canvas/renderers/MatchRenderer';
+	import resultRender from '$lib/canvas/renderers/ResultRenderer';
 	import Breadcrumb from '$lib/components/Breadcrumb.svelte';
 	import CancelLink from '$lib/components/forms/CancelLink.svelte';
 	import SubmitButton from '$lib/components/forms/SubmitButton.svelte';
 	import HeadingLg from '$lib/components/typography/HeadingLg.svelte';
 	import HeadingMd from '$lib/components/typography/HeadingMd.svelte';
 	import { Button } from '$lib/components/ui/button';
-	import { MEDIA_IMAGES, MediaImageTypes, SPONSORS, UPLOAD_TYPES } from '$lib/Constants';
-	import { getFonts } from '$lib/database/FontDBService';
-	import type { ImageUpload, Match } from '$lib/database/IndexedDB';
+	import { MEDIA_IMAGES, MediaImageTypes, UPLOAD_TYPES } from '$lib/Constants';
+	import type { ImageUpload } from '$lib/database/IndexedDB';
 	import {
 		getUploadByMatchAndTypes,
 		getUploadsByMatchAndMedia,
-		hasUploadByMatchAndTypes,
 		updateUploadSettingsById,
 	} from '$lib/database/match/ImageUploadDBService';
 	import { setMatchImage } from '$lib/database/match/MatchImageDBService';
-	import { getMatch } from '$lib/database/MatchService';
+	import type { CanvasImage } from '$lib/types/Images';
 	import { onDestroy, onMount } from 'svelte';
 	import { toast } from 'svelte-sonner';
-	import { set } from 'zod';
+	import type { LayoutProps } from '../../../../../$types';
+	import LineupRenderer from '$lib/canvas/renderers/LineupRenderer';
 
-	const matchId = Number.parseInt(page.params.id as string);
+	let { data }: LayoutProps = $props();
+	const { matchId, match, matchTile } = data;
 	const mediaType = page.params.mediaType as string;
 	const mediaLabel = MediaImageTypes.find(({ type }) => type === mediaType)?.label;
 	if (!mediaLabel) {
@@ -40,16 +42,15 @@
 
 	const breadcrumbs = [
 		{ name: 'Home', href: '/' },
-		{ name: 'Match', href: `/match/${matchId}` },
+		{ name: matchTile, href: `/match/${matchId}` },
 		{ name: 'Media', href: `/match/${matchId}/media` },
 		{ name: mediaLabel, href: `/match/${matchId}/media/${mediaType}` },
-		{ name: uploadLabel, href: `/match/${matchId}/media/${mediaType}/upload/${uploadType}` },
 		{ name: 'Adjust', href: `/match/${matchId}/media/${mediaType}/upload/${uploadType}/adjust` },
 	];
 
 	let canvas: HTMLCanvasElement | undefined = $state();
-	let match: Match | undefined = $state();
-	let images: CanvasImage[] = $state([]);
+
+	let canvasImages: CanvasImage[] = $state([]);
 
 	let settings = $state({
 		zoom: 1,
@@ -58,12 +59,6 @@
 	});
 
 	onMount(async () => {
-		match = await getMatch(matchId);
-
-		if (!match) {
-			throw new Error('Match not found');
-		}
-
 		if (!canvas) {
 			return;
 		}
@@ -76,49 +71,10 @@
 
 		settings = { ...upload.settings };
 
-		const uploads = await getUploadsByMatchAndMedia(matchId, mediaType);
+		canvasImages = await canvasImageLoader(match, mediaType);
 
-		images = await Promise.all(
-			uploads.map(async (upload: ImageUpload) => ({
-				photo: await createImageBitmap(upload.blob),
-				uploadType: upload.uploadType,
-				mediaType: upload.mediaType,
-				settings: upload.settings,
-			})),
-		);
-
-		const backgroundImages = await Promise.all(
-			MEDIA_IMAGES.filter((image) => image.mediaTypes.includes(mediaType))
-				.filter((image) => kitFilter(image.kit, match?.detail?.kit ?? KIT_VALUES.MAIN))
-
-				.map(async (image) => {
-					return {
-						photo: await getImageBitmap(image.url),
-						uploadType: image.version,
-						mediaType: mediaType,
-						settings: {
-							zoom: 1,
-							x: 0,
-							y: 0,
-						},
-					};
-				}),
-		);
-
-		// preload sponsor images
-		// preload team images
-
-		images = [...images, ...backgroundImages];
-
-		const fonts = await getFonts();
-
-		for await (const font of fonts) {
-			await new FontFace(font.type, font.blob).load().then((font) => {
-				document.fonts.add(font);
-			});
-		}
-
-		matchRenderer(canvas as HTMLCanvasElement, match, images);
+		await LineupRenderer(canvas as HTMLCanvasElement, matchId, canvasImages);
+		// resultRender(canvas as HTMLCanvasElement, matchId, canvasImages);
 	});
 
 	onDestroy(() => {
@@ -126,22 +82,34 @@
 	});
 
 	$effect(() => {
-		if (!canvas || !match || !images) {
+		if (!canvas || !match || !canvasImages) {
 			return;
 		}
 
-		const index = images.findIndex((image: CanvasImage) => image.uploadType === uploadType);
+		const index = canvasImages.findIndex(
+			(image: CanvasImage) =>
+				image.uploadType.toUpperCase() === 'UPLOAD'.toUpperCase() &&
+				image.mediaType.toUpperCase() === 'MAIN'.toUpperCase(),
+		);
 
 		if (index !== -1) {
-			// compare settings and if they are different, update the image
 			if (
-				images[index].settings.zoom !== settings.zoom ||
-				images[index].settings.x !== settings.x ||
-				images[index].settings.y !== settings.y
+				canvasImages[index].settings.zoom !== settings.zoom ||
+				canvasImages[index].settings.x !== settings.x ||
+				canvasImages[index].settings.y !== settings.y
 			) {
-				images[index].settings = { ...settings };
+				canvasImages[index].settings = { ...settings };
 
-				matchRenderer(canvas as HTMLCanvasElement, match, images);
+				if (mediaType === 'RESULT') {
+					resultRender(canvas as HTMLCanvasElement, matchId, canvasImages);
+				}
+				if (mediaType === 'MATCH') {
+					matchRenderer(canvas as HTMLCanvasElement, match, canvasImages);
+				}
+
+				if (mediaType === 'LINEUP') {
+					LineupRenderer(canvas as HTMLCanvasElement, matchId, canvasImages);
+				}
 			}
 		}
 	});
@@ -185,26 +153,28 @@
 			y: 0,
 		};
 	}
-
-	function kitFilter(kit: string | undefined, matchKit: string | undefined) {
-		return kit === matchKit;
-	}
 </script>
 
 <Breadcrumb {breadcrumbs} />
 <HeadingLg>{uploadLabel}</HeadingLg>
 <HeadingMd>Adjust image</HeadingMd>
-
+<pre
+	class="fixed top-0 right-0 border border-slate-900 bg-white p-4 text-xs text-gray-500">{JSON.stringify(
+		settings,
+		null,
+		2,
+	)}</pre>
 <canvas bind:this={canvas} width={1080} height={1350} class="w-full border border-slate-900"
 ></canvas>
+
 <form onsubmit={updateUploadSettings} novalidate>
 	<div class="mt-6">
-		<!-- <InputLabel id="zoom" title="Zoom" /> -->
+		<label for="zoom" class="text-sm text-gray-500">Zoom</label>
 		<input
 			id="zoom"
 			type="range"
 			bind:value={settings.zoom}
-			step=".25"
+			step=".1"
 			min="1"
 			max="20"
 			class="h-2 w-full cursor-pointer appearance-none rounded-lg bg-gray-700"
@@ -212,7 +182,7 @@
 	</div>
 
 	<div class="mt-6">
-		<!-- <InputLabel id="horizontal" title="Horizontal" /> -->
+		<label for="horizontal" class="text-sm text-gray-500">Horizontal</label>
 		<input
 			id="horizontal"
 			type="range"
@@ -225,7 +195,7 @@
 	</div>
 
 	<div class="mt-6">
-		<!-- <InputLabel id="vertical" title="Vertical" /> -->
+		<label for="vertical" class="text-sm text-gray-500">Vertical</label>
 		<input
 			id="vertical"
 			type="range"

@@ -1,16 +1,9 @@
 <script lang="ts">
 	import Breadcrumb from '$lib/components/Breadcrumb.svelte';
-	import { getMatch, updateMatchTeam } from '$lib/database/MatchService';
-
-	import type { Match, MatchTeam } from '$lib/database/IndexedDB';
+	import type { MatchTeam } from '$lib/database/IndexedDB';
 	import { onMount } from 'svelte';
 	import HeadingLg from '$lib/components/typography/HeadingLg.svelte';
-	import { page } from '$app/state';
-	import { Button } from '$lib/components/ui/button';
 	import { Separator } from '$lib/components/ui/separator';
-	import Input from '$lib/components/ui/input/input.svelte';
-	import { Label } from '$lib/components/ui/label';
-	import ErrorLabel from '$lib/components/forms/ErrorLabel.svelte';
 	import { getErrors, isValid } from '$lib/validation/Validator';
 	import { matchTeamSchema } from '$lib/validation/Schemas';
 	import { toast } from 'svelte-sonner';
@@ -18,12 +11,14 @@
 	import SubmitButton from '$lib/components/forms/SubmitButton.svelte';
 	import CancelLink from '$lib/components/forms/CancelLink.svelte';
 	import TextInput from '$lib/components/forms/TextInput.svelte';
+	import type { LayoutProps } from '../$types';
+	import { updateMatchTeam } from '$lib/database/MatchService';
 
-	const matchId = Number.parseInt(page.params.id as string);
-	let match: Match | undefined = $state();
+	let { data }: LayoutProps = $props();
+	const { matchId, match, matchTile } = data;
 
 	// TODO: This should be from constants or ENV
-	let data = $state<MatchTeam>({
+	let teamData = $state<MatchTeam>({
 		key: 'chipstead',
 		club: 'Chipstead',
 		squad: '',
@@ -32,28 +27,26 @@
 	let errors = $state({ club: '', squad: '' });
 
 	onMount(async () => {
-		match = await getMatch(matchId);
-
 		if (match?.team !== undefined) {
-			data = { ...match.team };
+			teamData = { ...match.team };
 		}
 	});
 
 	const breadcrumbs = [
 		{ name: 'Home', href: '/' },
-		{ name: 'Match', href: `/match/${matchId}` },
+		{ name: matchTile, href: `/match/${matchId}` },
 		{ name: 'Team', href: `/match/${matchId}/team` },
 	];
 
 	async function handleSubmit(e: SubmitEvent) {
 		e.preventDefault();
 
-		if (!isValid(data, matchTeamSchema)) {
-			errors = getErrors(data, matchTeamSchema);
+		if (!isValid(teamData, matchTeamSchema)) {
+			errors = getErrors(teamData, matchTeamSchema);
 			return;
 		}
 
-		await updateMatchTeam(matchId, { ...data });
+		await updateMatchTeam(matchId, { ...teamData });
 		toast.success('Team updated');
 		goto(`/match/${matchId}`);
 	}
@@ -61,36 +54,23 @@
 
 <Breadcrumb {breadcrumbs} />
 <HeadingLg>Team</HeadingLg>
-<form onsubmit={handleSubmit} novalidate>
-	<div class="mt-4 grid grid-cols-1 gap-2">
-		{#if !match}
-			<p>Match not found</p>
-		{:else}
-			<div class="grid w-full items-center gap-1.5">
-				<TextInput
-					id="match-team-club"
-					bind:value={data.club}
-					title="Club"
-					placeholder="Enter club name"
-					error={errors.club}
-					disabled
-				/>
-			</div>
-
-			<div class="grid w-full items-center gap-1.5">
-				<TextInput
-					id="match-team-squad"
-					bind:value={data.squad}
-					title="Squad"
-					placeholder="Enter squad name"
-					error={errors.squad}
-				/>
-			</div>
-
-			<Separator />
-
-			<CancelLink href={`/match/${matchId}`}>Cancel</CancelLink>
-			<SubmitButton>Save</SubmitButton>
-		{/if}
-	</div>
+<form onsubmit={handleSubmit} novalidate class="grid grid-cols-1 gap-2">
+	<TextInput
+		id="match-team-club"
+		bind:value={teamData.club}
+		title="Club"
+		placeholder="Enter club name"
+		error={errors.club}
+		disabled
+	/>
+	<TextInput
+		id="match-team-squad"
+		bind:value={teamData.squad}
+		title="Squad"
+		placeholder="Enter squad name"
+		error={errors.squad}
+	/>
+	<Separator />
+	<CancelLink href={`/match/${matchId}`}>Back to match details</CancelLink>
+	<SubmitButton>Save</SubmitButton>
 </form>

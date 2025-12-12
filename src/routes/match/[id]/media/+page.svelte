@@ -8,22 +8,22 @@
 	import HeadingMd from '$lib/components/typography/HeadingMd.svelte';
 	import { getImagesByMatch } from '$lib/database/match/MatchImageDBService';
 	import { MediaImageTypes, type MediaImageType } from '$lib/Constants';
+	import type { LayoutProps } from '../$types';
+	import { goto } from '$app/navigation';
 
-	const matchId = Number.parseInt(page.params.id as string);
+	let { data }: LayoutProps = $props();
+
+	const { matchId, match, matchTile } = data;
+
 	const breadcrumbs = [
 		{ name: 'Home', href: '/' },
-		{ name: 'Match', href: `/match/${matchId}` },
+		{ name: matchTile, href: `/match/${matchId}` },
 		{ name: 'Media', href: `/match/${matchId}/media` },
 	];
 
-	let match: Match | undefined = $state();
-
 	let images: MatchImage[] = $state([]);
 
-	onMount(async () => {
-		match = await getMatch(matchId);
-		getImagesByMatch(matchId).then((rows) => (images = rows));
-	});
+	onMount(async () => {});
 
 	function getImages(type: string) {
 		return images.filter((image) => image.type === type);

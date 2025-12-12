@@ -3,7 +3,7 @@
 </script>
 
 <nav class="flex" aria-label="Breadcrumb">
-	<ol role="list" class="flex items-center space-x-2">
+	<ol role="list" class="flex items-center space-x-1">
 		{#each breadcrumbs as breadcrumb, i}
 			{#if i === 0}
 				<li>

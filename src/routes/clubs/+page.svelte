@@ -1,6 +1,6 @@
 <script lang="ts">
 	import Breadcrumb from '$lib/components/Breadcrumb.svelte';
-	import ClubCard from '$lib/components/cards/ClubCard.svelte';
+	import ClubCard from '$lib/components/cards/club/ClubCard.svelte';
 	import HeadingLg from '$lib/components/typography/HeadingLg.svelte';
 	import { addClubs, clearClubs, getClubs } from '$lib/database/ClubDbService';
 	import type { Club } from '$lib/database/IndexedDB';

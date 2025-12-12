@@ -1,12 +1,16 @@
-import { Colours } from '$lib/Constants';
+import { Colours, UploadImageTypes } from '$lib/Constants';
 import type { MatchImage } from '$lib/database/IndexedDB';
 import { getMatchRolesByType } from '$lib/database/MatchRoleDBService';
 import { getMatch } from '$lib/database/MatchService';
 import { getPlayersByKeys } from '$lib/database/PlayerDBService';
 import type { CanvasImage } from '$lib/types/Images';
+import { KIT_VALUES } from '../constants/Colours';
+import photoDrawer from '../drawers/PhotoDrawer';
+
 import { drawSponsorsVertical } from '../drawers/SponsorsDrawer';
 import { getImageBitmap } from '../ImageCache';
 import canvasSplitter from './CanvasSplitter';
+import { backgrounds } from './MatchRenderer';
 
 export default async function resultRender(
 	canvas: HTMLCanvasElement | OffscreenCanvas,
@@ -28,7 +32,7 @@ export default async function resultRender(
 		return [];
 	}
 
-	ctx.fillStyle = Colours.NAVY;
+	ctx.fillStyle = backgrounds[match.detail?.kit ?? KIT_VALUES.MAIN];
 	ctx.fillRect(0, 0, canvas.width, canvas.height);
 
 	const backgroundImage = images.find((image) => image.uploadType === 'BACKGROUND');
@@ -36,34 +40,21 @@ export default async function resultRender(
 		ctx.drawImage(backgroundImage.photo, 0, 0, canvas.width, canvas.height);
 	}
 
-	// const mainImage = images.find((image) => image.uploadType === UploadImageTypes.MAIN);
+	const mainImage = images.find((image) => image.uploadType === UploadImageTypes.MAIN);
 
-	// if (!mainImage) {
-	// 	const img = await getImageBitmap(RESULT_BACKGROUND_IMAGE[match.detail?.kit ?? KIT_VALUES.MAIN]);
-	// 	ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-	// }
+	if (mainImage) {
+		const destination = { width: 1080, height: 675, x: 0, y: 0 };
 
-	// const mediaImageData = [
-	// 	{
-	// 		matchId,
-	// 		imageType: 'RESULT',
-	// 		type: 'PHOTO',
-	// 		url: '/img/photos/DSC03236.png',
-	// 		x: 0,
-	// 		y: 300,
-	// 	},
-	// ];
-
-	// const mediaImage = mediaImageData.find(
-	// 	(image) => image.imageType === 'RESULT' && image.type === 'PHOTO',
-	// );
-
-	// if (mediaImage) {
-	// 	const photo = await getImageBitmap(mediaImage?.url ?? '');
-	// 	if (photo) {
-	// 		ctx.drawImage(photo, mediaImage?.x ?? 0, mediaImage?.y ?? 0);
-	// 	}
-	// }
+		await photoDrawer(
+			ctx as CanvasRenderingContext2D,
+			mainImage.photo,
+			destination,
+			{ width: mainImage.photo.width, height: mainImage.photo.height, x: 0, y: 0 },
+			mainImage.settings.zoom,
+			mainImage.settings.x,
+			mainImage.settings.y,
+		);
+	}
 
 	if (match.detail?.venue === 'HOME') {
 		{
@@ -145,8 +136,6 @@ export default async function resultRender(
 
 		const centerHeight = badgeY + 150;
 
-		console.log(badgeY, centerHeight);
-
 		const homeString = homeScore.toString();
 		const awayString = awayScore.toString();
 		const title = 'Final Score';
@@ -177,11 +166,6 @@ export default async function resultRender(
 		ctx.fillText(awayString, 540 + 220, centerHeight);
 	}
 
-	{
-		const img = await getImageBitmap('/img/photos/2xvas2.png');
-		ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-	}
-
 	const awards = await getMatchRolesByType(matchId, 'awards');
 	const players = await getPlayersByKeys(awards.map((s) => s.playerKey));
 
@@ -189,6 +173,9 @@ export default async function resultRender(
 	const backsAwards = awards.find((s) => s.role === 'backs-motm');
 
 	if (forwardsAwards && backsAwards) {
+		const img = await getImageBitmap('/img/photos/1xv-worth1.png');
+		ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+
 		const forwardsPlayer = players.find((s) => s.key === forwardsAwards.playerKey);
 
 		const nameY = 1220;

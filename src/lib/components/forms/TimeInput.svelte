@@ -7,8 +7,9 @@
 		label: string;
 		error?: string;
 		disabled?: boolean;
+		step?: number;
 	};
-	let { id, value = $bindable(), label, error, disabled }: Props = $props();
+	let { id, value = $bindable(), label, error, disabled, step = 300 }: Props = $props();
 </script>
 
 <div>
@@ -19,25 +20,15 @@
 	{/if}
 
 	<div class="mt-2 grid grid-cols-1">
-		{#if error}
-			<input
-				type="time"
-				name={id}
-				{id}
-				class="block w-full rounded bg-red-50 px-3 py-1.5 text-base text-red-900 outline outline-1 -outline-offset-1 outline-red-300 placeholder:text-red-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-red-600 sm:text-sm/6"
-				bind:value
-				{disabled}
-			/>
-		{:else}
-			<input
-				type="time"
-				name={id}
-				{id}
-				class="block w-full rounded bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6"
-				bind:value
-				{disabled}
-			/>
-		{/if}
+		<input
+			type="time"
+			name={id}
+			{id}
+			{step}
+			class="border-input placeholder:text-muted-foreground focus-visible:ring-ring flex h-9 w-full rounded-sm border bg-slate-50 px-3 py-1 text-base shadow-xs transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium focus-visible:ring-1 focus-visible:outline-hidden disabled:cursor-not-allowed disabled:opacity-50 md:text-sm"
+			bind:value
+			{disabled}
+		/>
 	</div>
 	<ErrorLabel>{error}</ErrorLabel>
 </div>

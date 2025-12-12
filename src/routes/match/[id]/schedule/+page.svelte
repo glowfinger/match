@@ -1,84 +1,63 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
-
-	import { page } from '$app/state';
 	import Breadcrumb from '$lib/components/Breadcrumb.svelte';
 	import DateInput from '$lib/components/forms/DateInput.svelte';
 	import TimeInput from '$lib/components/forms/TimeInput.svelte';
 	import HeadingLg from '$lib/components/typography/HeadingLg.svelte';
-	import Button from '$lib/components/ui/button/button.svelte';
-	import type { Match } from '$lib/database/IndexedDB';
-	import { getMatch, updateMatchSchedule } from '$lib/database/MatchService';
+	import { updateMatchSchedule } from '$lib/database/MatchService';
 	import { matchScheduleSchema } from '$lib/validation/Schemas';
 	import { getErrors, isValid } from '$lib/validation/Validator';
-	import { onMount } from 'svelte';
 	import { toast } from 'svelte-sonner';
+	import type { LayoutProps } from '../$types';
+	import { Separator } from '$lib/components/ui/separator';
+	import CancelLink from '$lib/components/forms/CancelLink.svelte';
+	import SubmitButton from '$lib/components/forms/SubmitButton.svelte';
 
-	const matchId = Number.parseInt(page.params.id);
+	let { data }: LayoutProps = $props();
+	const { matchId, match, matchTile } = data;
 
-	let match: Match | undefined = $state();
-
-	let data = $state({ matchOn: '', meetAt: '', kickOffAt: '' });
-
+	let formData = $state({ matchOn: '', meetAt: '', kickOffAt: '' });
+	if (match.schedule !== undefined) {
+		formData = { ...match.schedule };
+	}
 	let errors = $state({
 		matchOn: '',
 		meetAt: '',
 		kickOffAt: '',
 	});
 
-	onMount(async () => {
-		// fetch match scheduls
-		match = await getMatch(matchId);
-		if (match?.schedule) {
-			data.matchOn = match.schedule.matchOn;
-			data.meetAt = match.schedule.meetAt;
-			data.kickOffAt = match.schedule.kickOffAt;
-		}
-	});
 	async function handleSubmit(e: SubmitEvent) {
 		e.preventDefault();
 
-		if (!isValid(data, matchScheduleSchema)) {
-			errors = getErrors(data, matchScheduleSchema);
+		if (!isValid(formData, matchScheduleSchema)) {
+			errors = getErrors(formData, matchScheduleSchema);
 			return;
 		}
 
-		if (match) {
-			match.schedule = {
-				matchOn: data.matchOn,
-				meetAt: data.meetAt,
-				kickOffAt: data.kickOffAt,
-			};
-
-			await updateMatchSchedule(matchId, { ...match.schedule });
-		}
+		await updateMatchSchedule(matchId, { ...formData });
 		toast.success('Match schedule updated');
 		goto(`/match/${matchId}`);
 	}
 
 	const breadcrumbs = [
 		{ name: 'Home', href: '/' },
-		{ name: 'Match', href: `/match/${matchId}` },
+		{ name: matchTile, href: `/match/${matchId}` },
 		{ name: 'Schedule', href: `/match/${matchId}/schedule` },
 	];
 </script>
 
 <Breadcrumb {breadcrumbs} />
 <HeadingLg>Match Schedule</HeadingLg>
-<form onsubmit={handleSubmit} novalidate>
-	<div class="mt-2 grid grid-cols-1 gap-4">
-		<DateInput id="matchOn" label="Date" error={errors.matchOn} bind:value={data.matchOn} />
-		<TimeInput id="meetAt" label="Meet time" error={errors.meetAt} bind:value={data.meetAt} />
-		<TimeInput
-			id="kickOfAt"
-			label="Kick-off time"
-			error={errors.kickOffAt}
-			bind:value={data.kickOffAt}
-		/>
-
-		<div class="mt-6 flex items-center justify-end gap-x-6">
-			<Button href={`/match/${matchId}`} variant="outline">Cancel</Button>
-			<Button type="submit">Save</Button>
-		</div>
-	</div>
+<form onsubmit={handleSubmit} novalidate class="grid grid-cols-1 gap-2">
+	<DateInput id="matchOn" label="Date" error={errors.matchOn} bind:value={formData.matchOn} />
+	<TimeInput id="meetAt" label="Meet time" error={errors.meetAt} bind:value={formData.meetAt} />
+	<TimeInput
+		id="kickOfAt"
+		label="Kick-off time"
+		error={errors.kickOffAt}
+		bind:value={formData.kickOffAt}
+	/>
+	<Separator />
+	<CancelLink href={`/match/${matchId}`}>Back to match details</CancelLink>
+	<SubmitButton>Save</SubmitButton>
 </form>

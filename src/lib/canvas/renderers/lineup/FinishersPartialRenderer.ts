@@ -4,6 +4,7 @@ import { drawSmallTitle, drawVersusTitle } from '$lib/canvas/TextDrawer';
 import { Colours } from '$lib/Constants';
 import { getMatchPositions } from '$lib/database/MatchPositionDBService';
 import { getMatch } from '$lib/database/MatchService';
+import { getMatchTags } from '$lib/database/MatchTagDBService';
 import { getPlayersByKeys } from '$lib/database/PlayerDBService';
 import { getYesSelectionsByMatchId } from '$lib/database/SelectionDBService';
 
@@ -18,6 +19,7 @@ export default async function finishersPartialRenderer(
 	// const order = [0, 1, 2]; // TODO bring this from image config
 
 	const match = await getMatch(matchId);
+	const debuts = (await getMatchTags(matchId, 'debut')).map((t) => t.playerKey);
 
 	const selections = await getYesSelectionsByMatchId(matchId);
 	const positions = (await getMatchPositions(matchId)).map((p) => p.playerKey);
@@ -46,7 +48,7 @@ export default async function finishersPartialRenderer(
 
 	if (match.detail) {
 		// todo better error handling for fetching images
-		const img = await getImageBitmap('/img/examples/finishers.png');
+		const img = await getImageBitmap('/img/photos/harvey-steve.png');
 		ctx.drawImage(img, 1080 * 3, 0);
 	}
 
@@ -147,23 +149,28 @@ export default async function finishersPartialRenderer(
 	// 		);
 	// 	}
 
+	console.log(coords);
+
 	coords.forEach((coord) => {
 		let { x, y } = coord;
 
 		y = y - 240;
-		ctx.fillStyle = 'white';
-		ctx.fillRect(x, y, 260, 40);
-		ctx.strokeStyle = Colours.NAVY;
-		ctx.lineWidth = 3;
-		ctx.strokeRect(x, y, 260, 40);
-		ctx.font = `24px semiBold`;
-		ctx.textAlign = 'center';
-		ctx.fillStyle = 'black';
-		ctx.fillText('TBC', x + 130, y + 30);
+		// ctx.fillStyle = 'white';
+		// ctx.fillRect(x, y, 260, 40);
+		// ctx.strokeStyle = Colours.NAVY;
+		// ctx.lineWidth = 3;
+		// ctx.strokeRect(x, y, 260, 40);
+		// ctx.font = `24px semiBold`;
+		// ctx.textAlign = 'center';
+		// ctx.fillStyle = 'black';
+		// ctx.fillText('TBC', x + 130, y + 30);
 	});
 
 	players.forEach((player, i) => {
-		let { x, y } = coords[i];
+		let { x, y } = [
+			{ x: 3400, y: 1400 },
+			{ x: 3920, y: 1400 },
+		][i];
 
 		y = y - 240;
 		if (!player) {
@@ -178,9 +185,9 @@ export default async function finishersPartialRenderer(
 		if (player.tags.homegrown) {
 			name = '🍟' + name;
 		}
-		// 	if (debutants.includes(player.key)) {
-		// 		name = '📣' + name;
-		// 	}
+		if (debuts.includes(player.key)) {
+			name = '📣' + name;
+		}
 		if (name.length > 0) {
 			name = name + ' ' + player.bio.screen;
 		} else {

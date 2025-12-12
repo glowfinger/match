@@ -12,27 +12,30 @@
 	import { setMatchImage } from '$lib/database/match/MatchImageDBService';
 	import canvasImageLoader from '$lib/canvas/images/CanvasImageLoader';
 	import type { CanvasImage } from '$lib/types/Images';
-	const matchId = Number.parseInt(page.params.id as string);
+	import type { LayoutProps } from '../../../$types';
+
 	const mediaType = page.params.mediaType as string;
 
 	let canvas: HTMLCanvasElement | undefined = $state();
-	let match: Match | undefined = $state();
+
+	let { data }: LayoutProps = $props();
+	const { matchId, match, matchTile } = data;
+
 	let canvasImages: CanvasImage[] = $state([]);
 	let WIDTH = $state(1080);
 	let HEIGHT = $state(1350);
 
 	onMount(async () => {
 		const hasUpload = await hasUploadByMatchIdAndMediaType(matchId, mediaType);
-		match = await getMatch(matchId);
 
 		canvasImages = await canvasImageLoader(match, mediaType);
 		if (!match) {
 			throw new Error('Match not found');
 		}
 
-		if (hasUpload) {
-			goto(`/match/${matchId}/media/${mediaType}`);
-		}
+		// if (hasUpload) {
+		// 	goto(`/match/${matchId}/media/${mediaType}`);
+		// }
 	});
 
 	$effect(() => {
@@ -57,19 +60,10 @@
 		if (mediaType === 'LINEUP') {
 			WIDTH = 1080 * 4;
 			HEIGHT = 1350;
-			LineupRenderer(canvas, matchId);
-
-			canvasSplitter(canvas)
-				.then((images) =>
-					images.map(({ page, base64 }) => ({
-						matchId,
-						type: 'LINEUP',
-						page,
-						base64,
-						createdAt: new Date().toISOString(),
-					})),
-				)
-				.then((images) => images.map((image) => setMatchImage(image)));
+			LineupRenderer(canvas, matchId, canvasImages).then((images) =>
+				images.map((image) => setMatchImage(image)),
+			);
+			// .then(() => goto(`/match/${matchId}/media/${mediaType}`));
 		}
 
 		if (mediaType === 'RESULT') {

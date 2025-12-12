@@ -13,13 +13,14 @@
 
 	import { getPlayers } from '$lib/database/PlayerDBService';
 	import { onMount } from 'svelte';
+	import type { LayoutProps } from '../../$types';
 
-	const matchId = Number.parseInt(page.params.id as string);
+	let { data }: LayoutProps = $props();
+	const { matchId, match, matchTile } = data;
 	const typeKey = page.params.type as string;
 
 	let roles: MatchRole[] = $state([]);
 	let players: Player[] = $state([]);
-	let match: Match | undefined = $state();
 
 	const roleOptions = AllRoles.filter((role) => role.type === typeKey);
 
@@ -31,7 +32,7 @@
 
 	const breadcrumbs = [
 		{ name: 'Home', href: '/' },
-		{ name: 'Match', href: `/match/${matchId}` },
+		{ name: matchTile, href: `/match/${matchId}` },
 		{
 			name: typeKey.charAt(0).toUpperCase() + typeKey.slice(1),
 			href: `/match/${matchId}/roles/${typeKey}`,
@@ -39,7 +40,6 @@
 	];
 
 	onMount(async () => {
-		match = await getMatch(matchId);
 		players = await getPlayers();
 		roles = await getMatchRoles(matchId);
 	});

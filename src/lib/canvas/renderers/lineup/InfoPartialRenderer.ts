@@ -23,63 +23,6 @@ export default async function InfoPartialRenderer(
 		y += 20;
 	}
 
-	// Title
-
-	// if (match.team && match.detail?.venue !== 'AWAY') {
-	// 	// Team name
-	// 	const size = 80;
-	// 	const team = [match.team.club ?? '', match.team.squad ?? ''].join(' ').trim();
-	// 	ctx.font = `${size}px black`;
-	// 	ctx.textAlign = 'left';
-	// 	ctx.lineWidth = 12;
-	// 	ctx.strokeStyle = Colours.NAVY;
-	// 	ctx.fillStyle = Colours.GOLD;
-	// 	ctx.strokeText(team, 60, y + size);
-	// 	ctx.fillText(team, 60, y + size);
-	// 	y += size + 30;
-	// }
-
-	// if (match.opponent && match.detail?.venue === 'AWAY') {
-	// 	const size = 48;
-	// 	const opponent = [match.opponent.club ?? '', match.opponent.squad ?? '', 'vs'].join(' ').trim();
-	// 	ctx.font = `${size}px regular`;
-	// 	ctx.textAlign = 'left';
-	// 	ctx.lineWidth = 6;
-	// 	ctx.fillStyle = Colours.WHITE;
-	// 	ctx.strokeStyle = Colours.NAVY;
-	// 	ctx.strokeText(opponent, 60, y + size);
-	// 	ctx.fillText(opponent, 60, y + size);
-	// 	y += size + 30;
-	// }
-
-	// if (match.opponent && match.detail?.venue !== 'AWAY') {
-	// 	const size = 48;
-	// 	const opponent = ['vs', match.opponent.club ?? '', match.opponent.squad ?? ''].join(' ').trim();
-	// 	// VS
-	// 	ctx.font = `${size}px regular`;
-	// 	ctx.textAlign = 'left';
-	// 	ctx.lineWidth = 6;
-	// 	ctx.fillStyle = Colours.WHITE;
-	// 	ctx.strokeStyle = Colours.NAVY;
-	// 	ctx.strokeText(opponent, 60, y + size);
-	// 	ctx.fillText(opponent, 60, y + size);
-	// 	y += size + 30;
-	// }
-
-	// if (match.team && match.detail?.venue === 'AWAY') {
-	// 	// Team name
-	// 	const size = 80;
-	// 	const team = [match.team.club ?? '', match.team.squad ?? ''].join(' ').trim();
-	// 	ctx.font = `${size}px black`;
-	// 	ctx.textAlign = 'left';
-	// 	ctx.lineWidth = 12;
-	// 	ctx.strokeStyle = Colours.NAVY;
-	// 	ctx.fillStyle = Colours.GOLD;
-	// 	ctx.strokeText(team, 60, y + size);
-	// 	ctx.fillText(team, 60, y + size);
-	// 	y += size + 30;
-	// }
-
 	if (match.detail) {
 		// Match type
 		const size = 60;
@@ -101,16 +44,6 @@ export default async function InfoPartialRenderer(
 
 		y += size + lines.length * size + margin;
 	}
-
-	// const home: string = config.teams.home.name.toUpperCase() || '';
-	// const away: string = config.teams.away.name.toUpperCase() || '';
-	// writeTeamBadge(ctx, { x: 300, y: 400 }, config.teams.home.badge);
-	// writeTeamName(ctx, { x: 375, y: 590 }, home, 'center');
-
-	// writeTeamBadge(ctx, { x: 640, y: 400 }, config.teams.away.badge);
-	// writeTeamName(ctx, { x: 715, y: 590 }, away, 'center');// if (match.schedule) {
-
-	// }
 
 	y += 620;
 	// Date
