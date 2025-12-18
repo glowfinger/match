@@ -27,20 +27,16 @@
 	import type { MatchImage } from '$lib/database/IndexedDB';
 	import MediaCard from '$lib/components/cards/MediaCard.svelte';
 	import { MediaImageTypes, type MediaImageType } from '$lib/Constants';
-	if (!page.params.id) {
-		throw new Error('Match ID is required');
-	}
+	import type { LayoutProps, PageData } from './$types';
 
-	const matchId = Number.parseInt(page.params.id);
+	let { data }: LayoutProps = $props();
+	const { matchId, match, matchTile } = data;
 
-	let match: Match | undefined = $state();
 	let players: Player[] = $state([]);
 	let selections: Selection[] = $state([]);
 	let images: MatchImage[] = $state([]);
 
 	onMount(async () => {
-		match = await getMatch(matchId);
-
 		selections = (await getSelections(matchId)).filter(isAvailable);
 		players = (await getPlayers()).filter((player) =>
 			selections.some((selection) => selection.playerKey === player.key),
@@ -51,7 +47,7 @@
 
 	const breadcrumbs = [
 		{ name: 'Home', href: '/' },
-		{ name: 'Match', href: `/match/${matchId}` },
+		{ name: matchTile, href: `/match/${matchId}` },
 	];
 
 	const INFO_LINKS = [
@@ -90,14 +86,17 @@
 {#if !match}
 	<p>Match not found</p>
 {:else}
-	<MatchCard {match} />
-	<Separator />
 	<HeadingMd>Info</HeadingMd>
-	<ul role="list" class="grid grid-cols-4 gap-2">
-		{#each INFO_LINKS as link}
-			<LinkCard {link} />
-		{/each}
-	</ul>
+	<div class="grid grid-cols-2 gap-2">
+		<ul role="list" class="grid grid-cols-2 gap-2">
+			{#each INFO_LINKS as link}
+				<LinkCard {link} />
+			{/each}
+		</ul>
+		<MatchCard {match} />
+	</div>
+	<Separator />
+
 	<Separator />
 
 	<HeadingMd>Manage</HeadingMd>

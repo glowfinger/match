@@ -54,11 +54,15 @@
 
 <HeadingMd>Latest</HeadingMd>
 <Button href={`/matches`} class="variant-filled-primary btn">View matches</Button>
-{#each matches.toSorted(sortByDate) as match}
-	<a href={`/match/${match.id}`} class="focus:outline-hidden">
-		<MatchCard {match} />
-	</a>
-{/each}
+
+<div class="grid grid-cols-2 gap-2">
+	{#each matches.toSorted(sortByDate) as match}
+		<a href={`/match/${match.id}`} class="focus:outline-hidden">
+			<MatchCard {match} />
+		</a>
+	{/each}
+</div>
+
 <Separator />
 <HeadingMd>Players</HeadingMd>
 <a href={`/players`} class="variant-filled-primary btn">View player</a>

@@ -1,5 +1,5 @@
 export default async function canvasSplitter(
-	source: OffscreenCanvas,
+	source: OffscreenCanvas | HTMLCanvasElement,
 ): Promise<{ page: number; base64: string }[]> {
 	const canvas = new OffscreenCanvas(1080, 1350);
 
@@ -33,7 +33,7 @@ export default async function canvasSplitter(
 	return images;
 }
 
-async function blobToData(blob: Blob) {
+export async function blobToData(blob: Blob) {
 	return new Promise((resolve) => {
 		const reader = new FileReader();
 		reader.onloadend = () => resolve(reader.result);

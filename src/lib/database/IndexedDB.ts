@@ -30,10 +30,12 @@ export interface MatchTeam {
 	club: string;
 	squad: string;
 	badge: string;
+	code: string;
 }
 
 export interface MatchOpponent {
 	key: string;
+	code: string;
 	squad: string;
 	club: string;
 	badge: string;
@@ -98,6 +100,7 @@ export interface Club {
 	name: string;
 	badge: string;
 	image?: string;
+	code: string;
 }
 
 export interface Font {
@@ -159,6 +162,25 @@ export interface ImageFile {
 	blob: Blob;
 }
 
+export interface ImageUpload {
+	id: number;
+	matchId: number;
+	mediaType: string;
+	uploadType: string;
+	createdAt: string;
+	blob: Blob;
+	meta: {
+		filename: string;
+		filesize: number;
+		mimetype: string;
+	};
+	settings: {
+		x: number;
+		y: number;
+		zoom: number;
+	};
+}
+
 const db = new Dexie('MatchDatabase') as Dexie & {
 	matches: EntityTable<Match, 'id'>;
 	players: EntityTable<Player, 'key'>;
@@ -173,9 +195,10 @@ const db = new Dexie('MatchDatabase') as Dexie & {
 	events: EntityTable<Event, 'uuid'>;
 	eventsImages: EntityTable<EventImage, 'id'>;
 	imageFiles: EntityTable<ImageFile, 'url'>;
+	imageUploads: EntityTable<ImageUpload, 'id'>;
 };
 
-db.version(1.0).stores({
+db.version(3.4).stores({
 	matches: '++id',
 	players: 'key',
 	selections: '++id, [matchId+playerKey], [matchId+available]',
@@ -187,10 +210,10 @@ db.version(1.0).stores({
 	matchImages: '++id, [matchId], [matchId+type+page],[matchId+type]',
 	clubs: 'key',
 	fonts: '++id',
-	backgroundsImages: '++id, [type], [type+page]',
 	events: 'uuid, [createdAt], [template]',
 	eventsImages: '++id, [eventUuid+type]',
 	imageFiles: 'url',
+	imageUploads: '++id, [matchId+mediaType+uploadType]',
 });
 
 export { db };

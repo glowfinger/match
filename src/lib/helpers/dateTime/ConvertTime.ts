@@ -1,8 +1,11 @@
+import type { MatchSchedule } from '$lib/database/IndexedDB';
 import { DateTime } from 'luxon';
 
-export function convertTime(timeString: string) {
+const ERROR_MESSAGE = '!!';
+
+export function convertTime(timeString: string | undefined | null) {
 	if (!timeString) {
-		return '';
+		return 'TBC';
 	}
 
 	const H = +timeString.substring(0, 2);
@@ -11,9 +14,23 @@ export function convertTime(timeString: string) {
 	return h + timeString.substring(2, 5) + ampm;
 }
 
+export function socialDate(dateString: string | undefined | null) {
+	if (!dateString) {
+		return;
+	}
+
+	const date = DateTime.fromSQL(dateString);
+
+	if (!date.isValid) {
+		return;
+	}
+
+	return date.toFormat('ccc d LLL');
+}
+
 export function matchDate(dateString: string) {
 	if (!dateString) {
-		return 'DATE: NOT SET';
+		return '';
 	}
 
 	const date = DateTime.fromSQL(dateString);
@@ -54,4 +71,11 @@ function getNumberSuffix(num: string) {
 		default:
 			return th;
 	}
+}
+
+export function formatMatchSchedule(schedule: MatchSchedule | undefined | null) {
+	if (!schedule) {
+		return 'TBC';
+	}
+	return socialDate(schedule.matchOn) + ' - ' + convertTime(schedule.kickOffAt);
 }

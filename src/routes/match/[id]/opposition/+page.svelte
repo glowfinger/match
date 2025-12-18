@@ -22,19 +22,26 @@
 	import * as Popover from '$lib/components/ui/popover/index.js';
 	import { cn } from '$lib/utils.js';
 	import { Separator } from '$lib/components/ui/separator';
+	import type { LayoutProps } from '../$types';
+	import CancelLink from '$lib/components/forms/CancelLink.svelte';
+	import SubmitButton from '$lib/components/forms/SubmitButton.svelte';
+	import TextInput from '$lib/components/forms/TextInput.svelte';
 
-	const matchId = Number.parseInt(page.params.id as string);
-
-	let match: Match | undefined = $state();
+	let { data }: LayoutProps = $props();
+	const { matchId, match } = data;
 	let options: { value: string; label: string }[] = $state([]);
 	let clubs: Club[] = $state([]);
 
-	let data = $state<MatchOpponent>({
+	let formData = $state<MatchOpponent>({
 		key: '',
 		club: '',
 		squad: '',
 		badge: '',
 	});
+
+	if (match.opponent !== undefined) {
+		formData = { ...match.opponent };
+	}
 
 	let errors = $state({
 		club: '',
@@ -44,17 +51,9 @@
 	let selectedValue = $state<string | undefined>(undefined);
 
 	onMount(async () => {
-		match = await getMatch(matchId);
-
-		if (match.opponent !== undefined) {
-			data = { ...match.opponent };
-		}
-
 		clubs = await getClubs();
-
 		options = clubs.map(clubToComboboxValue);
-
-		selectedValue = data.club;
+		selectedValue = formData.club;
 	});
 
 	const breadcrumbs = [
@@ -71,22 +70,23 @@
 		event.preventDefault();
 
 		if (selectedValue === undefined) {
-			data.key = '';
-			data.club = '';
-			data.badge = '';
+			formData.key = '';
+			formData.club = '';
+			formData.badge = '';
 		} else {
 			const club = clubs.find((c) => c.name === selectedValue);
-			data.key = club?.key || '';
-			data.club = club?.name || '';
-			data.badge = club?.badge || '';
+			formData.key = club?.key || '';
+			formData.club = club?.name || '';
+			formData.badge = club?.badge || '';
+			formData.code = club?.code || '';
 		}
 
-		if (!isValid(data, matchOpponentSchema)) {
+		if (!isValid(formData, matchOpponentSchema)) {
 			errors = getErrors(data, matchOpponentSchema);
 			return;
 		}
 
-		await updateOpponent(matchId, { ...data });
+		await updateOpponent(matchId, { ...formData });
 		toast.success('Opponent updated');
 		goto(`/match/${matchId}`);
 	}
@@ -113,66 +113,57 @@
 
 <Breadcrumb {breadcrumbs} />
 <HeadingLg>Opposition</HeadingLg>
-{#if !match}
-	<p>Match not found</p>
-{:else}
-	<form class="grid grid-cols-1 gap-2" onsubmit={handleSubmission}>
-		<div class="grid w-full max-w-sm gap-1.5">
-			<Label for="match-opposition-club">Club</Label>
-			<Popover.Root bind:open>
-				<Popover.Trigger bind:ref={triggerRef}>
-					{#snippet child({ props })}
-						<Button
-							variant="outline"
-							class="w-full justify-between"
-							{...props}
-							role="combobox"
-							aria-expanded={open}
-						>
-							{selectedValue || 'Select a club...'}
-							<ChevronsUpDown class="opacity-50" />
-						</Button>
-					{/snippet}
-				</Popover.Trigger>
-				<Popover.Content class="w-[200px] p-0">
-					<Command.Root>
-						<Command.Input placeholder="Search clubs..." />
-						<Command.List>
-							<Command.Empty>No club found.</Command.Empty>
-							<Command.Group>
-								{#each options as option}
-									<Command.Item
-										value={option.value}
-										onSelect={() => {
-											value = option.value;
-											closeAndFocusTrigger();
-										}}
-									>
-										<Check class={cn(value !== option.value && 'text-transparent')} />
-										{option.label}
-									</Command.Item>
-								{/each}
-							</Command.Group>
-						</Command.List>
-					</Command.Root>
-				</Popover.Content>
-			</Popover.Root>
-			<ErrorLabel>{errors.club}</ErrorLabel>
-		</div>
-		<div class="grid w-full max-w-sm items-center gap-1.5">
-			<Label for="match-opposition-squad">squad</Label>
-			<Input
-				type="text"
-				name="opposition-team"
-				id="match-opposition-squad"
-				bind:value={data.squad}
-			/>
-			<ErrorLabel>{errors.squad}</ErrorLabel>
-		</div>
 
-		<Separator />
+<form class="grid grid-cols-1 gap-2" onsubmit={handleSubmission}>
+	<Label for="match-opposition-club">Club</Label>
+	<Popover.Root bind:open>
+		<Popover.Trigger bind:ref={triggerRef} class="w-full bg-white">
+			{#snippet child({ props })}
+				<Button
+					variant="outline"
+					class="w-full justify-between"
+					{...props}
+					role="combobox"
+					aria-expanded={open}
+				>
+					{selectedValue || 'Select a club...'}
+					<ChevronsUpDown class="opacity-50" />
+				</Button>
+			{/snippet}
+		</Popover.Trigger>
+		<Popover.Content class="bg-white p-0">
+			<Command.Root>
+				<Command.Input placeholder="Search clubs..." />
+				<Command.List>
+					<Command.Empty>No club found.</Command.Empty>
+					<Command.Group>
+						{#each options as option}
+							<Command.Item
+								value={option.value}
+								onSelect={() => {
+									value = option.value;
+									closeAndFocusTrigger();
+								}}
+							>
+								<Check class={cn(value !== option.value && 'text-transparent')} />
+								{option.label}
+							</Command.Item>
+						{/each}
+					</Command.Group>
+				</Command.List>
+			</Command.Root>
+		</Popover.Content>
+	</Popover.Root>
+	<ErrorLabel>{errors.club}</ErrorLabel>
 
-		<Button href={`/match/${matchId}`} variant="outline">Cancel</Button>
-		<Button type="submit">Save</Button>
-	</form>
-{/if}
+	<TextInput
+		id="match-opposition-squad"
+		bind:value={formData.squad}
+		title="Squad"
+		placeholder="Enter squad name"
+		error={errors.squad}
+	/>
+	<Separator />
+	<CancelLink href={`/match/${matchId}`}>Back to match details</CancelLink>
+	<SubmitButton>Save</SubmitButton>
+</form>

@@ -14,10 +14,9 @@
 	import { addPlayers, getPlayers } from '$lib/database/PlayerDBService';
 	import { getApiPlayers } from '$lib/services/api/PlayerApiService';
 	import { toast } from 'svelte-sonner';
+	import { addFonts, getFonts, hasFonts } from '$lib/database/FontDBService';
 
-	import { addFonts, clearFonts, hasFonts } from '$lib/database/FontDBService';
 	let { children } = $props();
-
 	let clubWorker: Worker = new ClubWorker();
 	let imageWorker: Worker = new ImageWorker();
 
@@ -29,9 +28,17 @@
 		loading = true;
 
 		if (!(await hasFonts())) {
-			await clearFonts();
 			await addFonts();
+
 			toast('Added fonts');
+		}
+
+		const fonts = await getFonts();
+
+		for await (const font of fonts) {
+			await new FontFace(font.type, font.blob).load().then((font) => {
+				document.fonts.add(font);
+			});
 		}
 
 		const clubs = await getClubs();
@@ -58,6 +65,10 @@
 		clubWorker.terminate();
 		imageWorker.terminate();
 	});
+
+	function clearFonts() {
+		// throw new Error('Function not implemented.');
+	}
 </script>
 
 <ModeWatcher />
@@ -70,8 +81,8 @@
 {:else if error}
 	<p>Error loading clubs</p>
 {:else}
-	<div class="m-2 flex min-h-full justify-center">
-		<div class="w-full max-w-md">
+	<div class="flex min-h-full justify-center">
+		<div class="w-full max-w-md border-x border-slate-400 p-4 shadow-lg">
 			<div class="grid grid-cols-1 gap-2">
 				{@render children()}
 			</div>

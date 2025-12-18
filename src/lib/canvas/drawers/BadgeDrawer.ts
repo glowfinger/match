@@ -1,13 +1,13 @@
 import { Colours } from '$lib/Constants';
 import type { Match } from '$lib/database/IndexedDB';
+import type { CanvasImage } from '$lib/types/Images';
 
-import { getImageBitmap } from '../ImageCache';
-
-export async function drawBadge(
-	ctx: OffscreenCanvasRenderingContext2D,
+export async function drawBadges(
+	ctx: OffscreenCanvasRenderingContext2D | CanvasRenderingContext2D,
 	match: Match,
 	x: number = 60,
 	y: number = 460,
+	images: CanvasImage[] = [],
 ) {
 	const homeTeam = match.detail?.venue === 'HOME' ? match.team : match.opponent;
 	const awayTeam = match.detail?.venue === 'HOME' ? match.opponent : match.team;
@@ -20,19 +20,20 @@ export async function drawBadge(
 		ctx.fillRect(x, y, 170, 170);
 		ctx.strokeRect(x, y, 170, 170);
 
-		const img = await getImageBitmap(homeTeam.badge);
-		ctx.drawImage(img, x + 10, y + 10);
+		const homeTeamImage = images.find(
+			(image) => image.uploadType === 'HOME' && image.mediaType === 'TEAM',
+		);
+		if (homeTeamImage) {
+			ctx.drawImage(homeTeamImage.photo, x + 10, y + 10);
+		}
 
 		const title = [homeTeam.club, homeTeam.squad].join(' ').trim();
-		// if (homeTeam.club === match.team?.club) {
-		// 	title = `${title} vs`;
-		// }
 
 		const lines = [title];
-		ctx.font = `${lineHeight}px black`;
+		ctx.font = `${lineHeight}px semiBold`;
 		ctx.textAlign = 'left';
 		ctx.lineWidth = 8;
-		ctx.fillStyle = Colours.GOLD;
+		ctx.fillStyle = Colours.WHITE;
 		ctx.strokeStyle = Colours.NAVY;
 		lines.forEach((line, index) => {
 			ctx.strokeText(line, x + 170 + 30, y + 95 + index * lineHeight + 10);
@@ -52,11 +53,15 @@ export async function drawBadge(
 		ctx.fillRect(x1, y1, 170, 170);
 		ctx.strokeRect(x1, y1, 170, 170);
 
-		const img = await getImageBitmap(awayTeam.badge);
-		ctx.drawImage(img, x1 + 10, y1 + 10);
+		const awayTeamImage = images.find(
+			(image) => image.uploadType === 'AWAY' && image.mediaType === 'TEAM',
+		);
+		if (awayTeamImage) {
+			ctx.drawImage(awayTeamImage.photo, x1 + 10, y1 + 10);
+		}
 
 		const lines = [[awayTeam.club, awayTeam.squad].join(' ')];
-		ctx.font = `${lineHeight}px regular`;
+		ctx.font = `${lineHeight}px semiBold`;
 		ctx.textAlign = 'left';
 		ctx.lineWidth = 8;
 		ctx.fillStyle = Colours.WHITE;

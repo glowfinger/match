@@ -6,36 +6,26 @@ import { getMatch } from '$lib/database/MatchService';
 import { getMatchTags } from '$lib/database/MatchTagDBService';
 import { getPlayersByKeys } from '$lib/database/PlayerDBService';
 import { getYesSelectionsByMatchId } from '$lib/database/SelectionDBService';
+import type { CanvasImage } from '$lib/types/Images';
 import { KIT_BACKGROUND, KIT_VALUES } from '../constants/Colours';
 import StarterPositons from '../constants/lineup/StarterPositons';
-import { drawBadge } from '../drawers/BadgeDrawer';
-import { drawSponsors } from '../drawers/SponsorsDrawer';
-import { getImageBitmap } from '../ImageCache';
-import headshotLoader from '../images/HeadshotLoader';
+import { drawBadges } from '../drawers/BadgeDrawer';
+import photoDrawer from '../drawers/PhotoDrawer';
+import { drawSponsors, drawSponsorsVertical } from '../drawers/SponsorsDrawer';
 import { drawSmallTitle, drawVersusTitle } from '../TextDrawer';
-
 import canvasSplitter from './CanvasSplitter';
 import FinishersPartialRenderer from './lineup/FinishersPartialRenderer';
 import InfoPartialRenderer from './lineup/InfoPartialRenderer';
 
-const KIT_BACKGROUND_IMAGE = {
-	[KIT_VALUES.MAIN]: '/img/backgrounds/seniors/senior-gold-4-panel-basic.png',
-	[KIT_VALUES.SECONDARY]: '/img/backgrounds/seniors/senior-pink-4-panel-basic.png',
-};
-
-const KIT_BACKGROUND_IMAGE_CUTOUT = {
-	[KIT_VALUES.MAIN]: '/img/backgrounds/seniors/senior-gold-4-panel-cutout.png',
-	[KIT_VALUES.SECONDARY]: '/img/backgrounds/seniors/senior-pink-4-panel-cutout.png',
-};
-
 export default async function LineupRenderer(
+	canvas: HTMLCanvasElement | OffscreenCanvas,
 	matchId: number,
-	type: string,
+	images: CanvasImage[] = [],
 ): Promise<Omit<MatchImage, 'id'>[]> {
-	const PAGES = 4;
-	const WIDTH = 1080;
-	const HEIGHT = 1350;
-	const canvas = new OffscreenCanvas(PAGES * WIDTH, HEIGHT);
+	if (!canvas) {
+		return [];
+	}
+
 	const ctx = canvas.getContext('2d', { willReadFrequently: true });
 	if (!ctx) {
 		throw new Error('Failed to get 2D context');
@@ -56,21 +46,31 @@ export default async function LineupRenderer(
 		ctx.fillRect(0, 0, canvas.width, canvas.height);
 	}
 
-	if (match.detail) {
-		// todo better error handling for fetching images
-		const img = await getImageBitmap(KIT_BACKGROUND_IMAGE[match.detail.kit]);
-		ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+	const backgroundImage = images.find((image) => image.uploadType === 'BACKGROUND');
+	if (backgroundImage) {
+		ctx.drawImage(backgroundImage.photo, 0, 0);
 	}
 
-	{
-		const img = await getImageBitmap('/img/photos/gez.png');
-		ctx.drawImage(img, 0, 0);
+	const mainImage = images.find(
+		(image) => image.uploadType === 'UPLOAD' && image.mediaType === 'MAIN',
+	);
+
+	if (mainImage) {
+		const destination = { width: 1080, height: 1350, x: 0, y: 0 };
+		await photoDrawer(
+			ctx as CanvasRenderingContext2D,
+			mainImage.photo,
+			destination,
+			{ width: mainImage.photo.width, height: mainImage.photo.height, x: 0, y: 0 },
+			mainImage.settings.zoom,
+			mainImage.settings.x,
+			mainImage.settings.y,
+		);
 	}
 
-	if (match.detail) {
-		// todo better error handling for fetching images
-		const img = await getImageBitmap(KIT_BACKGROUND_IMAGE_CUTOUT[match.detail.kit]);
-		ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+	const backgroundCutoutImage = images.find((image) => image.uploadType === 'BACKGROUND_CUTOUT');
+	if (backgroundCutoutImage) {
+		ctx.drawImage(backgroundCutoutImage.photo, 0, 0);
 	}
 
 	await InfoPartialRenderer(ctx, matchId);
@@ -79,9 +79,8 @@ export default async function LineupRenderer(
 	drawVersusTitle(ctx, `vs ${match.opponent?.club ?? ''}`, 1080 + 60, 180);
 	drawSmallTitle(ctx, 'BACKS', 1080 + 1080 + 60, 120);
 	drawVersusTitle(ctx, `vs ${match.opponent?.club ?? ''}`, 1080 + 1080 + 60, 180);
-	// drawTitle(ctx, 'FINISHERS', 1080 + 1080 + 1080 + 60, 160);
 
-	// // aysnc loop
+	// // // aysnc loop
 	for (const i of StarterPositons) {
 		const position = positions.find((s) => s.position === i.number);
 		if (!position) {
@@ -106,9 +105,16 @@ export default async function LineupRenderer(
 
 		drawPlayerNumber(ctx, i.number, x + 100, y + 100);
 
-		const image = await headshotLoader(match.detail?.kit ?? 'MAIN', player);
-		if (image) {
-			ctx.drawImage(image, x + 10, y, 240, 240);
+		// const image = await headshotLoader(match.detail?.kit ?? 'MAIN', player);
+		// if (image) {
+		// 	ctx.drawImage(image, x + 10, y, 240, 240);
+		// }
+
+		const positionImage = images.find(
+			(image) => image.uploadType === position.position && image.mediaType === 'POSITION',
+		);
+		if (positionImage) {
+			ctx.drawImage(positionImage.photo, x + 10, y, 240, 240);
 		}
 
 		ctx.fillStyle = 'white';
@@ -152,118 +158,45 @@ export default async function LineupRenderer(
 		ctx.fillText(name, x + 130, y + 260 - 10);
 	}
 
-	await drawBadge(ctx, match);
+	await drawBadges(ctx, match, 60, 460, images as CanvasImage[]);
 
 	// Finishers
 	await FinishersPartialRenderer(ctx, matchId);
 
-	// Badges
+	// await finisherListPartialRenderer(ctx, matchId);
 
-	// Title
-	// ctx.font = `140px black`;
-	// ctx.textAlign = 'left';
-	// ctx.fillStyle = Colours.WHITE;
-	// ctx.lineWidth = 16;
-	// ctx.strokeStyle = Colours.NAVY;
-	// ctx.strokeText('LINEUP', 60, 160);
-	// ctx.fillText('LINEUP', 60, 160);
-
-	// Team name
-	// ctx.font = `80px black`;
-	// ctx.textAlign = 'left';
-	// ctx.lineWidth = 12;
-	// ctx.strokeStyle = Colours.NAVY;
-	// ctx.fillStyle = Colours.GOLD;
-	// ctx.strokeText(teams.home.name, 60, 280);
-	// ctx.fillText(teams.home.name, 60, 280);
-
-	// VS
-	// ctx.font = `40px regular`;
-	// ctx.textAlign = 'left';
-	// ctx.lineWidth = 6;
-	// ctx.fillStyle = Colours.WHITE;
-	// ctx.strokeStyle = Colours.NAVY;
-	// ctx.strokeText('vs', 60, 360);
-	// ctx.fillText('vs', 60, 360);
-
-	// Opposition team
-	// ctx.font = `48px regular`;
-	// ctx.textAlign = 'left';
-	// ctx.lineWidth = 6;
-	// ctx.fillStyle = Colours.WHITE;
-	// ctx.strokeStyle = Colours.NAVY;
-	// ctx.strokeText(teams.away.name, 120, 360);
-	// ctx.fillText(teams.away.name, 120, 360);
-
-	// Match type
-	// const MATCH_TYPE = match.detail?.type ?? '';
-	// ctx.font = `60px black`;
-	// ctx.textAlign = 'left';
-	// ctx.lineWidth = 6;
-	// ctx.fillStyle = Colours.WHITE;
-	// ctx.strokeStyle = Colours.NAVY;
-	// ctx.strokeText(MATCH_TYPE, 60, 440);
-	// ctx.fillText(MATCH_TYPE, 60, 440);
-
-	// Date
-	// const date = matchDate(match.schedule?.matchOn ?? '');
-	// ctx.font = `36px regular`;
-	// ctx.textAlign = 'left';
-	// ctx.lineWidth = 6;
-	// ctx.fillStyle = Colours.WHITE;
-	// ctx.strokeStyle = Colours.NAVY;
-	// ctx.strokeText(date, 60, 540);
-	// ctx.fillText(date, 60, 540);
-
-	// // Timings
-	// const times = `Meet: ${convertTime(match.meetAt)} - KO: ${convertTime(match.kickOffAt)}`;
-	// ctx.font = `36px regular`;
-	// ctx.textAlign = 'left';
-	// ctx.lineWidth = 6;
-	// ctx.fillStyle = Colours.WHITE;
-	// ctx.strokeStyle = Colours.NAVY;
-	// ctx.strokeText(times, 60, 620);
-	// ctx.fillText(times, 60, 620);
-
-	// Footnote
-	// ctx.font = `30px regular`;
-	// ctx.textAlign = 'left';
-	// ctx.lineWidth = 6;
-	// ctx.fillStyle = Colours.GOLD;
-	// ctx.strokeStyle = Colours.NAVY;
-	// ctx.strokeText(footnote, 60, 880);
-	// ctx.fillText(footnote, 60, 880);
+	const legend = ' 🍟 Home Grown  |  📣 Debut';
+	// const legend = '🍟 Home Grown';
+	ctx.font = `30px regular`;
+	ctx.textAlign = 'right';
+	ctx.lineWidth = 6;
+	ctx.fillStyle = Colours.WHITE;
+	ctx.strokeStyle = Colours.NAVY;
+	ctx.strokeText(legend, 1080 * 2 - 60, 1280);
+	ctx.fillText(legend, 1080 * 2 - 60, 1280);
+	ctx.strokeText(legend, 1080 * 3 - 60, 1280);
+	ctx.fillText(legend, 1080 * 3 - 60, 1280);
+	ctx.strokeText(legend, 1080 * 4 - 60, 1280);
+	ctx.fillText(legend, 1080 * 4 - 60, 1280);
 
 	// draw sponsors on each page
 	for (const page of [1, 2, 3]) {
 		await drawSponsors(ctx, 60 + (page - 1) * 1080, 1120);
 	}
 
-	for (const page of [4]) {
-		await drawSponsors(ctx, 60 + (page - 1) * 1080, 300);
-	}
+	await drawSponsorsVertical(ctx, 1080 * 4 - 60 - 160, 60);
 
-	return (await canvasSplitter(canvas)).map(({ page, base64 }) => ({
+	return (await canvasSplitter(canvas as OffscreenCanvas)).map(({ page, base64 }) => ({
 		matchId,
-		type,
+		type: 'LINEUP',
 		page,
 		base64,
 		createdAt: new Date().toISOString(),
 	}));
 }
 
-// function drawTitle(ctx: OffscreenCanvasRenderingContext2D, title: string, x: number, y: number) {
-// 	ctx.font = `140px black`;
-// 	ctx.textAlign = 'left';
-// 	ctx.fillStyle = Colours.WHITE;
-// 	ctx.lineWidth = 16;
-// 	ctx.strokeStyle = Colours.NAVY;
-// 	ctx.strokeText(title, x, y);
-// 	ctx.fillText(title, x, y);
-// }
-
 export function drawPlayerNumber(
-	ctx: OffscreenCanvasRenderingContext2D,
+	ctx: OffscreenCanvasRenderingContext2D | CanvasRenderingContext2D,
 	number: string,
 	x: number,
 	y: number,

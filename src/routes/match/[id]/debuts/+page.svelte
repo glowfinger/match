@@ -16,10 +16,11 @@
 	import { sortByMatchPostion } from '$lib/utils/sorts/MatchPositionSort';
 	import { SHIRT_NUMBERS, SHIRT_NUMBERS_LINEUP } from '$lib/counts/PlayerCounts';
 	import PlayerAvatar from '$lib/components/avatars/PlayerAvatar.svelte';
+	import type { LayoutProps } from '../$types';
 
-	const matchId = Number.parseInt(page.params.id);
+	let { data }: LayoutProps = $props();
+	const { matchId, match, matchTile } = data;
 
-	let match: Match | undefined = $state();
 	let players: Player[] = $state([]);
 	let replacements: Player[] = $state([]);
 	let selections: Selection[] = $state([]);
@@ -29,8 +30,6 @@
 
 	onMount(async () => {
 		const allPlayer = await getPlayers();
-
-		match = await getMatch(matchId);
 
 		selections = (await getSelections(matchId)).filter(isAvailable);
 
@@ -54,7 +53,7 @@
 
 	const breadcrumbs = [
 		{ name: 'Home', href: '/' },
-		{ name: 'Match', href: `/match/${matchId}` },
+		{ name: matchTile, href: `/match/${matchId}` },
 		{ name: 'Manage lineup', href: `/match/${matchId}/lineup` },
 	];
 

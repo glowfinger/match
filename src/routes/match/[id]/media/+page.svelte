@@ -7,23 +7,23 @@
 	import HeadingLg from '$lib/components/typography/HeadingLg.svelte';
 	import HeadingMd from '$lib/components/typography/HeadingMd.svelte';
 	import { getImagesByMatch } from '$lib/database/match/MatchImageDBService';
-	import { MediaImageTypes } from '$lib/Constants';
+	import { MediaImageTypes, type MediaImageType } from '$lib/Constants';
+	import type { LayoutProps } from '../$types';
+	import { goto } from '$app/navigation';
 
-	const matchId = Number.parseInt(page.params.id as string);
+	let { data }: LayoutProps = $props();
+
+	const { matchId, match, matchTile } = data;
+
 	const breadcrumbs = [
 		{ name: 'Home', href: '/' },
-		{ name: 'Match', href: `/match/${matchId}` },
+		{ name: matchTile, href: `/match/${matchId}` },
 		{ name: 'Media', href: `/match/${matchId}/media` },
 	];
 
-	let match: Match | undefined = $state();
-
 	let images: MatchImage[] = $state([]);
 
-	onMount(async () => {
-		match = await getMatch(matchId);
-		getImagesByMatch(matchId).then((rows) => (images = rows));
-	});
+	onMount(async () => {});
 
 	function getImages(type: string) {
 		return images.filter((image) => image.type === type);
@@ -32,11 +32,27 @@
 	function getGeneratedImageTypes() {
 		return MediaImageTypes.filter((type) => getImages(type.type).length > 0);
 	}
+
+	function hasBeenSelected(type: MediaImageType) {
+		return images.filter((image) => image.type === type.type).length > 0;
+	}
+
+	function notSelected(type: MediaImageType) {
+		return images.filter((image) => image.type === type.type).length === 0;
+	}
 </script>
 
 <Breadcrumb {breadcrumbs} />
 <HeadingLg>Media</HeadingLg>
-<a href={`/match/${matchId}/media/add`}>Add image</a>
+
+<div class="grid grid-cols-2 gap-4">
+	{#each MediaImageTypes.filter(notSelected) as type}
+		<div class="flex items-center justify-between">
+			<p>{type.label}</p>
+			<a class="btn" href={`/match/${matchId}/media/${type.type}`}>Generate</a>
+		</div>
+	{/each}
+</div>
 
 {#each getGeneratedImageTypes() as type}
 	<HeadingMd>{type.label}</HeadingMd>

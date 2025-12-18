@@ -10,7 +10,7 @@
 </script>
 
 <li
-	class="group aspect-square border border-slate-700 bg-white shadow-sm transition-colors duration-200 focus-within:outline-1 focus-within:outline-offset-2 focus-within:outline-slate-600 hover:border-slate-400 hover:bg-slate-100 dark:border-white/10 dark:bg-slate-800/50 dark:shadow-none dark:focus-within:outline-slate-500 dark:hover:border-white/25 dark:hover:bg-slate-700/50"
+	class="group aspect-square rounded-lg border border-slate-500 bg-white shadow-sm transition-colors duration-200 focus-within:outline-1 focus-within:outline-offset-2 focus-within:outline-slate-600 hover:border-slate-400 hover:bg-slate-100 dark:border-white/10 dark:bg-slate-800/50 dark:shadow-none dark:focus-within:outline-slate-500 dark:hover:border-white/25 dark:hover:bg-slate-700/50"
 >
 	<a
 		href={link.href}

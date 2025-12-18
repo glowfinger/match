@@ -21,11 +21,12 @@
 	import HeadingLg from '$lib/components/typography/HeadingLg.svelte';
 	import HeadingMd from '$lib/components/typography/HeadingMd.svelte';
 	import { toast } from 'svelte-sonner';
+	import type { LayoutProps } from '../../../$types';
 
-	const matchId = Number.parseInt(page.params.id);
+	let { data }: LayoutProps = $props();
+	const { matchId, match, matchTile } = data;
 	const position = page.params.position;
 
-	let match: Match | undefined = $state();
 	let players: Player[] = $state([]);
 	let selections: Selection[] = $state([]);
 	let mains: Player[] = $state([]);
@@ -35,8 +36,6 @@
 
 	onMount(async () => {
 		const allPlayer = await getPlayers();
-
-		match = await getMatch(matchId);
 
 		selections = (await getSelections(matchId)).filter(isAvailable);
 		players = allPlayer.filter((player) =>
@@ -53,7 +52,7 @@
 
 	const breadcrumbs = [
 		{ name: 'Home', href: '/' },
-		{ name: 'Match', href: `/match/${matchId}` },
+		{ name: matchTile, href: `/match/${matchId}` },
 		{ name: 'Manage lineup', href: `/match/${matchId}/lineup` },
 		{ name: 'Position', href: `/match/${matchId}/lineup/position` },
 	];

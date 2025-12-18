@@ -8,9 +8,10 @@
 	import { getImagesByMatch } from '$lib/database/match/MatchImageDBService';
 	import { getMatch } from '$lib/database/MatchService';
 	import { onMount } from 'svelte';
+	import type { LayoutProps } from '../../$types';
 
-	const matchId = Number.parseInt(page.params.id);
-	let match: Match | undefined = $state();
+	let { data }: LayoutProps = $props();
+	const { matchId, match, matchTile } = data;
 	let images: MatchImage[] = $state([]);
 
 	const breadcrumbs = [
@@ -20,11 +21,8 @@
 	];
 
 	onMount(async () => {
-		const promise = Promise.all([getMatch(matchId), getImagesByMatch(matchId)]);
-		const [matchData, imagesData] = await promise;
-
-		match = matchData;
-		images = imagesData;
+		const promise = Promise.all([getImagesByMatch(matchId)]);
+		[images] = await promise;
 	});
 
 	function hasBeenSelected(type: MediaImageType) {

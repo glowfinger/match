@@ -15,17 +15,16 @@
 	import HeadingMd from '$lib/components/typography/HeadingMd.svelte';
 	import { Separator } from '$lib/components/ui/separator/index.js';
 	import { deleteMatchAllositions } from '$lib/database/MatchPositionDBService';
+	import type { LayoutProps } from '../../$types';
+	let { data }: LayoutProps = $props();
+	const { matchId, match, matchTile } = data;
 
-	const matchId = Number.parseInt(page.params.id);
-
-	let match: Match | undefined = $state();
 	let players: Player[] = $state([]);
 	let selections: Selection[] = $state([]);
 
 	let search = new SvelteURLSearchParams(page.url.searchParams);
 
 	onMount(async () => {
-		match = await getMatch(matchId);
 		players = await getPlayers();
 		selections = await getSelections(matchId);
 	});

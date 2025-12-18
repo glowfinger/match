@@ -10,19 +10,16 @@
 	import { goto } from '$app/navigation';
 	import { toast } from 'svelte-sonner';
 	import MatchCard from '$lib/components/cards/MatchCard.svelte';
-	const matchId = Number.parseInt(page.params.id);
+	import type { LayoutProps } from '../$types';
+
+	let { data }: LayoutProps = $props();
+	const { matchId, match, matchTile } = data;
 
 	const breadcrumbs = [
 		{ name: 'Home', href: '/' },
-		{ name: 'Match', href: `/match/${matchId}` },
+		{ name: matchTile, href: `/match/${matchId}` },
 		{ name: 'Remove', href: `/match/${matchId}/remove` },
 	];
-
-	let match: Match | undefined = $state();
-
-	onMount(async () => {
-		match = await getMatch(matchId);
-	});
 
 	async function handleRemove() {
 		deleteMatch(matchId);
