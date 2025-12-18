@@ -4,8 +4,7 @@ import { error } from '@sveltejs/kit';
 
 export const ssr = false;
 
-export const load = async ({ params, url, route }) => {
-	console.log(route.id, params);
+export const load = async ({ params, url }) => {
 	if (!params.id) {
 		error(404, 'No match ID provided');
 	}

@@ -9,12 +9,13 @@ const STORAGE_PATH_CLUBS = 'https://glowfinger.blob.core.windows.net/smg/other-b
 export async function clubMapper(row: string[]): Promise<Club[]> {
 	return row
 		.map((club) => {
-			const [key, name, badge, , , , instagram, website] = club;
+			const [key, name, badge, , , , instagram, website, code] = club;
 
 			return {
 				key,
 				name,
 				badge,
+				code: code ?? '',
 				socials: {
 					instagram: instagram ?? '',
 					website: website ?? '',

@@ -56,6 +56,8 @@ export default async function resultRender(
 		);
 	}
 
+	const img = await getImageBitmap('/img/photos/sully-loss.png');
+	ctx.drawImage(img, 0, 0);
 	if (match.detail?.venue === 'HOME') {
 		{
 			const TITLE = [match.team?.club ?? '', match.team?.squad ?? ''].join(' ').trim();

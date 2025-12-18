@@ -78,6 +78,7 @@
 			formData.key = club?.key || '';
 			formData.club = club?.name || '';
 			formData.badge = club?.badge || '';
+			formData.code = club?.code || '';
 		}
 
 		if (!isValid(formData, matchOpponentSchema)) {

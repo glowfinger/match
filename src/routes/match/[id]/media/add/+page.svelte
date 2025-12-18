@@ -8,6 +8,7 @@
 	import { getImagesByMatch } from '$lib/database/match/MatchImageDBService';
 	import { getMatch } from '$lib/database/MatchService';
 	import { onMount } from 'svelte';
+	import type { LayoutProps } from '../../$types';
 
 	let { data }: LayoutProps = $props();
 	const { matchId, match, matchTile } = data;

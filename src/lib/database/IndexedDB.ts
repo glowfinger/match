@@ -30,10 +30,12 @@ export interface MatchTeam {
 	club: string;
 	squad: string;
 	badge: string;
+	code: string;
 }
 
 export interface MatchOpponent {
 	key: string;
+	code: string;
 	squad: string;
 	club: string;
 	badge: string;
@@ -98,6 +100,7 @@ export interface Club {
 	name: string;
 	badge: string;
 	image?: string;
+	code: string;
 }
 
 export interface Font {

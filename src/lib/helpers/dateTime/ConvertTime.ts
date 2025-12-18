@@ -30,7 +30,7 @@ export function socialDate(dateString: string | undefined | null) {
 
 export function matchDate(dateString: string) {
 	if (!dateString) {
-		return ERROR_MESSAGE;
+		return '';
 	}
 
 	const date = DateTime.fromSQL(dateString);

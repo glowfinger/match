@@ -10,9 +10,9 @@ export function getMatchTitle(match: Match): string {
 	}
 
 	if (listFirst) {
-		title = `${match.team?.squad} vs ${match.opponent?.club}`;
+		title = `${match.team?.squad} vs ${match.opponent?.code}`;
 	} else {
-		title = `${match.opponent?.club} vs ${match.team?.squad}`;
+		title = `${match.opponent?.code} vs ${match.team?.squad}`;
 	}
 
 	return title;

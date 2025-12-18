@@ -6,6 +6,7 @@ import { KIT_VALUES } from '../constants/Colours';
 import photoDrawer from '../drawers/PhotoDrawer';
 import { drawSponsorsVertical } from '../drawers/SponsorsDrawer';
 import { getImageBitmap } from '../ImageCache';
+import canvasSplitter from './CanvasSplitter';
 
 export const backgrounds = {
 	[KIT_VALUES.MAIN]: Colours.NAVY,
@@ -211,7 +212,13 @@ export default async function matchRenderer(
 	}
 
 	await drawSponsorsVertical(ctx, 1080 - 150 - 60, 1000);
-	return [];
+	return (await canvasSplitter(canvas as OffscreenCanvas)).map(({ page, base64 }) => ({
+		matchId: match.id,
+		type: 'MATCH',
+		page,
+		base64,
+		createdAt: new Date().toISOString(),
+	}));
 }
 
 export function splitIntoLines(text: string): string[] {
