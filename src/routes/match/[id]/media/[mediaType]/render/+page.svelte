@@ -81,7 +81,7 @@
 	];
 
 	function backToMedia() {
-		goto(`/match/${matchId}/media/${mediaType}`);
+		// goto(`/match/${matchId}/media/${mediaType}`);
 	}
 	function saveImages(images: Omit<MatchImage, 'id'>[]) {
 		return images.map(async (image) => await setMatchImage(image));

@@ -14,7 +14,7 @@ import photoDrawer from '../drawers/PhotoDrawer';
 import { drawSponsors, drawSponsorsVertical } from '../drawers/SponsorsDrawer';
 import { drawSmallTitle, drawVersusTitle } from '../TextDrawer';
 import canvasSplitter from './CanvasSplitter';
-import FinishersPartialRenderer from './lineup/FinishersPartialRenderer';
+import finisherListPartialRenderer from './lineup/FinisherListPartialRenderer';
 import InfoPartialRenderer from './lineup/InfoPartialRenderer';
 
 export default async function LineupRenderer(
@@ -139,9 +139,9 @@ export default async function LineupRenderer(
 		}
 
 		if (name.length > 0) {
-			name = name + ' ' + player.bio.screen;
+			name = name + ' ' + player.bio.last;
 		} else {
-			name = player.bio.screen;
+			name = player.bio.last;
 		}
 
 		// TODO unnest the ifs
@@ -161,9 +161,9 @@ export default async function LineupRenderer(
 	await drawBadges(ctx, match, 60, 460, images as CanvasImage[]);
 
 	// Finishers
-	await FinishersPartialRenderer(ctx, matchId);
+	// await FinishersPartialRenderer(ctx, matchId);
 
-	// await finisherListPartialRenderer(ctx, matchId);
+	await finisherListPartialRenderer(ctx, matchId);
 
 	const legend = ' 🍟 Home Grown  |  📣 Debut';
 	// const legend = '🍟 Home Grown';
