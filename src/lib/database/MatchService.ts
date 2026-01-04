@@ -50,16 +50,21 @@ export async function deleteMatch(id: number) {
 	return await db.matches.delete(id);
 }
 
-export async function getMatch(id: number): Promise<Match> {
+export async function getMatch(id: number): Promise<Match | undefined> {
 	const match = await db.matches.get(id);
 	if (match) {
 		return match;
 	}
-	throw new Error('Match not found');
+
+	return undefined;
 }
 
 export async function updateMatchResult(id: number, result: MatchResult) {
 	const updatedAt = new Date().toISOString();
 	await db.matches.update(id, { result, updatedAt });
 	return await db.matches.get(id);
+}
+
+export async function matchExists(id: number): Promise<boolean> {
+	return (await db.matches.get(id)) !== undefined;
 }

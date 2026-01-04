@@ -1,5 +1,4 @@
 <script lang="ts">
-	import { page } from '$app/state';
 	import Breadcrumb from '$lib/components/Breadcrumb.svelte';
 	import { getPlayer } from '$lib/database/PlayerDBService';
 	import type { Player, PlayerImage } from '$lib/database/IndexedDB';
@@ -8,8 +7,10 @@
 	import HeadingLg from '$lib/components/typography/HeadingLg.svelte';
 	import PhotoIcon from '$lib/components/icons/PhotoIcon.svelte';
 	import HeadingMd from '$lib/components/typography/HeadingMd.svelte';
+	import type { LayoutProps } from '../../../$types';
 
-	const { key } = page.params;
+	let props: LayoutProps = $props();
+	let key = props.params.key as string;
 
 	let player: Player | undefined = $state();
 

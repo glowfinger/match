@@ -5,11 +5,12 @@
 	import Breadcrumb from '$lib/components/Breadcrumb.svelte';
 	import EventImageWorker from '$lib/workers/EventImage.worker.ts?worker';
 	import type { Event, EventImage } from '$lib/types/Event';
-	import { page } from '$app/state';
 	import { getImagesByEvent } from '$lib/database/event/EventImageDBService';
 	import Button from '$lib/components/ui/button/button.svelte';
+	import type { LayoutProps } from '../../$types';
 
-	const uuid = page.params.id as string;
+	let props: LayoutProps = $props();
+	let uuid = props.params.id as string;
 
 	let worker: Worker = new EventImageWorker();
 	let event: Event | undefined = $state();
