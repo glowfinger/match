@@ -1,5 +1,4 @@
 <script lang="ts">
-	import PlayerAvatar from '$lib/components/avatars/PlayerAvatar.svelte';
 	import { POSITION_NAMES } from '$lib/counts/PlayerCounts';
 	import type { Player } from '$lib/database/IndexedDB';
 	import type { Snippet } from 'svelte';
@@ -22,24 +21,52 @@
 	});
 </script>
 
-<div>
-	<div class="mt-6 grid grid-cols-1">
+{#snippet cardPlayerImage(player: Player)}
+	{#if player && player.images?.length > 0}
+		<div class="col-start-1 row-start-1 -mt-4 pl-8">
+			<img
+				class="size-36"
+				src={imageUrl}
+				alt="Player image {player.bio.screen}"
+				aria-label="Player image {player.bio.screen}"
+			/>
+		</div>
+	{:else}
+		<div class="col-start-1 row-start-1 -mt-6 pl-8">
+			<div class="size-36"></div>
+		</div>
+	{/if}
+{/snippet}
+
+{#snippet cardPlayerName(player: Player)}
+	<div class="col-start-1 row-start-1 pt-6 pl-42">
+		<p
+			class="overflow-hidden text-2xl font-semibold text-ellipsis whitespace-nowrap text-white text-shadow-sm/30"
+		>
+			{player.bio.first}
+		</p>
+		<p
+			class="-mt-1 overflow-hidden text-4xl font-bold text-ellipsis whitespace-nowrap text-yellow-600 text-shadow-sm/30"
+		>
+			{player.bio.last}
+		</p>
+		<span
+			class="inline-flex items-center rounded-full bg-slate-300 px-2 py-1 text-xs font-medium text-slate-700 ring-1 ring-slate-700/10 ring-inset"
+			>{POSITION_NAMES.get(player.positions.main)}</span
+		>
+	</div>
+{/snippet}
+
+<div class="pt-4">
+	<div class=" grid grid-cols-1">
 		<div
-			class="col-start-1 row-start-1 mt-6 h-auto w-full rounded-t border-b border-slate-800 bg-slate-500"
+			class="col-start-1 row-start-1 h-auto w-full rounded-t border-b border-slate-800 bg-slate-500"
 		></div>
-		{#if player && player.images?.length > 0}
-			<div class="col-start-1 row-start-1 -mt-6 pl-8">
-				<img class="size-48" src={imageUrl} alt="" />
-			</div>
-		{:else}
-			<div class="col-start-1 row-start-1 -mt-6 pl-8">
-				<div class="size-48"></div>
-			</div>
-		{/if}
+		{@render cardPlayerImage(player)}
 
 		{#if position}
 			<div class="col-start-1 row-start-1 mt-8 ml-4 size-24">
-				<span class=" text-8xl font-medium text-slate-100 text-shadow-sm/30">
+				<span class=" text-7xl font-medium text-slate-100 text-shadow-sm/30">
 					{position}
 				</span>
 			</div>
@@ -48,22 +75,7 @@
 				<PlayerPositionIndicator {player} />
 			</div>
 		{/if}
-		<div class="col-start-1 row-start-1 pt-16 pl-48">
-			<p
-				class="overflow-hidden text-2xl font-semibold text-ellipsis whitespace-nowrap text-white text-shadow-sm/30"
-			>
-				{player.bio.first}
-			</p>
-			<p
-				class="-mt-1 overflow-hidden text-4xl font-bold text-ellipsis whitespace-nowrap text-yellow-600 text-shadow-sm/30"
-			>
-				{player.bio.last}
-			</p>
-			<span
-				class="inline-flex items-center rounded-full bg-slate-300 px-2 py-1 text-xs font-medium text-slate-700 ring-1 ring-slate-700/10 ring-inset"
-				>{POSITION_NAMES.get(player.positions.main)}</span
-			>
-		</div>
+		{@render cardPlayerName(player)}
 
 		{#if children}
 			{@render children()}
