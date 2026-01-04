@@ -20,10 +20,6 @@
 		return selections.filter((s) => s.available === 'yes').length;
 	}
 
-	function countMaybe() {
-		return selections.filter((s) => s.available === 'maybe').length;
-	}
-
 	function countNo() {
 		return selections.filter((s) => s.available === 'no').length;
 	}
@@ -39,7 +35,7 @@
 	}
 </script>
 
-<dl class="grid grid-cols-4 gap-2">
+<dl class="grid grid-cols-3 gap-2">
 	<button onclick={() => toggleFilters('UNANSWERED')}>
 		<Stat title="Unanswered" value={countPlayers()} active={isFilterActive('UNANSWERED')} />
 	</button>
@@ -48,8 +44,5 @@
 	</button>
 	<button onclick={() => toggleFilters('NO')}>
 		<Stat title="No" value={countNo()} active={isFilterActive('NO')} />
-	</button>
-	<button onclick={() => toggleFilters('MAYBE')}>
-		<Stat title="Maybe" value={countMaybe()} active={isFilterActive('MAYBE')} />
 	</button>
 </dl>

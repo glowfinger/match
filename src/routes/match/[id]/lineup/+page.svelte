@@ -1,15 +1,12 @@
 <script lang="ts">
 	import Breadcrumb from '$lib/components/Breadcrumb.svelte';
 	import LineupSelector from '$lib/components/LineupSelector.svelte';
-	import { getMatch } from '$lib/database/MatchService';
 	import { getPlayers } from '$lib/database/PlayerDBService';
 	import { getMatchPositions, getPositions } from '$lib/database/MatchPositionDBService';
 	import { getSelections } from '$lib/database/SelectionDBService';
 	import { isAvailable } from '$lib/filters/SelectionFilter';
 	import type { Match, MatchPosition, Player, Selection } from '$lib/database/IndexedDB';
 	import { onMount } from 'svelte';
-	import PlayerCard from '$lib/components/PlayerCard.svelte';
-	import PlayerAvatar from '$lib/components/avatars/PlayerAvatar.svelte';
 	import FinisherCard from '$lib/components/cards/FinisherCard.svelte';
 	import HeadingLg from '$lib/components/typography/HeadingLg.svelte';
 	import HeadingMd from '$lib/components/typography/HeadingMd.svelte';
@@ -42,23 +39,10 @@
 					).length === 0,
 			);
 
-		const info = matchPositions.map((position) => {
+		matchPositions.map((position) => {
 			const player = players.find((player) => player.key === position.playerKey);
 			return { key: player?.key, position: position.position };
 		});
-		console.log(
-			JSON.stringify(
-				info
-					.map((player) => {
-						return { key: player.key, position: parseInt(player.position) };
-					})
-					.toSorted((a, b) => a.position - b.position),
-			),
-		);
-
-		console.log(
-			JSON.stringify(replacements.map((player) => ({ key: player.key, position: null }))),
-		);
 	});
 
 	const breadcrumbs = [

@@ -1,12 +1,8 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
-	import { page } from '$app/state';
 	import Breadcrumb from '$lib/components/Breadcrumb.svelte';
-	import CardButton from '$lib/components/CardButton.svelte';
 	import CardList from '$lib/components/CardList.svelte';
-	import PlayerCard from '$lib/components/PlayerCard.svelte';
 	import { isMainPosition, isOtherPosition, SHIRT_NUMBERS } from '$lib/counts/PlayerCounts';
-	import { getMatch } from '$lib/database/MatchService';
 	import { getPlayers } from '$lib/database/PlayerDBService';
 	import {
 		deleteMatchPlayer,
@@ -14,7 +10,7 @@
 		getMatchPositions,
 		setPosition,
 	} from '$lib/database/MatchPositionDBService';
-	import { getSelections, setSelection } from '$lib/database/SelectionDBService';
+	import { getSelections } from '$lib/database/SelectionDBService';
 	import { isAvailable } from '$lib/filters/SelectionFilter';
 	import type { Match, MatchPosition, Player, Selection } from '$lib/database/IndexedDB';
 	import { onMount } from 'svelte';
@@ -22,10 +18,19 @@
 	import HeadingMd from '$lib/components/typography/HeadingMd.svelte';
 	import { toast } from 'svelte-sonner';
 	import type { LayoutProps } from '../../../$types';
+	import PlayerCard from '$lib/components/cards/player/PlayerCard.svelte';
+	import PositionActions from '$lib/components/cards/player/PositionActions.svelte';
+	import { isPosition } from '$lib/helpers/SelectionPredicate';
+	import { error } from '@sveltejs/kit';
 
 	let { data }: LayoutProps = $props();
-	const { matchId, match, matchTile } = data;
-	const position = page.params.position;
+	const { matchId, match, matchTile, params } = data;
+
+	const position = params.position as string;
+
+	if (!position || !isPosition(position)) {
+		throw error(404, 'Position not found: ' + position);
+	}
 
 	let players: Player[] = $state([]);
 	let selections: Selection[] = $state([]);
@@ -74,22 +79,6 @@
 		goto(`/match/${matchId}/lineup`);
 	}
 
-	async function handleReplacement(playerKey: string) {
-		hasReplacement(playerKey)
-			? await deleteMatchPositions(matchId, position, 'replacement')
-			: await setPosition(playerKey, matchId, position, 'replacement');
-		matchPositions = await getMatchPositions(matchId);
-	}
-
-	function alreadyStarting(playerKey: string): boolean {
-		return matchPositions.some(
-			(matchPosition) =>
-				matchPosition.matchId === matchId &&
-				matchPosition.playerKey === playerKey &&
-				matchPosition.type === 'start',
-		);
-	}
-
 	function hasStart(playerKey: string): boolean {
 		return matchPositions.some(
 			(matchPosition) =>
@@ -97,16 +86,6 @@
 				matchPosition.playerKey === playerKey &&
 				matchPosition.position === position &&
 				matchPosition.type === 'start',
-		);
-	}
-
-	function hasReplacement(playerKey: string): boolean {
-		return matchPositions.some(
-			(matchPosition) =>
-				matchPosition.matchId === matchId &&
-				matchPosition.playerKey === playerKey &&
-				matchPosition.position === position &&
-				matchPosition.type === 'replacement',
 		);
 	}
 </script>
@@ -120,10 +99,14 @@
 	<HeadingMd>Main</HeadingMd>
 	<CardList>
 		{#each mains as player}
-			<PlayerCard {player} isSelected={alreadyStarting(player.key)}>
-				<CardButton onClick={() => handleStart(player.key)} active={hasStart(player.key)}
-					>Start</CardButton
-				>
+			<PlayerCard {player}>
+				<PositionActions
+					{player}
+					handleStart={() => handleStart(player.key)}
+					{matchPositions}
+					{matchId}
+					{position}
+				/>
 			</PlayerCard>
 		{/each}
 	</CardList>
@@ -131,20 +114,28 @@
 	<HeadingMd>Secondary</HeadingMd>
 	<CardList>
 		{#each secondary as player}
-			<PlayerCard {player} isSelected={alreadyStarting(player.key)}>
-				<CardButton onClick={() => handleStart(player.key)} active={hasStart(player.key)}
-					>Start</CardButton
-				>
+			<PlayerCard {player}>
+				<PositionActions
+					{player}
+					handleStart={() => handleStart(player.key)}
+					{matchPositions}
+					{matchId}
+					{position}
+				/>
 			</PlayerCard>
 		{/each}
 	</CardList>
 	<HeadingMd>Unfavoured</HeadingMd>
 	<CardList>
 		{#each not as player}
-			<PlayerCard {player} isSelected={alreadyStarting(player.key)}>
-				<CardButton onClick={() => handleStart(player.key)} active={hasStart(player.key)}
-					>Start</CardButton
-				>
+			<PlayerCard {player}>
+				<PositionActions
+					{player}
+					handleStart={() => handleStart(player.key)}
+					{matchPositions}
+					{matchId}
+					{position}
+				/>
 			</PlayerCard>
 		{/each}
 	</CardList>

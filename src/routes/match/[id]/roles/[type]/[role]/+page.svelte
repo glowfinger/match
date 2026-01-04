@@ -18,6 +18,8 @@
 	import { onMount } from 'svelte';
 	import { toast } from 'svelte-sonner';
 	import type { LayoutProps } from '../../../$types';
+	import PlayerCard from '$lib/components/cards/player/PlayerCard.svelte';
+	import CardButton from '$lib/components/CardButton.svelte';
 
 	let { data }: LayoutProps = $props();
 	const { matchId, match, matchTile } = data;
@@ -77,18 +79,15 @@
 {:else if players.length === 0}
 	<p>No players selected</p>
 {:else}
-	<div class="grid grid-cols-3 gap-2">
-		<button class="block w-full" onclick={() => removeRole(matchId, award?.value ?? '', typeKey)}>
-			Remove</button
-		>
+	<button class="block w-full" onclick={() => removeRole(matchId, award?.value ?? '', typeKey)}>
+		Remove</button
+	>
 
-		{#each players as player}
-			<button
-				class="block w-full"
-				onclick={() => saveRole(player.key, matchId, award?.value ?? '', typeKey)}
+	{#each players as player}
+		<PlayerCard {player}>
+			<CardButton onClick={() => saveRole(player.key, matchId, award?.value ?? '', typeKey)}
+				>Set {award?.label}</CardButton
 			>
-				{player.bio.screen}
-			</button>
-		{/each}
-	</div>
+		</PlayerCard>
+	{/each}
 {/if}

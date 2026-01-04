@@ -8,9 +8,10 @@
 	type Props = {
 		player: Player;
 		children?: Snippet;
+		position?: string;
 	};
 
-	let { player, children }: Props = $props();
+	let { player, children, position = '' }: Props = $props();
 
 	let imageUrl = $state('');
 
@@ -31,16 +32,30 @@
 				<img class="size-48" src={imageUrl} alt="" />
 			</div>
 		{:else}
-			<div class="col-start-1 row-start-1 size-48"></div>
+			<div class="col-start-1 row-start-1 -mt-6 pl-8">
+				<div class="size-48"></div>
+			</div>
 		{/if}
 
-		<div class="col-start-1 row-start-1 mt-8 ml-4 size-24">
-			<PlayerPositionIndicator {player} />
-		</div>
+		{#if position}
+			<div class="col-start-1 row-start-1 mt-8 ml-4 size-24">
+				<span class=" text-8xl font-medium text-slate-100 text-shadow-sm/30">
+					{position}
+				</span>
+			</div>
+		{:else}
+			<div class="col-start-1 row-start-1 mt-8 ml-4 size-24">
+				<PlayerPositionIndicator {player} />
+			</div>
+		{/if}
 		<div class="col-start-1 row-start-1 pt-16 pl-48">
-			<p class="text-2xl font-semibold text-white text-shadow-sm/30">{player.bio.first}</p>
 			<p
-				class="-mt-1 overflow-hidden text-4xl font-bold text-ellipsis text-yellow-600 text-shadow-sm/30"
+				class="overflow-hidden text-2xl font-semibold text-ellipsis whitespace-nowrap text-white text-shadow-sm/30"
+			>
+				{player.bio.first}
+			</p>
+			<p
+				class="-mt-1 overflow-hidden text-4xl font-bold text-ellipsis whitespace-nowrap text-yellow-600 text-shadow-sm/30"
 			>
 				{player.bio.last}
 			</p>

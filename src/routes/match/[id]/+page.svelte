@@ -65,9 +65,9 @@
 			href: `/match/${matchId}/roles/leadership`,
 			icon: SocialLeaderboardIcon,
 		},
-		{ label: 'Awards', href: `/match/${matchId}/roles/awards`, icon: AwardStarIcon },
 		{ label: 'Debuts', href: `/match/${matchId}/debuts`, icon: StarShineIcon },
 		{ label: 'Result', href: `/match/${matchId}/result`, icon: SportsScoreIcon },
+		{ label: 'Awards', href: `/match/${matchId}/roles/awards`, icon: AwardStarIcon },
 	];
 
 	const MEDIA_LINKS = MediaImageTypes.map((type) => mediaMapper(type));
@@ -119,4 +119,5 @@
 	<a href={`/match/${match.id}/analysis`} class="variant-filled-primary btn">Analysis dashboad</a>
 	<HeadingMd>Admin</HeadingMd>
 	<a href={`/match/${match.id}/remove`} class="variant-filled-primary btn">Remove match</a>
+	<a href={`/match/${match.id}/squad/reset`} class="variant-filled-primary btn">Reset squad</a>
 {/if}

@@ -3,21 +3,23 @@
 	import Breadcrumb from '$lib/components/Breadcrumb.svelte';
 	import CardButton from '$lib/components/CardButton.svelte';
 	import CardList from '$lib/components/CardList.svelte';
-	import PlayerCard from '$lib/components/PlayerCard.svelte';
 	import SelectionStats from '$lib/components/stats/SelectionStats.svelte';
-	import { getMatch } from '$lib/database/MatchService';
 	import { getPlayers } from '$lib/database/PlayerDBService';
 	import { getSelections, setSelection } from '$lib/database/SelectionDBService';
-	import type { Match, Player, Selection } from '$lib/database/IndexedDB';
+	import type { Player, Selection } from '$lib/database/IndexedDB';
 	import { onMount } from 'svelte';
 	import { SvelteURLSearchParams } from 'svelte/reactivity';
 	import HeadingLg from '$lib/components/typography/HeadingLg.svelte';
 	import HeadingMd from '$lib/components/typography/HeadingMd.svelte';
 	import { Separator } from '$lib/components/ui/separator/index.js';
 	import { deleteMatchAllositions } from '$lib/database/MatchPositionDBService';
-	import type { LayoutProps } from '../../$types';
+
+	import PlayerCard from '$lib/components/cards/player/PlayerCard.svelte';
+	import type { LayoutProps } from '../$types';
+	import PositiveButton from '$lib/components/buttons/PositiveButton.svelte';
+	import NegativeButton from '$lib/components/buttons/NegativeButton.svelte';
 	let { data }: LayoutProps = $props();
-	const { matchId, match, matchTile } = data;
+	const { matchId, match } = data;
 
 	let players: Player[] = $state([]);
 	let selections: Selection[] = $state([]);
@@ -40,11 +42,6 @@
 		selections = await getSelections(matchId);
 	}
 
-	async function handleMaybe(key: string) {
-		await setSelection(key, matchId, 'maybe');
-		selections = await getSelections(matchId);
-	}
-
 	function hasSelection(key: string, status: string) {
 		return selections.find((s) => s.playerKey === key && s.available === status) !== undefined;
 	}
@@ -55,15 +52,6 @@
 
 	function isNo(key: string) {
 		return hasSelection(key, 'no');
-	}
-
-	function isMaybe(key: string) {
-		return hasSelection(key, 'maybe');
-	}
-
-	function getSelection(key: string) {
-		const selection = selections.find((s) => s.playerKey === key);
-		return selection ? selection.available : '';
 	}
 
 	const breadcrumbs = [
@@ -110,14 +98,6 @@
 			});
 		}
 
-		if (filters.includes('MAYBE')) {
-			selections.forEach((selection) => {
-				if (selection.available === 'maybe') {
-					keys.push(selection.playerKey);
-				}
-			});
-		}
-
 		if (filters.includes('UNANSWERED')) {
 			players.forEach((player) => {
 				if (!selections.some((selection) => selection.playerKey === player.key)) {
@@ -143,12 +123,14 @@
 	<CardList>
 		{#each listing as player}
 			<PlayerCard {player}>
-				<CardButton onClick={() => handleYes(player.key)} active={isYes(player.key)}>Yes</CardButton
-				>
-				<CardButton onClick={() => handleNo(player.key)} active={isNo(player.key)}>No</CardButton>
-				<CardButton onClick={() => handleMaybe(player.key)} active={isMaybe(player.key)}
-					>Maybe</CardButton
-				>
+				<div class="flex">
+					<PositiveButton onClick={() => handleYes(player.key)} active={isYes(player.key)}
+						>Yes</PositiveButton
+					>
+					<NegativeButton onClick={() => handleNo(player.key)} active={isNo(player.key)}
+						>No</NegativeButton
+					>
+				</div>
 			</PlayerCard>
 		{/each}
 	</CardList>

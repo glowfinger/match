@@ -79,7 +79,7 @@
 	</div>
 {/snippet}
 <div
-	class="flex h-full max-w-64 flex-col divide-y divide-slate-500 overflow-hidden rounded-lg border border-slate-500 shadow-sm"
+	class="flex h-full max-w-96 flex-col divide-y divide-slate-500 overflow-hidden rounded-lg border border-slate-500 shadow-sm"
 >
 	<div class=" h-28 flex-grow items-center justify-center bg-white p-2">
 		<div class="grid grid-cols-7 gap-2 bg-white p-2">

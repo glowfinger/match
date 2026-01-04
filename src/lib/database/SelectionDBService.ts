@@ -23,3 +23,7 @@ export async function getSelections(matchId: number): Promise<Selection[]> {
 export async function getYesSelectionsByMatchId(matchId: number): Promise<Selection[]> {
 	return await db.selections.where({ matchId, available: 'yes' }).toArray();
 }
+
+export async function resetSelections(matchId: number) {
+	await db.selections.where({ matchId }).delete();
+}
