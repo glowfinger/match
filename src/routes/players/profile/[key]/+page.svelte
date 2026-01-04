@@ -2,18 +2,16 @@
 	import Breadcrumb from '$lib/components/Breadcrumb.svelte';
 	import { getPlayer } from '$lib/database/PlayerDBService';
 	import type { Player, PlayerImage } from '$lib/database/IndexedDB';
-
 	import { onMount } from 'svelte';
 	import HeadingLg from '$lib/components/typography/HeadingLg.svelte';
 	import PhotoIcon from '$lib/components/icons/PhotoIcon.svelte';
 	import HeadingMd from '$lib/components/typography/HeadingMd.svelte';
 	import type { LayoutProps } from '../../../$types';
+	import PlayerCard from '$lib/components/cards/player/PlayerCard.svelte';
 
 	let props: LayoutProps = $props();
 	let key = props.params.key as string;
-
 	let player: Player | undefined = $state();
-
 	let profileImage: PlayerImage | undefined = $state();
 
 	let breadcrumbs = $state([
@@ -45,19 +43,7 @@
 {/if}
 
 {#if player}
-	<div class="relative h-64 border border-slate-800 bg-slate-500 text-white">
-		{#if profileImage}
-			<div
-				class="absolute bottom-0 left-4 aspect-square h-60 bg-cover bg-center"
-				style="background-image: url('{profileImage.large}')"
-			></div>
-		{/if}
-
-		<div class="absolute right-2 bottom-2 bg-slate-900/40 p-2">
-			<h2 class="text-4xl font-bold">{player.bio.first} {player.bio.last}</h2>
-			<p class="text-md font-bold text-yellow-600">{player.positions.main}</p>
-		</div>
-	</div>
+	<PlayerCard {player} />
 {/if}
 
 {#if player?.bio}
