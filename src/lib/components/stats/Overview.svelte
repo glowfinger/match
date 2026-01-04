@@ -16,7 +16,9 @@
 		times: number[];
 	};
 
-	let { notes, grid }: Props = $props();
+	let props: Props = $props();
+	let notes = props.notes;
+	let grid = props.grid;
 
 	let totalRucks = notes.filter((note) => note.ruck !== undefined).length;
 

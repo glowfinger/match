@@ -12,6 +12,9 @@ export async function getCaption(mediaType: string, match: Match): Promise<strin
 		return await writeResultCaption(match);
 	}
 
+	if (mediaType === 'LINEUP') {
+		return await writeMatchCaption(match);
+	}
 	return '';
 }
 

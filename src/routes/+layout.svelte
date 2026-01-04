@@ -82,7 +82,7 @@
 	<p>Error loading clubs</p>
 {:else}
 	<div class="flex min-h-full justify-center">
-		<div class="w-full max-w-md border-x border-slate-400 p-4 shadow-lg">
+		<div class="w-full max-w-md min-w-xs border-x border-slate-400 p-4 shadow-lg">
 			<div class="grid grid-cols-1 gap-2">
 				{@render children()}
 			</div>

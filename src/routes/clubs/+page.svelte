@@ -1,12 +1,12 @@
 <script lang="ts">
 	import Breadcrumb from '$lib/components/Breadcrumb.svelte';
 	import ClubCard from '$lib/components/cards/club/ClubCard.svelte';
-	import HeadingLg from '$lib/components/typography/HeadingLg.svelte';
+	import TextInput from '$lib/components/forms/TextInput.svelte';
 	import { addClubs, clearClubs, getClubs } from '$lib/database/ClubDbService';
 	import type { Club } from '$lib/database/IndexedDB';
 	import { getApiClubs } from '$lib/services/api/ClubApiService';
 	import { requiredClubImages } from '$lib/stores/BlobStore.svelte';
-
+	import filterClubs from '$lib/filters/ClubFilter';
 	import { onMount } from 'svelte';
 
 	const breadcrumbs = [
@@ -15,23 +15,14 @@
 	];
 
 	let clubs: Club[] = $state([]);
-
+	let filteredClubs: Club[] = $state([]);
+	let search = $state('');
 	let loading = $state(false);
 	let error = $state(false);
 
-	async function handleLoadClubs() {
-		loading = true;
-		try {
-			await clearClubs();
-			const apiClubs = await getApiClubs();
-			await addClubs(apiClubs);
-			clubs = await getClubs();
-			requiredClubImages.push(...clubs);
-		} catch (e) {
-			error = true;
-		}
-		loading = false;
-	}
+	$effect(() => {
+		filteredClubs = filterClubs(clubs, search);
+	});
 
 	onMount(async () => {
 		loading = true;
@@ -49,9 +40,7 @@
 </script>
 
 <Breadcrumb {breadcrumbs} />
-<HeadingLg>Clubs</HeadingLg>
-
-<button onclick={handleLoadClubs} class="variant-filled-primary btn">Load clubs</button>
+<TextInput id="search" title="Search" placeholder="Search for a club" bind:value={search} />
 
 {#if loading}
 	<p>Loading...</p>
@@ -61,7 +50,7 @@
 	<p>No clubs found</p>
 {:else}
 	<div class="grid grid-cols-3 gap-4 lg:grid-cols-4">
-		{#each clubs as club}
+		{#each filteredClubs as club}
 			<ClubCard {club} />
 		{/each}
 	</div>

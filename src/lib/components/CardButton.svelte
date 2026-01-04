@@ -9,21 +9,17 @@
 </script>
 
 {#if active}
-	<div class="flex w-0 flex-1">
-		<button
-			onclick={onClick}
-			class="relative -mr-px inline-flex w-0 flex-1 items-center justify-center gap-x-3 border border-transparent bg-slate-500 py-2 text-sm font-semibold text-slate-100"
-		>
-			{@render children()}
-		</button>
-	</div>
+	<button
+		onclick={onClick}
+		class="relative -mr-px inline-flex w-full flex-1 items-center justify-center gap-x-3 border border-transparent bg-slate-500 py-2 text-sm font-semibold text-slate-100"
+	>
+		{@render children()}
+	</button>
 {:else}
-	<div class="flex w-0 flex-1">
-		<button
-			onclick={onClick}
-			class="relative -mr-px inline-flex w-0 flex-1 items-center justify-center gap-x-3 border border-transparent py-2 text-sm font-semibold text-slate-900"
-		>
-			{@render children()}
-		</button>
-	</div>
+	<button
+		onclick={onClick}
+		class="relative -mr-px inline-flex w-full flex-1 items-center justify-center gap-x-3 border border-transparent bg-slate-300 py-2 text-sm font-semibold text-slate-900"
+	>
+		{@render children()}
+	</button>
 {/if}
