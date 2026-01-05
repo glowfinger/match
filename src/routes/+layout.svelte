@@ -3,7 +3,6 @@
 	import { ModeWatcher } from 'mode-watcher';
 	import Navbar from '$lib/components/layout/Navbar.svelte';
 	import { onDestroy, onMount } from 'svelte';
-	// import PlayerImageWorker from '$lib/workers/PlayerImage.worker.ts?worker';
 	import ClubWorker from '$lib/workers/ClubImage.worker.ts?worker';
 	import { Toaster } from '$lib/components/ui/sonner/index.js';
 
@@ -15,18 +14,18 @@
 	import { getApiPlayers } from '$lib/services/api/PlayerApiService';
 	import { toast } from 'svelte-sonner';
 	import { addFonts, getFonts, hasFonts } from '$lib/database/FontDBService';
+	import { authClient } from '$lib/auth-client';
 
 	let { children } = $props();
 	let clubWorker: Worker = new ClubWorker();
 	let imageWorker: Worker = new ImageWorker();
 
-	// let playerImageWorker: Worker;
+	const session = authClient.useSession();
 
 	let loading = $state(false);
 	let error = $state(false);
 	onMount(async () => {
 		loading = true;
-
 		if (!(await hasFonts())) {
 			await addFonts();
 
@@ -41,6 +40,7 @@
 			});
 		}
 
+		loading = false;
 		const clubs = await getClubs();
 		const players = await getPlayers();
 
