@@ -57,14 +57,12 @@
 		"vitest": "^3.0.0"
 	},
 	"dependencies": {
-		"@google-cloud/local-auth": "^2.1.1",
 		"@tailwindcss/aspect-ratio": "^0.4.2",
 		"dexie": "^4.0.10",
 		"fuse.js": "^7.1.0",
 		"googleapis": "^170.0.0",
 		"luxon": "^3.7.2",
 		"postcss": "^8.5.3",
-		"svelte-radix": "^2.0.1",
 		"tailwind-merge": "^3.4.0",
 		"three": "^0.182.0",
 		"zod": "^4.3.5"
