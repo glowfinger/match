@@ -9,7 +9,7 @@ export default defineConfig({
 		port: 5190,
 	},
 	test: {
-		workspace: [
+		projects: [
 			{
 				extends: './vite.config.ts',
 				plugins: [svelteTesting()],

@@ -5,7 +5,7 @@
 	import { onDestroy, onMount } from 'svelte';
 	// import PlayerImageWorker from '$lib/workers/PlayerImage.worker.ts?worker';
 	import ClubWorker from '$lib/workers/ClubImage.worker.ts?worker';
-	import { Toaster } from '$lib/components/ui/sonner/index.js';
+	import { Toaster, toast } from 'svelte-sonner';
 
 	import ImageWorker from '$lib/workers/Image.worker.ts?worker';
 	import { requiredClubImages } from '$lib/stores/BlobStore.svelte';
@@ -13,7 +13,6 @@
 	import { getApiClubs } from '$lib/services/api/ClubApiService';
 	import { addPlayers, getPlayers } from '$lib/database/PlayerDBService';
 	import { getApiPlayers } from '$lib/services/api/PlayerApiService';
-	import { toast } from 'svelte-sonner';
 	import { addFonts, getFonts, hasFonts } from '$lib/database/FontDBService';
 
 	let { children } = $props();
