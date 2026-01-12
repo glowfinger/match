@@ -6,7 +6,6 @@
 - Clear match images
 - Update image draws on save
 
-
 ## Done
 
 - ~~Add remove images from the cache in the admin section~~
