@@ -38,7 +38,12 @@
 			allowed: boolean;
 		};
 		notAllowed = !allowed;
+
 		loading = false;
+
+		if (notAllowed) {
+			return;
+		}
 
 		if (!(await hasFonts())) {
 			await addFonts();
