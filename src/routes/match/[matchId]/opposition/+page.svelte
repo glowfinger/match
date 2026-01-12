@@ -83,7 +83,13 @@
 		}
 
 		if (!isValid(formData, matchOpponentSchema)) {
-			errors = getErrors(formData, matchOpponentSchema);
+			const messageErrors: Record<string, string> = getErrors(formData, matchOpponentSchema);
+			errors = {
+				...messageErrors,
+				club: messageErrors.club ?? '',
+				squad: messageErrors.squad ?? '',
+			};
+
 			return;
 		}
 

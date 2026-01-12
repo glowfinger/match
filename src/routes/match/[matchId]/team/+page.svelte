@@ -45,7 +45,8 @@
 		e.preventDefault();
 
 		if (!isValid(teamData, matchTeamSchema)) {
-			errors = getErrors(teamData, matchTeamSchema);
+			const messageErrors: Record<string, string> = getErrors(teamData, matchTeamSchema);
+			errors = { club: messageErrors.club ?? '', squad: messageErrors.squad ?? '' };
 			return;
 		}
 

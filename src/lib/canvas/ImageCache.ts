@@ -14,4 +14,3 @@ export async function getImageBitmap(url: string): Promise<ImageBitmap> {
 
 	return await createImageBitmap(response);
 }
-

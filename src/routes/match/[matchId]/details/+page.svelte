@@ -42,7 +42,13 @@
 		e.preventDefault();
 
 		if (!isValid(formData, matchDetailSchema)) {
-			errors = getErrors(formData, matchDetailSchema);
+			const messageErrors: Record<string, string> = getErrors(formData, matchDetailSchema);
+			errors = {
+				venue: messageErrors.venue ?? '',
+				type: messageErrors.type ?? '',
+				address: messageErrors.address ?? '',
+				kit: messageErrors.kit ?? '',
+			};
 			return;
 		}
 

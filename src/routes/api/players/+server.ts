@@ -38,9 +38,6 @@ async function load() {
 			.then(handleListResponse),
 	]);
 
-	// const images = getImages(imageResponse);
-	// const tags = getTags(tagResponse);
-
 	const players: any[] = playerResponse
 		.map(rowToPlayer)
 		.map((player) => {
