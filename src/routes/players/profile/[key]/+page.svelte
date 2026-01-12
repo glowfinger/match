@@ -126,7 +126,7 @@
 		role="list"
 		class="grid grid-cols-2 gap-x-4 gap-y-8 sm:grid-cols-3 sm:gap-x-6 lg:grid-cols-4 xl:gap-x-8"
 	>
-		{#each player.images as image}
+		{#each player.images as image (image.url)}
 			<li class="relative">
 				<div class="group overflow-hidden bg-slate-500">
 					<img src={image.large} alt="" class="pointer-events-none aspect-square object-cover" />

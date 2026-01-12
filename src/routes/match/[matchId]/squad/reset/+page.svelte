@@ -9,10 +9,10 @@
 	import { onMount } from 'svelte';
 	import CancelLink from '$lib/components/forms/CancelLink.svelte';
 	import type { LayoutProps } from '../../$types';
+	import { base } from '$app/paths';
 
 	let props: LayoutProps = $props();
 	let matchId = props.data.matchId;
-	let matchTile = props.data.matchTile;
 	let match = props.data.match;
 	const breadcrumbs = [
 		{ name: 'Home', href: '/' },
@@ -30,7 +30,7 @@
 	async function handleConfirm() {
 		resetSelections(matchId);
 		toast.success('Squad reset');
-		goto(`/match/${matchId}/squad`);
+		goto(`${base}/match/${matchId}/squad`);
 	}
 </script>
 

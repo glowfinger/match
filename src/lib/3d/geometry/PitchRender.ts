@@ -111,8 +111,6 @@ function addLabels(scene: THREE.Scene, stats: Stat[]) {
 		{ w: 14, h: 22, z: -39, x: 28 },
 	];
 
-	const zones = ['A', 'B', 'C', 'D'].reverse();
-
 	// positions.forEach((position, i) => {
 	// 	const zoneI = Math.floor(i / 5);
 
