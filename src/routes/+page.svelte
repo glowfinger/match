@@ -46,14 +46,14 @@
 
 {#if CONFIG.EVENT_ENABLED}
 	<a
-		href={`/events`}
+		href="/events"
 		class="border border-transparent bg-slate-800 px-4 py-2 text-center text-sm text-white shadow-md transition-all hover:bg-slate-700 hover:shadow-lg focus:bg-slate-700 focus:shadow-none active:bg-slate-700 active:shadow-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none"
 		>View events</a
 	>
 {/if}
 
 <HeadingMd>Latest</HeadingMd>
-<Button href={`/matches`} class="variant-filled-primary btn">View matches</Button>
+<Button href="/matches" class="variant-filled-primary btn">View matches</Button>
 
 <div class="grid grid-cols-2 gap-2">
 	{#each matches.toSorted(sortByDate) as match}
@@ -65,7 +65,7 @@
 
 <Separator />
 <HeadingMd>Players</HeadingMd>
-<a href={`/players`} class="variant-filled-primary btn">View player</a>
+<a href="/players" class="variant-filled-primary btn">View player</a>
 <Separator />
 <HeadingMd>Admin</HeadingMd>
-<a href={`/admin`} class="variant-filled-primary btn">Admin</a>
+<a href="/admin" class="variant-filled-primary btn">Admin</a>

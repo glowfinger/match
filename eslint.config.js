@@ -21,6 +21,6 @@ export default ts.config(
 		languageOptions: { parserOptions: { parser: ts.parser } },
 	},
 	{
-		ignores: ['build/', '.svelte-kit/', 'dist/'],
+		ignores: ['build/', '.svelte-kit/', 'dist/', '.vercel/'],
 	},
 );

@@ -1,15 +1,13 @@
 <script lang="ts">
-	import { onDestroy, onMount } from 'svelte';
+	import { onMount } from 'svelte';
 	import { addPlayers, clearPlayers, getPlayers } from '$lib/database/PlayerDBService';
 	import { type Player } from '$lib/database/IndexedDB';
 	import Breadcrumb from '$lib/components/Breadcrumb.svelte';
 	import { getApiPlayers } from '$lib/services/api/PlayerApiService';
-	// import worker from '$lib/workers/PlayerImageLoader.ts?worker';
 
 	let status = $state('STARTING');
 	let cleared: Player[] = $state([]);
 	let added: Player[] = $state([]);
-	let imageWorker: Worker;
 
 	let names: string[] = $state([]);
 
@@ -45,7 +43,7 @@
 	<p>Added: {added.length}</p>
 	<p>New Players</p>
 	<ul>
-		{#each names as name}
+		{#each names as name (name)}
 			<li>{name}</li>
 		{/each}
 	</ul>

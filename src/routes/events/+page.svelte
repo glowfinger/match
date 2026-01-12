@@ -26,7 +26,7 @@
 <Breadcrumb {breadcrumbs} />
 <HeadingLg>Events</HeadingLg>
 <a
-	href={`/events/new`}
+	href="/events/new"
 	class="border border-transparent bg-slate-800 px-4 py-2 text-center text-sm text-white shadow-md transition-all hover:bg-slate-700 hover:shadow-lg focus:bg-slate-700 focus:shadow-none active:bg-slate-700 active:shadow-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none"
 	>Add New event</a
 >
