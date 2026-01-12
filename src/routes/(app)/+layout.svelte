@@ -1,5 +1,5 @@
 <script lang="ts">
-	import '../app.css';
+	import '../../app.css';
 	import { ModeWatcher } from 'mode-watcher';
 	import Navbar from '$lib/components/layout/Navbar.svelte';
 	import { onDestroy, onMount } from 'svelte';
@@ -14,6 +14,7 @@
 	import { addPlayers, getPlayers } from '$lib/database/PlayerDBService';
 	import { getApiPlayers } from '$lib/services/api/PlayerApiService';
 	import { addFonts, getFonts, hasFonts } from '$lib/database/FontDBService';
+	import { authClient } from '$lib/auth-client';
 
 	let { children } = $props();
 	let clubWorker: Worker = new ClubWorker();
@@ -23,8 +24,21 @@
 
 	let loading = $state(false);
 	let error = $state(false);
+	let notAllowed = $state(false);
+	let session;
 	onMount(async () => {
 		loading = true;
+
+		session = await authClient.getSession();
+
+		const { allowed } = (await fetch('/api/access', {
+			method: 'POST',
+			body: JSON.stringify({ email: session.data?.user.email }),
+		}).then((res) => res.json())) as {
+			allowed: boolean;
+		};
+		notAllowed = !allowed;
+		loading = false;
 
 		if (!(await hasFonts())) {
 			await addFonts();
@@ -74,17 +88,18 @@
 <Toaster position="bottom-center" />
 
 <Navbar />
-
-{#if loading}
-	<p>Loading...</p>
-{:else if error}
-	<p>Error loading clubs</p>
-{:else}
-	<div class="flex min-h-full justify-center">
-		<div class="w-full max-w-md min-w-xs border-x border-slate-400 p-4 shadow-lg">
-			<div class="grid grid-cols-1 gap-2">
+<div class="flex min-h-full justify-center">
+	<div class="w-full max-w-md min-w-xs border-x border-slate-400 p-4 shadow-lg">
+		<div class="grid grid-cols-1 gap-2">
+			{#if notAllowed}
+				<p>Please contact the administrator to get access</p>
+			{:else if loading}
+				<p>Loading...</p>
+			{:else if error}
+				<p>Error loading clubs</p>
+			{:else}
 				{@render children()}
-			</div>
+			{/if}
 		</div>
 	</div>
-{/if}
+</div>

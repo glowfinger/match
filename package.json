@@ -57,6 +57,7 @@
 	},
 	"dependencies": {
 		"@tailwindcss/aspect-ratio": "^0.4.2",
+		"better-auth": "^1.4.11",
 		"dexie": "^4.0.10",
 		"fuse.js": "^7.1.0",
 		"googleapis": "^170.0.0",
