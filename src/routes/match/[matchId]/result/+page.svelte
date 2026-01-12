@@ -38,7 +38,11 @@
 		e.preventDefault();
 
 		if (!isValid(formData, matchResultSchema)) {
-			errors = getErrors(formData, matchResultSchema);
+			const messageErrors: Record<string, string> = getErrors(formData, matchResultSchema);
+			errors = {
+				homeScore: messageErrors.homeScore ?? '',
+				awayScore: messageErrors.awayScore ?? '',
+			};
 			return;
 		}
 

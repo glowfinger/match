@@ -4,7 +4,7 @@ import { error } from '@sveltejs/kit';
 
 export const ssr = false;
 
-export const load = async ({ params }) => {
+export const load = async ({ params, url }) => {
 	if (!params.matchId) {
 		error(404, 'No match ID provided: ' + params.matchId);
 	}
@@ -23,5 +23,6 @@ export const load = async ({ params }) => {
 		matchId,
 		matchTile: getMatchTitle(match),
 		match,
+		pathKey: url.href,
 	};
 };

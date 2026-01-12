@@ -32,7 +32,12 @@
 		e.preventDefault();
 
 		if (!isValid(formData, matchScheduleSchema)) {
-			errors = getErrors(formData, matchScheduleSchema);
+			const messageErrors: Record<string, string> = getErrors(formData, matchScheduleSchema);
+			errors = {
+				matchOn: messageErrors.matchOn ?? '',
+				meetAt: messageErrors.meetAt ?? '',
+				kickOffAt: messageErrors.kickOffAt ?? '',
+			};
 			return;
 		}
 
