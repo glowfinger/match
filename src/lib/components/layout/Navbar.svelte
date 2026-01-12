@@ -2,6 +2,14 @@
 	import { online } from 'svelte/reactivity/window';
 	import OfflineIcon from '../icons/OfflineIcon.svelte';
 	import OnlineIcon from '../icons/OnlineIcon.svelte';
+	import { authClient } from '$lib/auth-client';
+	import { goto } from '$app/navigation';
+
+	const session = authClient.useSession();
+	async function signOut() {
+		await authClient.signOut();
+		goto('/sign-in');
+	}
 </script>
 
 <nav class="bg-slate-900">
@@ -20,6 +28,9 @@
 						<OfflineIcon />
 					{/if}
 				</div>
+				{#if $session.data !== null}
+					<button class="text-slate-100" onclick={signOut}>Sign out</button>
+				{/if}
 			</div>
 		</div>
 	</div>
