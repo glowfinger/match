@@ -29,6 +29,8 @@
 
 	let images: MatchImage[] = $state([]);
 
+	const showMedia = false;
+
 	onMount(async () => {
 		images = await getImagesByMatch(matchId);
 	});
@@ -95,13 +97,16 @@
 	</ul>
 	<Separator />
 
-	<HeadingMd>Media</HeadingMd>
-	<ul role="list" class="grid grid-cols-4 gap-2">
-		{#each MEDIA_LINKS as link}
-			<MediaCard {link} image={images.find((image) => image.type === link.type)} />
-		{/each}
-	</ul>
-	<Separator />
+	{#if showMedia}
+		<HeadingMd>Media</HeadingMd>
+		<ul role="list" class="grid grid-cols-4 gap-2">
+			{#each MEDIA_LINKS as link}
+				<MediaCard {link} image={images.find((image) => image.type === link.type)} />
+			{/each}
+		</ul>
+		<Separator />
+	{/if}
+
 	<HeadingMd>Admin</HeadingMd>
 	<a href={`/match/${match.id}/remove`} class="variant-filled-primary btn">Remove match</a>
 	<a href={`/match/${match.id}/squad/reset`} class="variant-filled-primary btn">Reset squad</a>
