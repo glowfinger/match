@@ -12,6 +12,7 @@
 	import DrawIcon from '$lib/components/icons/DrawIcon.svelte';
 	import LinkCard from '$lib/components/cards/LinkCard.svelte';
 	import matchCanvasRenderer from '$lib/canvas/renderers/MatchCanvasRenderer';
+	import { goto } from '$app/navigation';
 
 	let canvas: HTMLCanvasElement | undefined = $state();
 	let canvasImages: CanvasImage[] = $state([]);
@@ -31,14 +32,6 @@
 	];
 
 	onMount(async () => {
-		canvasImages = await canvasImageLoader(match, mediaType);
-	});
-
-	onDestroy(() => {
-		canvas = undefined;
-	});
-
-	$effect(() => {
 		if (!match) {
 			return;
 		}
@@ -46,8 +39,14 @@
 		if (!canvas) {
 			return;
 		}
+		canvasImages = await canvasImageLoader(match, mediaType);
+		const images = await matchCanvasRenderer(canvas, match, mediaType, canvasImages);
+		await Promise.all(images.map(async (image) => await setMatchImage(image)));
+		goto(`/match/${matchId}/media/${mediaType}`);
+	});
 
-		matchCanvasRenderer(canvas, match, mediaType, canvasImages).then(saveImages).then(backToMedia);
+	onDestroy(() => {
+		canvas = undefined;
 	});
 
 	const LINKS = [
@@ -61,12 +60,7 @@
 		{ label: 'Caption', href: `/match/${matchId}/media/${mediaType}/caption`, icon: DrawIcon },
 	];
 
-	function backToMedia() {
-		// goto(`/match/${matchId}/media/${mediaType}`);
-	}
-	function saveImages(images: Omit<MatchImage, 'id'>[]) {
-		return images.map(async (image) => await setMatchImage(image));
-	}
+	async function saveImages(images: Omit<MatchImage, 'id'>[]): Promise<void> {}
 </script>
 
 <Breadcrumb {breadcrumbs} />

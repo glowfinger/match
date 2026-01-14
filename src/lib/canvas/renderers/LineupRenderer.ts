@@ -25,7 +25,7 @@ export default async function LineupRenderer(
 		return [];
 	}
 
-	const ctx = canvas.getContext('2d', { willReadFrequently: true });
+	const ctx = canvas.getContext('2d', { willReadFrequently: true }) as CanvasRenderingContext2D;
 	if (!ctx) {
 		throw new Error('Failed to get 2D context');
 	}

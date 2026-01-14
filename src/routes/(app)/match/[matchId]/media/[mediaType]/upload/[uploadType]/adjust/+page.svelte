@@ -142,14 +142,8 @@
 </script>
 
 <Breadcrumb {breadcrumbs} />
-
 <HeadingMd>Adjust image</HeadingMd>
-<pre
-	class="fixed top-0 right-0 w-64 overflow-x-scroll border border-slate-900 bg-white p-4 text-xs text-gray-500">{JSON.stringify(
-		canvasImages.filter((image) => image.uploadType === 'SPONSOR'),
-		null,
-		2,
-	)}</pre>
+
 <canvas bind:this={canvas} width={1080} height={1350} class="w-full border border-slate-900"
 ></canvas>
 
