@@ -1,6 +1,7 @@
 import type { Match } from '$lib/database/IndexedDB';
 import type { CanvasImage } from '$lib/types/Images';
 import lineupImageLoader from './LineupImageLoader';
+import matchImageLoader from './MatchImageLoader';
 import resultImageLoader from './ResultImageLoader';
 
 export default async function canvasImageLoader(
@@ -14,6 +15,10 @@ export default async function canvasImageLoader(
 
 	if (mediaType === 'LINEUP') {
 		canvasImages.push(...(await lineupImageLoader(match)));
+	}
+
+	if (mediaType === 'MATCH') {
+		canvasImages.push(...(await matchImageLoader(match)));
 	}
 
 	return canvasImages;

@@ -69,6 +69,10 @@
 			type: type.type,
 		};
 	}
+
+	function allowedMedia(type: MediaImageType) {
+		return type.type === 'MATCH';
+	}
 </script>
 
 <Breadcrumb {breadcrumbs} />
@@ -97,15 +101,13 @@
 	</ul>
 	<Separator />
 
-	{#if showMedia}
-		<HeadingMd>Media</HeadingMd>
-		<ul role="list" class="grid grid-cols-4 gap-2">
-			{#each MEDIA_LINKS as link}
-				<MediaCard {link} image={images.find((image) => image.type === link.type)} />
-			{/each}
-		</ul>
-		<Separator />
-	{/if}
+	<HeadingMd>Media</HeadingMd>
+	<ul role="list" class="grid grid-cols-4 gap-2">
+		{#each MEDIA_LINKS.filter(allowedMedia) as link}
+			<MediaCard {link} image={images.find((image) => image.type === link.type)} />
+		{/each}
+	</ul>
+	<Separator />
 
 	<HeadingMd>Admin</HeadingMd>
 	<a href={`/match/${match.id}/remove`} class="variant-filled-primary btn">Remove match</a>

@@ -1,6 +1,5 @@
 <script lang="ts">
 	import Breadcrumb from '$lib/components/Breadcrumb.svelte';
-	import { getMatch } from '$lib/database/MatchService';
 
 	import type { Match, ImageUpload } from '$lib/database/IndexedDB';
 	import { onMount } from 'svelte';

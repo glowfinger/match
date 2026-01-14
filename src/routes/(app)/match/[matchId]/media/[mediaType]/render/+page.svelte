@@ -1,8 +1,6 @@
 <script lang="ts">
-	import { onMount } from 'svelte';
-	import LineupRenderer from '$lib/canvas/renderers/LineupRenderer';
+	import { onDestroy, onMount } from 'svelte';
 	import resultRender from '$lib/canvas/renderers/ResultRenderer';
-	import matchRenderer from '$lib/canvas/renderers/MatchRenderer';
 	import type { MatchImage } from '$lib/database/IndexedDB';
 	import { setMatchImage } from '$lib/database/match/MatchImageDBService';
 	import canvasImageLoader from '$lib/canvas/images/CanvasImageLoader';
@@ -13,8 +11,10 @@
 	import HeadingMd from '$lib/components/typography/HeadingMd.svelte';
 	import DrawIcon from '$lib/components/icons/DrawIcon.svelte';
 	import LinkCard from '$lib/components/cards/LinkCard.svelte';
+	import matchCanvasRenderer from '$lib/canvas/renderers/MatchCanvasRenderer';
 
 	let canvas: HTMLCanvasElement | undefined = $state();
+	let canvasImages: CanvasImage[] = $state([]);
 
 	let props: LayoutProps = $props();
 	let matchId = props.data.matchId;
@@ -22,7 +22,6 @@
 	let match = props.data.match;
 	let mediaType = props.params.mediaType as string;
 
-	let canvasImages: CanvasImage[] = $state([]);
 	let WIDTH = $state(1080);
 	let HEIGHT = $state(1350);
 
@@ -35,6 +34,10 @@
 		canvasImages = await canvasImageLoader(match, mediaType);
 	});
 
+	onDestroy(() => {
+		canvas = undefined;
+	});
+
 	$effect(() => {
 		if (!match) {
 			return;
@@ -44,25 +47,7 @@
 			return;
 		}
 
-		let images: Omit<MatchImage, 'id'>[] = [];
-
-		if (mediaType === 'MATCH') {
-			WIDTH = 1080;
-			HEIGHT = 1350;
-			matchRenderer(canvas, match, canvasImages).then(saveImages).then(backToMedia);
-		}
-
-		if (mediaType === 'LINEUP') {
-			WIDTH = 1080 * 4;
-			HEIGHT = 1350;
-			LineupRenderer(canvas, matchId, canvasImages).then(saveImages).then(backToMedia);
-		}
-
-		if (mediaType === 'RESULT') {
-			WIDTH = 1080;
-			HEIGHT = 1350;
-			resultRender(canvas, matchId, canvasImages).then(saveImages).then(backToMedia);
-		}
+		matchCanvasRenderer(canvas, match, mediaType, canvasImages).then(saveImages).then(backToMedia);
 	});
 
 	const LINKS = [
@@ -87,7 +72,7 @@
 <Breadcrumb {breadcrumbs} />
 <HeadingLg>Render</HeadingLg>
 
-<div class="aspect-[4/5] h-full overflow-x-scroll">
+<div class="aspect-4/5 h-full overflow-x-scroll">
 	<canvas bind:this={canvas} width={WIDTH} height={HEIGHT} class="w-full border border-slate-900"
 	></canvas>
 </div>
