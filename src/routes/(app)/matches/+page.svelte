@@ -24,7 +24,7 @@
 <HeadingLg>Matches</HeadingLg>
 
 <HeadingMd>Info</HeadingMd>
-<div class="grid grid-cols-2 gap-2">
+<div class="grid grid-cols-1 gap-2">
 	{#each matches.toSorted(sortByDate) as match}
 		<a href={`/match/${match.id}`} class="focus:outline-hidden">
 			<MatchCard {match} />

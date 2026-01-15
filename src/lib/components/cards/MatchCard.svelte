@@ -79,9 +79,9 @@
 	</div>
 {/snippet}
 <div
-	class="flex h-full max-w-96 flex-col divide-y divide-slate-500 overflow-hidden rounded-lg border border-slate-500 shadow-sm"
+	class="grid grid-cols-2 divide-slate-500 overflow-hidden rounded-lg border border-slate-500 shadow-sm"
 >
-	<div class=" h-28 flex-grow items-center justify-center bg-white p-2">
+	<div class=" ">
 		<div class="grid grid-cols-7 gap-2 bg-white p-2">
 			<div class="col-span-3 grid grid-cols-1">
 				{@render teamBadge(homeTeam)}
@@ -96,6 +96,8 @@
 			</div>
 		</div>
 	</div>
-	{@render matchSchedule()}
-	{@render matchStatusIcons()}
+	<div class="">
+		{@render matchSchedule()}
+		{@render matchStatusIcons()}
+	</div>
 </div>

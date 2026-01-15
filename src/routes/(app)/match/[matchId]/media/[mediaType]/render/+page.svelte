@@ -1,7 +1,5 @@
 <script lang="ts">
 	import { onDestroy, onMount } from 'svelte';
-	import resultRender from '$lib/canvas/renderers/ResultRenderer';
-	import type { MatchImage } from '$lib/database/IndexedDB';
 	import { setMatchImage } from '$lib/database/match/MatchImageDBService';
 	import canvasImageLoader from '$lib/canvas/images/CanvasImageLoader';
 	import type { CanvasImage } from '$lib/types/Images';
@@ -13,6 +11,7 @@
 	import LinkCard from '$lib/components/cards/LinkCard.svelte';
 	import matchCanvasRenderer from '$lib/canvas/renderers/MatchCanvasRenderer';
 	import { goto } from '$app/navigation';
+	import { MediaImageTypes } from '$lib/Constants';
 
 	let canvas: HTMLCanvasElement | undefined = $state();
 	let canvasImages: CanvasImage[] = $state([]);
@@ -26,9 +25,17 @@
 	let WIDTH = $state(1080);
 	let HEIGHT = $state(1350);
 
+	const mediaLabel = MediaImageTypes.find((m) => m.type === mediaType)?.label;
+	if (!mediaLabel) {
+		throw new Error('Media type is required');
+	}
+
 	const breadcrumbs = [
 		{ name: 'Home', href: '/' },
 		{ name: matchTile, href: `/match/${matchId}` },
+		{ name: 'Media', href: `/match/${matchId}/media` },
+		{ name: mediaLabel, href: `/match/${matchId}/media/${mediaType}` },
+		{ name: 'Render', href: `/match/${matchId}/media/${mediaType}/render` },
 	];
 
 	onMount(async () => {
@@ -59,8 +66,6 @@
 		{ label: 'Render', href: `/match/${matchId}/media/${mediaType}/render`, icon: DrawIcon },
 		{ label: 'Caption', href: `/match/${matchId}/media/${mediaType}/caption`, icon: DrawIcon },
 	];
-
-	async function saveImages(images: Omit<MatchImage, 'id'>[]): Promise<void> {}
 </script>
 
 <Breadcrumb {breadcrumbs} />

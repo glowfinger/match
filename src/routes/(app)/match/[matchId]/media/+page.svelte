@@ -6,6 +6,9 @@
 	import HeadingMd from '$lib/components/typography/HeadingMd.svelte';
 	import { MediaImageTypes, type MediaImageType } from '$lib/Constants';
 	import type { LayoutProps } from '../$types';
+	import { getImagesByMatch } from '$lib/database/match/MatchImageDBService';
+	import { MATCH_MEDIA_IMAGE_LINKS, matchIdMapper } from '../MatchLinks';
+	import LinkCard from '$lib/components/cards/LinkCard.svelte';
 
 	let props: LayoutProps = $props();
 	let matchId = props.data.matchId;
@@ -18,8 +21,11 @@
 	];
 
 	let images: MatchImage[] = $state([]);
+	let matchMediaImageLinks = MATCH_MEDIA_IMAGE_LINKS.map((link) => matchIdMapper(matchId, link));
 
-	onMount(async () => {});
+	onMount(async () => {
+		images = await getImagesByMatch(matchId);
+	});
 
 	function getImages(type: string) {
 		return images.filter((image) => image.type === type);
@@ -39,29 +45,16 @@
 </script>
 
 <Breadcrumb {breadcrumbs} />
-<HeadingLg>Media</HeadingLg>
 
-<div class="grid grid-cols-2 gap-4">
-	{#each MediaImageTypes.filter(notSelected) as type}
-		<div class="flex items-center justify-between">
-			<p>{type.label}</p>
-			<a class="btn" href={`/match/${matchId}/media/${type.type}`}>Generate</a>
+<ul role="list" class="grid grid-cols-4 gap-2">
+	{#each matchMediaImageLinks as link}
+		<LinkCard {link} />
+		<div class="col-span-3 overflow-hidden rounded-lg border border-slate-900 bg-slate-300">
+			<div class="grid grid-cols-4">
+				{#each getImages(link?.type ?? '') as image}
+					<img class="h-24 w-24 object-cover" src={image.base64} alt={image.type} />
+				{/each}
+			</div>
 		</div>
 	{/each}
-</div>
-
-{#each getGeneratedImageTypes() as type}
-	<HeadingMd>{type.label}</HeadingMd>
-
-	{#if getImages(type.type).length > 0}
-		<div class="grid grid-cols-2">
-			{#each getImages(type.type) as image}
-				<a href={`/match/${matchId}/media/${type.type}`}>
-					<img src={image.base64} alt={type.label} />
-				</a>
-			{/each}
-		</div>
-	{/if}
-{:else}
-	no images
-{/each}
+</ul>
