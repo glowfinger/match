@@ -1,9 +1,8 @@
 <script lang="ts">
+	import { onDestroy, onMount } from 'svelte';
 	import { goto } from '$app/navigation';
 	import canvasImageLoader from '$lib/canvas/images/CanvasImageLoader';
 	import { blobToData } from '$lib/canvas/renderers/CanvasSplitter';
-	import matchRenderer from '$lib/canvas/renderers/MatchRenderer';
-	import resultRender from '$lib/canvas/renderers/ResultRenderer';
 	import Breadcrumb from '$lib/components/Breadcrumb.svelte';
 	import CancelLink from '$lib/components/forms/CancelLink.svelte';
 	import SubmitButton from '$lib/components/forms/SubmitButton.svelte';
@@ -17,15 +16,20 @@
 	} from '$lib/database/match/ImageUploadDBService';
 	import { setMatchImage } from '$lib/database/match/MatchImageDBService';
 	import type { CanvasImage } from '$lib/types/Images';
-	import { onDestroy, onMount } from 'svelte';
+
 	import { toast } from 'svelte-sonner';
 	import type { LayoutProps } from '../../../../../$types';
-	import LineupRenderer from '$lib/canvas/renderers/LineupRenderer';
+	import matchCanvasRenderer from '$lib/canvas/renderers/MatchCanvasRenderer';
+
+	let canvas: HTMLCanvasElement | undefined = $state();
+	let canvasImages: CanvasImage[] = $state([]);
+	let adjustIndex: number | undefined = $state();
 
 	let props: LayoutProps = $props();
 	let matchId = props.data.matchId;
 	let matchTile = props.data.matchTile;
 	let match = props.data.match;
+
 	const mediaType = props.params.mediaType as string;
 	const mediaLabel = MediaImageTypes.find(({ type }) => type === mediaType)?.label;
 	if (!mediaLabel) {
@@ -44,10 +48,6 @@
 		{ name: mediaLabel, href: `/match/${matchId}/media/${mediaType}` },
 		{ name: 'Adjust', href: `/match/${matchId}/media/${mediaType}/upload/${uploadType}/adjust` },
 	];
-
-	let canvas: HTMLCanvasElement | undefined = $state();
-
-	let canvasImages: CanvasImage[] = $state([]);
 
 	let settings = $state({
 		zoom: 1,
@@ -69,9 +69,13 @@
 		settings = { ...upload.settings };
 
 		canvasImages = await canvasImageLoader(match, mediaType);
+		adjustIndex = canvasImages.findIndex(
+			(image: CanvasImage) =>
+				image.uploadType.toUpperCase() === 'UPLOAD'.toUpperCase() &&
+				image.mediaType.toUpperCase() === 'MAIN'.toUpperCase(),
+		);
 
-		await LineupRenderer(canvas as HTMLCanvasElement, matchId, canvasImages);
-		// resultRender(canvas as HTMLCanvasElement, matchId, canvasImages);
+		matchCanvasRenderer(canvas as HTMLCanvasElement, match, mediaType, canvasImages);
 	});
 
 	onDestroy(() => {
@@ -79,34 +83,19 @@
 	});
 
 	$effect(() => {
-		if (!canvas || !match || !canvasImages) {
+		if (!canvas || !match || !canvasImages || adjustIndex === undefined) {
 			return;
 		}
 
-		const index = canvasImages.findIndex(
-			(image: CanvasImage) =>
-				image.uploadType.toUpperCase() === 'UPLOAD'.toUpperCase() &&
-				image.mediaType.toUpperCase() === 'MAIN'.toUpperCase(),
-		);
-
-		if (index !== -1) {
+		if (adjustIndex !== undefined) {
 			if (
-				canvasImages[index].settings.zoom !== settings.zoom ||
-				canvasImages[index].settings.x !== settings.x ||
-				canvasImages[index].settings.y !== settings.y
+				canvasImages[adjustIndex].settings.zoom !== settings.zoom ||
+				canvasImages[adjustIndex].settings.x !== settings.x ||
+				canvasImages[adjustIndex].settings.y !== settings.y
 			) {
-				canvasImages[index].settings = { ...settings };
+				canvasImages[adjustIndex].settings = { ...settings };
 
-				if (mediaType === 'RESULT') {
-					resultRender(canvas as HTMLCanvasElement, matchId, canvasImages);
-				}
-				if (mediaType === 'MATCH') {
-					matchRenderer(canvas as HTMLCanvasElement, match, canvasImages);
-				}
-
-				if (mediaType === 'LINEUP') {
-					LineupRenderer(canvas as HTMLCanvasElement, matchId, canvasImages);
-				}
+				matchCanvasRenderer(canvas as HTMLCanvasElement, match, mediaType, canvasImages);
 			}
 		}
 	});
@@ -137,10 +126,10 @@
 				base64: base64 as string,
 				createdAt: new Date().toISOString(),
 			});
-		});
 
-		toast.success('Settings updated');
-		goto(`/match/${matchId}/media/${mediaType}`);
+			toast.success('Settings updated');
+			goto(`/match/${matchId}/media/${mediaType}`);
+		});
 	}
 
 	function resetSettings() {
@@ -153,14 +142,8 @@
 </script>
 
 <Breadcrumb {breadcrumbs} />
-<HeadingLg>{uploadLabel}</HeadingLg>
 <HeadingMd>Adjust image</HeadingMd>
-<pre
-	class="fixed top-0 right-0 border border-slate-900 bg-white p-4 text-xs text-gray-500">{JSON.stringify(
-		settings,
-		null,
-		2,
-	)}</pre>
+
 <canvas bind:this={canvas} width={1080} height={1350} class="w-full border border-slate-900"
 ></canvas>
 

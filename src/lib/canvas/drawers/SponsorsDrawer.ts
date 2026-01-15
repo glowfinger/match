@@ -1,15 +1,19 @@
 import { Colours, SPONSORS, type Sponsor } from '$lib/Constants';
+import type { Match } from '$lib/database/IndexedDB';
+import type { CanvasImage } from '$lib/types/Images';
 import { getImageBitmap } from '../ImageCache';
 
 export async function drawSponsorsVertical(
 	ctx: OffscreenCanvasRenderingContext2D | CanvasRenderingContext2D,
 	x: number = 60,
 	y: number = 60,
+	match: Match,
+	images: CanvasImage[],
 ) {
 	// TODO team section should be passed in as a parameter
-	const sponsors = SPONSORS.filter((sponsor) => sponsor.sections.includes('1XV')).toSorted((a) =>
-		a.level === '1' ? -1 : 1,
-	);
+	const sponsors = SPONSORS.filter((sponsor) =>
+		sponsor.sections.includes(match.team?.squad ?? ''),
+	).toSorted((a) => (a.level === '1' ? -1 : 1));
 
 	let yOffset = 0 - 20;
 
@@ -24,8 +28,12 @@ export async function drawSponsorsVertical(
 			ctx.fillStyle = Colours.WHITE;
 			ctx.fillRect(drawX, drawY, imageWidth + imageBorder * 2, imageWidth + imageBorder * 2);
 			ctx.strokeRect(drawX, drawY, imageWidth + imageBorder * 2, imageWidth + imageBorder * 2);
-			const img = await getImageBitmap(sponsor.logo);
-			ctx.drawImage(img, drawX + imageBorder, drawY + imageBorder);
+			const img = images.find(
+				(image) => image.uploadType === 'SPONSOR' && image.mediaType === sponsor.key,
+			);
+			if (img) {
+				ctx.drawImage(img.photo, drawX + imageBorder, drawY + imageBorder);
+			}
 			yOffset = imageWidth + imageBorder * 2 + 20;
 		}
 
@@ -40,8 +48,12 @@ export async function drawSponsorsVertical(
 			ctx.fillStyle = Colours.WHITE;
 			ctx.fillRect(drawX, drawY, imageWidth + imageBorder * 2, imageHeight + imageBorder * 2);
 			ctx.strokeRect(drawX, drawY, imageWidth + imageBorder * 2, imageHeight + imageBorder * 2);
-			const img = await getImageBitmap(sponsor.logo);
-			ctx.drawImage(img, drawX + imageBorder, drawY + imageBorder);
+			const img = images.find(
+				(image) => image.uploadType === 'SPONSOR' && image.mediaType === sponsor.key,
+			);
+			if (img) {
+				ctx.drawImage(img.photo, drawX + imageBorder, drawY + imageBorder);
+			}
 			yOffset = imageHeight + imageBorder * 2 + 20;
 		}
 	}

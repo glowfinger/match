@@ -19,10 +19,12 @@ export const load = async ({ params, url }) => {
 		error(404, 'Match not found with ID: ' + matchId);
 	}
 
-	return {
+	const props = {
 		matchId,
 		matchTile: getMatchTitle(match),
 		match,
 		pathKey: url.href,
 	};
+
+	return props;
 };

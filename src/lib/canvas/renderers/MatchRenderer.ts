@@ -1,11 +1,11 @@
-import { Colours, UploadImageTypes } from '$lib/Constants';
+import { Colours } from '$lib/Constants';
 import type { Match, MatchImage } from '$lib/database/IndexedDB';
 import { convertTime, matchDate } from '$lib/helpers/dateTime/ConvertTime';
 import type { CanvasImage } from '$lib/types/Images';
 import { KIT_VALUES } from '../constants/Colours';
+import { UploadImageTypes } from '../constants/ImageKey';
 import photoDrawer from '../drawers/PhotoDrawer';
 import { drawSponsorsVertical } from '../drawers/SponsorsDrawer';
-import { getImageBitmap } from '../ImageCache';
 import canvasSplitter from './CanvasSplitter';
 
 export const backgrounds = {
@@ -30,12 +30,13 @@ export default async function matchRenderer(
 	ctx.fillStyle = backgrounds[match.detail?.kit ?? KIT_VALUES.MAIN];
 	ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-	const fullBackgroundImage = images.find((image) => image.uploadType === 'full');
-	if (fullBackgroundImage) {
-		ctx.drawImage(fullBackgroundImage.photo, 0, 0);
+	const backgroundImage = images.find(getBackgroundImage);
+
+	if (backgroundImage) {
+		ctx.drawImage(backgroundImage.photo, 0, 0);
 	}
 
-	const mainImage = images.find((image) => image.uploadType === UploadImageTypes.MAIN);
+	const mainImage = images.find(getMainImage);
 
 	if (mainImage) {
 		const destination = { width: 1080, height: 700, x: 0, y: 1350 - 700 };
@@ -51,7 +52,8 @@ export default async function matchRenderer(
 		);
 	}
 
-	const cutoutBackgroundImage = images.find((image) => image.uploadType === 'cutout');
+	const cutoutBackgroundImage = images.find(getBackgroundCutoutImage);
+
 	if (cutoutBackgroundImage) {
 		ctx.drawImage(cutoutBackgroundImage.photo, 0, 0);
 	}
@@ -153,8 +155,10 @@ export default async function matchRenderer(
 		ctx.fillRect(x, y, 170, 170);
 		ctx.strokeRect(x, y, 170, 170);
 
-		const img = await getImageBitmap(homeTeam.badge);
-		ctx.drawImage(img, x + 10, y + 10);
+		const homeTeamImage = images.find(getHomeTeamImage);
+		if (homeTeamImage) {
+			ctx.drawImage(homeTeamImage.photo, x + 10, y + 10, 150, 150);
+		}
 
 		const lineHeight = 40;
 		const lines = [homeTeam.club, homeTeam.squad];
@@ -193,8 +197,10 @@ export default async function matchRenderer(
 		ctx.fillRect(x, y, 170, 170);
 		ctx.strokeRect(x, y, 170, 170);
 
-		const img = await getImageBitmap(awayTeam.badge);
-		ctx.drawImage(img, x + 10, y + 10);
+		const awayTeamImage = images.find(getAwayTeamImage);
+		if (awayTeamImage) {
+			ctx.drawImage(awayTeamImage.photo, x + 10, y + 10, 150, 150);
+		}
 
 		const lineHeight = 40;
 		const lines = [awayTeam.club, awayTeam.squad];
@@ -211,7 +217,7 @@ export default async function matchRenderer(
 		});
 	}
 
-	await drawSponsorsVertical(ctx, 1080 - 150 - 60, 1000);
+	await drawSponsorsVertical(ctx, 1080 - 150 - 60, 1000, match, images);
 	return (await canvasSplitter(canvas as OffscreenCanvas)).map(({ page, base64 }) => ({
 		matchId: match.id,
 		type: 'MATCH',
@@ -219,6 +225,26 @@ export default async function matchRenderer(
 		base64,
 		createdAt: new Date().toISOString(),
 	}));
+}
+
+function getMainImage(image: CanvasImage): unknown {
+	return image.uploadType === UploadImageTypes.UPLOAD && image.mediaType === 'MAIN';
+}
+
+function getBackgroundImage(image: CanvasImage): unknown {
+	return image.uploadType === UploadImageTypes.BACKGROUND && image.mediaType === 'MATCH';
+}
+
+function getBackgroundCutoutImage(image: CanvasImage): unknown {
+	return image.uploadType === UploadImageTypes.BACKGROUND_CUTOUT && image.mediaType === 'MATCH';
+}
+
+function getHomeTeamImage(image: CanvasImage): unknown {
+	return image.uploadType === 'HOME' && image.mediaType === 'TEAM';
+}
+
+function getAwayTeamImage(image: CanvasImage): unknown {
+	return image.uploadType === 'AWAY' && image.mediaType === 'TEAM';
 }
 
 export function splitIntoLines(text: string): string[] {

@@ -1,3 +1,4 @@
+import { SPONSORS } from '$lib/Constants';
 import type { Match, MatchTeam } from '$lib/database/IndexedDB';
 import { getMatchPositions } from '$lib/database/MatchPositionDBService';
 import { getPlayersByKeys } from '$lib/database/PlayerDBService';
@@ -58,6 +59,27 @@ export async function playerHeadshotLoader(match: Match): Promise<CanvasImage[]>
 				},
 			});
 		}
+	}
+
+	return images;
+}
+
+export async function sponsorImageLoader(match: Match): Promise<CanvasImage[]> {
+	const images: CanvasImage[] = [];
+
+	const matchSection = match.team?.squad ?? '';
+
+	const sponsors = SPONSORS.filter((sponsor) => sponsor.sections.includes(matchSection)).toSorted(
+		(a) => (a.level === '1' ? -1 : 1),
+	);
+
+	for (const sponsor of sponsors) {
+		images.push({
+			photo: await getImageBitmap(sponsor.logo),
+			uploadType: 'SPONSOR',
+			mediaType: sponsor.key,
+			settings: { x: 0, y: 0, zoom: 1 },
+		});
 	}
 
 	return images;

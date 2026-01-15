@@ -22,10 +22,10 @@
 				<div class="relative rounded-full bg-slate-700 p-1">
 					<span class="absolute -inset-1.5"></span>
 					<span class="sr-only">View notifications</span>
-					{#if online}
-						<OnlineIcon />
+					{#if online.current}
+						<OnlineIcon class="size-6 text-slate-200" />
 					{:else}
-						<OfflineIcon />
+						<OfflineIcon class="size-6 text-slate-200" />
 					{/if}
 				</div>
 				{#if $session.data !== null}

@@ -1,0 +1,6 @@
+export const UploadImageTypes = {
+	BACKGROUND: 'BACKGROUND',
+	BACKGROUND_CUTOUT: 'BACKGROUND_CUTOUT',
+	MAIN: 'MAIN',
+	UPLOAD: 'UPLOAD',
+};

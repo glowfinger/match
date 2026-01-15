@@ -11,6 +11,8 @@
 	import { Separator } from '$lib/components/ui/separator/index.js';
 	import { sortByDate } from '$lib/utils/sorts/ClubSort';
 	import CONFIG from '$lib/constants/FeatureConfig';
+	import { DATABASE_LINKS } from './match/[matchId]/MatchLinks';
+	import LinkCard from '$lib/components/cards/LinkCard.svelte';
 
 	let matches: Match[] = $state([]);
 
@@ -63,7 +65,7 @@
 	>View matches</Button
 >
 
-<div class="grid grid-cols-2 gap-2">
+<div class="grid grid-cols-1 gap-2">
 	{#each matches.toSorted(sortByDate) as match}
 		<a href={`/match/${match.id}`} class="focus:outline-hidden">
 			<MatchCard {match} />
@@ -72,8 +74,10 @@
 </div>
 
 <Separator />
-<HeadingMd>Players</HeadingMd>
-<a href="/players" class="variant-filled-primary btn">View player</a>
-<Separator />
-<HeadingMd>Admin</HeadingMd>
-<a href="/admin" class="variant-filled-primary btn">Admin</a>
+<HeadingMd>Database</HeadingMd>
+
+<ul role="list" class="grid grid-cols-4 gap-2">
+	{#each DATABASE_LINKS as link}
+		<LinkCard {link} />
+	{/each}
+</ul>

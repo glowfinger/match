@@ -1,9 +1,5 @@
 <script lang="ts">
-	import { onMount } from 'svelte';
-	import LineupRenderer from '$lib/canvas/renderers/LineupRenderer';
-	import resultRender from '$lib/canvas/renderers/ResultRenderer';
-	import matchRenderer from '$lib/canvas/renderers/MatchRenderer';
-	import type { MatchImage } from '$lib/database/IndexedDB';
+	import { onDestroy, onMount } from 'svelte';
 	import { setMatchImage } from '$lib/database/match/MatchImageDBService';
 	import canvasImageLoader from '$lib/canvas/images/CanvasImageLoader';
 	import type { CanvasImage } from '$lib/types/Images';
@@ -13,8 +9,12 @@
 	import HeadingMd from '$lib/components/typography/HeadingMd.svelte';
 	import DrawIcon from '$lib/components/icons/DrawIcon.svelte';
 	import LinkCard from '$lib/components/cards/LinkCard.svelte';
+	import matchCanvasRenderer from '$lib/canvas/renderers/MatchCanvasRenderer';
+	import { goto } from '$app/navigation';
+	import { MediaImageTypes } from '$lib/Constants';
 
 	let canvas: HTMLCanvasElement | undefined = $state();
+	let canvasImages: CanvasImage[] = $state([]);
 
 	let props: LayoutProps = $props();
 	let matchId = props.data.matchId;
@@ -22,20 +22,23 @@
 	let match = props.data.match;
 	let mediaType = props.params.mediaType as string;
 
-	let canvasImages: CanvasImage[] = $state([]);
 	let WIDTH = $state(1080);
 	let HEIGHT = $state(1350);
+
+	const mediaLabel = MediaImageTypes.find((m) => m.type === mediaType)?.label;
+	if (!mediaLabel) {
+		throw new Error('Media type is required');
+	}
 
 	const breadcrumbs = [
 		{ name: 'Home', href: '/' },
 		{ name: matchTile, href: `/match/${matchId}` },
+		{ name: 'Media', href: `/match/${matchId}/media` },
+		{ name: mediaLabel, href: `/match/${matchId}/media/${mediaType}` },
+		{ name: 'Render', href: `/match/${matchId}/media/${mediaType}/render` },
 	];
 
 	onMount(async () => {
-		canvasImages = await canvasImageLoader(match, mediaType);
-	});
-
-	$effect(() => {
 		if (!match) {
 			return;
 		}
@@ -43,26 +46,14 @@
 		if (!canvas) {
 			return;
 		}
+		canvasImages = await canvasImageLoader(match, mediaType);
+		const images = await matchCanvasRenderer(canvas, match, mediaType, canvasImages);
+		await Promise.all(images.map(async (image) => await setMatchImage(image)));
+		goto(`/match/${matchId}/media/${mediaType}`);
+	});
 
-		let images: Omit<MatchImage, 'id'>[] = [];
-
-		if (mediaType === 'MATCH') {
-			WIDTH = 1080;
-			HEIGHT = 1350;
-			matchRenderer(canvas, match, canvasImages).then(saveImages).then(backToMedia);
-		}
-
-		if (mediaType === 'LINEUP') {
-			WIDTH = 1080 * 4;
-			HEIGHT = 1350;
-			LineupRenderer(canvas, matchId, canvasImages).then(saveImages).then(backToMedia);
-		}
-
-		if (mediaType === 'RESULT') {
-			WIDTH = 1080;
-			HEIGHT = 1350;
-			resultRender(canvas, matchId, canvasImages).then(saveImages).then(backToMedia);
-		}
+	onDestroy(() => {
+		canvas = undefined;
 	});
 
 	const LINKS = [
@@ -75,19 +66,12 @@
 		{ label: 'Render', href: `/match/${matchId}/media/${mediaType}/render`, icon: DrawIcon },
 		{ label: 'Caption', href: `/match/${matchId}/media/${mediaType}/caption`, icon: DrawIcon },
 	];
-
-	function backToMedia() {
-		// goto(`/match/${matchId}/media/${mediaType}`);
-	}
-	function saveImages(images: Omit<MatchImage, 'id'>[]) {
-		return images.map(async (image) => await setMatchImage(image));
-	}
 </script>
 
 <Breadcrumb {breadcrumbs} />
 <HeadingLg>Render</HeadingLg>
 
-<div class="aspect-[4/5] h-full overflow-x-scroll">
+<div class="aspect-4/5 h-full overflow-x-scroll">
 	<canvas bind:this={canvas} width={WIDTH} height={HEIGHT} class="w-full border border-slate-900"
 	></canvas>
 </div>

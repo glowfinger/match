@@ -53,6 +53,7 @@ export const MediaImageTypes: MediaImageType[] = [
 ];
 
 export type Sponsor = {
+	key: string;
 	name: string;
 	logo: string;
 	handle: string;
@@ -62,6 +63,7 @@ export type Sponsor = {
 
 export const SPONSORS: Sponsor[] = [
 	{
+		key: 'furniture-village',
 		name: 'Furniture Village',
 		logo: 'https://glowfinger.blob.core.windows.net/smg/sponsors/furniture-village.png',
 		handle: '@furniturevillage',
@@ -69,6 +71,7 @@ export const SPONSORS: Sponsor[] = [
 		level: '1',
 	},
 	{
+		key: 'formation-lighting',
 		name: 'Formation Lighting',
 		logo: 'https://glowfinger.blob.core.windows.net/smg/sponsors/formation-lighting.png',
 		handle: ' @formation_lighting',

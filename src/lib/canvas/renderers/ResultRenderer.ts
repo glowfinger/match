@@ -1,7 +1,6 @@
 import { Colours, UploadImageTypes } from '$lib/Constants';
-import type { MatchImage } from '$lib/database/IndexedDB';
+import type { Match, MatchImage } from '$lib/database/IndexedDB';
 import { getMatchRolesByType } from '$lib/database/MatchRoleDBService';
-import { getMatch } from '$lib/database/MatchService';
 import { getPlayersByKeys } from '$lib/database/PlayerDBService';
 import type { CanvasImage } from '$lib/types/Images';
 import { KIT_VALUES } from '../constants/Colours';
@@ -13,23 +12,18 @@ import canvasSplitter from './CanvasSplitter';
 import { backgrounds } from './MatchRenderer';
 
 export default async function resultRender(
-	canvas: HTMLCanvasElement | OffscreenCanvas,
-	matchId: number,
+	canvas: OffscreenCanvas | HTMLCanvasElement,
+	match: Match,
 	images: CanvasImage[] = [],
 ): Promise<Omit<MatchImage, 'id'>[]> {
 	if (!canvas) {
 		return [];
 	}
 
-	const ctx = canvas.getContext('2d', { willReadFrequently: true });
+	const ctx = canvas.getContext('2d', { willReadFrequently: true }) as CanvasRenderingContext2D;
 
 	if (!ctx) {
 		throw new Error('Failed to get 2D context');
-	}
-
-	const match = await getMatch(matchId);
-	if (!match) {
-		return [];
 	}
 
 	ctx.fillStyle = backgrounds[match.detail?.kit ?? KIT_VALUES.MAIN];
@@ -168,7 +162,7 @@ export default async function resultRender(
 		ctx.fillText(awayString, 540 + 220, centerHeight);
 	}
 
-	const awards = await getMatchRolesByType(matchId, 'awards');
+	const awards = await getMatchRolesByType(match.id, 'awards');
 	const players = await getPlayersByKeys(awards.map((s) => s.playerKey));
 
 	const forwardsAwards = awards.find((s) => s.role === 'forwards-motm');
@@ -222,10 +216,10 @@ export default async function resultRender(
 		}
 	}
 
-	await drawSponsorsVertical(ctx, 1080 - 60 - 150, 60);
+	await drawSponsorsVertical(ctx, 1080 - 60 - 150, 60, match, images);
 
 	return (await canvasSplitter(canvas as OffscreenCanvas)).map(({ page, base64 }) => ({
-		matchId,
+		matchId: match.id,
 		type: 'RESULT',
 		page,
 		base64,

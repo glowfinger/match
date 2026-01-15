@@ -6,7 +6,8 @@
 	import { goto } from '$app/navigation';
 	import { toast } from 'svelte-sonner';
 	import MatchCard from '$lib/components/cards/MatchCard.svelte';
-	import type { LayoutProps } from '../$types';
+	import type { LayoutProps } from '../../$types';
+	import CancelLink from '$lib/components/forms/CancelLink.svelte';
 
 	let props: LayoutProps = $props();
 	let matchId = props.data.matchId;
@@ -45,4 +46,5 @@
 	</div>
 
 	<Button type="button" onclick={handleRemove} variant="destructive">Remove</Button>
+	<CancelLink href={`/match/${matchId}/admin`}>Back to admin</CancelLink>
 {/if}

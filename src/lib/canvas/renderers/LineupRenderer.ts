@@ -1,8 +1,7 @@
 import { Colours } from '$lib/Constants';
-import type { MatchImage } from '$lib/database/IndexedDB';
+import type { Match, MatchImage } from '$lib/database/IndexedDB';
 import { getMatchPositions } from '$lib/database/MatchPositionDBService';
 import { getMatchRolesByType } from '$lib/database/MatchRoleDBService';
-import { getMatch } from '$lib/database/MatchService';
 import { getMatchTags } from '$lib/database/MatchTagDBService';
 import { getPlayersByKeys } from '$lib/database/PlayerDBService';
 import { getYesSelectionsByMatchId } from '$lib/database/SelectionDBService';
@@ -19,24 +18,26 @@ import InfoPartialRenderer from './lineup/InfoPartialRenderer';
 
 export default async function LineupRenderer(
 	canvas: HTMLCanvasElement | OffscreenCanvas,
-	matchId: number,
+	match: Match,
 	images: CanvasImage[] = [],
 ): Promise<Omit<MatchImage, 'id'>[]> {
 	if (!canvas) {
 		return [];
 	}
 
-	const ctx = canvas.getContext('2d', { willReadFrequently: true });
+	const ctx = canvas.getContext('2d', { willReadFrequently: true }) as CanvasRenderingContext2D;
 	if (!ctx) {
 		throw new Error('Failed to get 2D context');
 	}
 
-	const match = await getMatch(matchId);
-	const selections = await getYesSelectionsByMatchId(matchId);
-	const positions = await getMatchPositions(matchId);
+	canvas.width = 1080 * 4;
+	canvas.height = 1350;
+
+	const selections = await getYesSelectionsByMatchId(match.id);
+	const positions = await getMatchPositions(match.id);
 	const players = await getPlayersByKeys(selections.map((s) => s.playerKey));
-	const debuts = (await getMatchTags(matchId, 'debut')).map((t) => t.playerKey);
-	const leadershipRoles = await getMatchRolesByType(matchId, 'leadership');
+	const debuts = (await getMatchTags(match.id, 'debut')).map((t) => t.playerKey);
+	const leadershipRoles = await getMatchRolesByType(match.id, 'leadership');
 
 	if (match.detail) {
 		ctx.fillStyle = KIT_BACKGROUND[match.detail?.kit ?? KIT_VALUES.MAIN];
@@ -73,7 +74,7 @@ export default async function LineupRenderer(
 		ctx.drawImage(backgroundCutoutImage.photo, 0, 0);
 	}
 
-	await InfoPartialRenderer(ctx, matchId);
+	await InfoPartialRenderer(ctx, match.id);
 
 	drawSmallTitle(ctx, 'FORWARDS', 1080 + 60, 120);
 	drawVersusTitle(ctx, `vs ${match.opponent?.club ?? ''}`, 1080 + 60, 180);
@@ -163,7 +164,7 @@ export default async function LineupRenderer(
 	// Finishers
 	// await FinishersPartialRenderer(ctx, matchId);
 
-	await finisherListPartialRenderer(ctx, matchId);
+	await finisherListPartialRenderer(ctx, match.id);
 
 	const legend = ' 🍟 Home Grown  |  📣 Debut';
 	// const legend = '🍟 Home Grown';
@@ -184,10 +185,10 @@ export default async function LineupRenderer(
 		await drawSponsors(ctx, 60 + (page - 1) * 1080, 1120);
 	}
 
-	await drawSponsorsVertical(ctx, 1080 * 4 - 60 - 160, 60);
+	await drawSponsorsVertical(ctx, 1080 * 4 - 60 - 160, 60, match, images);
 
 	return (await canvasSplitter(canvas as OffscreenCanvas)).map(({ page, base64 }) => ({
-		matchId,
+		matchId: match.id,
 		type: 'LINEUP',
 		page,
 		base64,
