@@ -6,7 +6,6 @@
 	import Breadcrumb from '$lib/components/Breadcrumb.svelte';
 	import CancelLink from '$lib/components/forms/CancelLink.svelte';
 	import SubmitButton from '$lib/components/forms/SubmitButton.svelte';
-	import HeadingLg from '$lib/components/typography/HeadingLg.svelte';
 	import HeadingMd from '$lib/components/typography/HeadingMd.svelte';
 	import { Button } from '$lib/components/ui/button';
 	import { MediaImageTypes, UPLOAD_TYPES } from '$lib/Constants';
@@ -20,6 +19,7 @@
 	import { toast } from 'svelte-sonner';
 	import type { LayoutProps } from '../../../../../$types';
 	import matchCanvasRenderer from '$lib/canvas/renderers/MatchCanvasRenderer';
+	import canvasFontLoader from '$lib/canvas/images/CanvasFontLoader';
 
 	let canvas: HTMLCanvasElement | undefined = $state();
 	let canvasImages: CanvasImage[] = $state([]);
@@ -66,8 +66,11 @@
 			throw new Error('Upload not found');
 		}
 
-		settings = { ...upload.settings };
 
+
+
+
+		await canvasFontLoader();
 		canvasImages = await canvasImageLoader(match, mediaType);
 		adjustIndex = canvasImages.findIndex(
 			(image: CanvasImage) =>
@@ -83,21 +86,25 @@
 	});
 
 	$effect(() => {
-		if (!canvas || !match || !canvasImages || adjustIndex === undefined) {
+		if (!canvas || !match || !canvasImages  || !settings) {
 			return;
 		}
 
-		if (adjustIndex !== undefined) {
-			if (
-				canvasImages[adjustIndex].settings.zoom !== settings.zoom ||
-				canvasImages[adjustIndex].settings.x !== settings.x ||
-				canvasImages[adjustIndex].settings.y !== settings.y
-			) {
-				canvasImages[adjustIndex].settings = { ...settings };
 
-				matchCanvasRenderer(canvas as HTMLCanvasElement, match, mediaType, canvasImages);
-			}
+		if (adjustIndex === undefined || adjustIndex === -1 ) {
+			return;
 		}
+
+		if (
+			canvasImages[adjustIndex].settings.zoom !== settings.zoom ||
+			canvasImages[adjustIndex].settings.x !== settings.x ||
+			canvasImages[adjustIndex].settings.y !== settings.y
+		) {
+			canvasImages[adjustIndex].settings = { ...settings };
+
+			matchCanvasRenderer(canvas as HTMLCanvasElement, match, mediaType, canvasImages);
+		}
+
 	});
 
 	async function updateUploadSettings(e: SubmitEvent) {
@@ -144,7 +151,7 @@
 <Breadcrumb {breadcrumbs} />
 <HeadingMd>Adjust image</HeadingMd>
 
-<canvas bind:this={canvas} width={1080} height={1350} class="w-full border border-slate-900"
+<canvas bind:this={canvas} width={1080} height={1350} class="w-full border border-slate-900  touch-none"
 ></canvas>
 
 <form onsubmit={updateUploadSettings} novalidate>

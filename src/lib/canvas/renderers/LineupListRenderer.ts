@@ -1,13 +1,12 @@
 import { Colours } from '$lib/Constants';
-import type { MatchImage } from '$lib/database/IndexedDB';
-import { getMatch } from '$lib/database/MatchService';
+import type { Match, MatchImage } from '$lib/database/IndexedDB';
 import { KIT_BACKGROUND, KIT_VALUES } from '../constants/Colours';
 import { drawSponsors } from '../drawers/SponsorsDrawer';
 import { getImageBitmap } from '../ImageCache';
 import canvasSplitter from './CanvasSplitter';
 
 export default async function LineupListRenderer(
-	matchId: number,
+	match: Match,
 	type: string,
 ): Promise<Omit<MatchImage, 'id'>[]> {
 	const PAGES = 1;
@@ -18,7 +17,6 @@ export default async function LineupListRenderer(
 	if (!ctx) {
 		throw new Error('Failed to get 2D context');
 	}
-	const match = await getMatch(matchId);
 
 	if (match.detail) {
 		ctx.fillStyle = KIT_BACKGROUND[match.detail?.kit ?? KIT_VALUES.MAIN];
@@ -101,7 +99,7 @@ export default async function LineupListRenderer(
 	await drawSponsors(ctx, 60, 1120);
 
 	return (await canvasSplitter(canvas)).map(({ page, base64 }) => ({
-		matchId,
+		matchId: match.id,
 		type,
 		page,
 		base64,

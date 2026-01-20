@@ -54,7 +54,9 @@ export const MATCH_MEDIA_IMAGE_LINKS: MediaImageLink[] = [
 		href: `/match/[matchId]/media/MATCH`,
 		icon: PhotoAlbumIcon,
 	},
-	// { type: 'LINEUP', label: 'Lineup', href: `/match/[matchId]/media/LINEUP`, icon: ArticleIcon },
+	{ type: 'LINEUP', label: 'Lineup', href: `/match/[matchId]/media/LINEUP`, icon: ArticleIcon },
+	{ type: 'RESULT', label: 'Result', href: `/match/[matchId]/media/RESULT`, icon: SportsScoreIcon },
+	{ type: 'HIGHLIGHT', label: 'Highlight', href: `/match/[matchId]/media/HIGHLIGHT`, icon: StarShineIcon },
 ];
 
 export const ADMIN_LINKS: LinkList[] = [

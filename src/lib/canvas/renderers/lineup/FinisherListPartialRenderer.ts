@@ -1,9 +1,9 @@
 import headshotLoader from '$lib/canvas/images/HeadshotLoader';
 import { drawSmallTitle, drawVersusTitle } from '$lib/canvas/TextDrawer';
 import { Colours } from '$lib/Constants';
+import type { Match } from '$lib/database/IndexedDB';
 import { getMatchPositions } from '$lib/database/MatchPositionDBService';
 import { getMatchRolesByType } from '$lib/database/MatchRoleDBService';
-import { getMatch } from '$lib/database/MatchService';
 import { getMatchTags } from '$lib/database/MatchTagDBService';
 import { getPlayersByKeys } from '$lib/database/PlayerDBService';
 import { getYesSelectionsByMatchId } from '$lib/database/SelectionDBService';
@@ -31,18 +31,16 @@ const COORDS = [
 
 export default async function finisherListPartialRenderer(
 	ctx: OffscreenCanvasRenderingContext2D | CanvasRenderingContext2D,
-	matchId: number,
+	match: Match,
 ): Promise<void> {
-	const match = await getMatch(matchId);
-
-	const selections = await getYesSelectionsByMatchId(matchId);
-	const positions = (await getMatchPositions(matchId)).map((p) => p.playerKey);
+	const selections = await getYesSelectionsByMatchId(match.id);
+	const positions = (await getMatchPositions(match.id)).map((p) => p.playerKey);
 
 	const finishers = selections.filter(({ playerKey }) => !positions.includes(playerKey));
 	const players = await getPlayersByKeys(finishers.map((s) => s.playerKey));
 
-	const debuts = (await getMatchTags(matchId, 'debut')).map((t) => t.playerKey);
-	const leadershipRoles = await getMatchRolesByType(matchId, 'leadership');
+	const debuts = (await getMatchTags(match.id, 'debut')).map((t) => t.playerKey);
+	const leadershipRoles = await getMatchRolesByType(match.id, 'leadership');
 
 	// {
 	// 	const img = await getImageBitmap('/img/photos/stollery-hickson.png');
@@ -54,7 +52,6 @@ export default async function finisherListPartialRenderer(
 	drawVersusTitle(ctx, `vs ${match.opponent?.club ?? ''}`, x, 180);
 
 	const coords = players.length == 2 ? [COORDS[0], COORDS[2]] : COORDS;
-	console.log(coords);
 	for (const [i, coord] of coords.entries()) {
 		const player = players[i];
 		if (!player) {
